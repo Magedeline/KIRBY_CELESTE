@@ -532,7 +532,7 @@ public static class AreaModeExtender
         }
 
         int requiredModes = Math.Max((int) area.Mode + 1, Math.Max(areaModeCount, 3));
-        EnsureAreaModeStatsArray(stats, requiredModes);
+        EnsureAreaModeStatsArray(stats, requiredModes, allowShrink: areaModeCount > 0);
         return stats;
     }
 
@@ -1006,7 +1006,7 @@ public static class AreaModeExtender
             ?? stats.GetType().GetField("modes", flags)?.FieldType;
     }
 
-    private static void EnsureAreaModeStatsArray(object stats, int requiredModes)
+    private static void EnsureAreaModeStatsArray(object stats, int requiredModes, bool allowShrink = false)
     {
         DynamicData dyn = DynamicData.For(stats);
         Array modes = GetModesArray(stats);
@@ -1019,6 +1019,14 @@ public static class AreaModeExtender
         if (modes == null)
         {
             modes = Array.CreateInstance(modeType, requiredModes);
+            TrySetMember(stats, dyn, "Modes", modes);
+            TrySetMember(stats, dyn, "modes", modes);
+        }
+        else if (allowShrink && modes.Length > requiredModes)
+        {
+            Array resized = Array.CreateInstance(modeType, requiredModes);
+            Array.Copy(modes, resized, requiredModes);
+            modes = resized;
             TrySetMember(stats, dyn, "Modes", modes);
             TrySetMember(stats, dyn, "modes", modes);
         }
