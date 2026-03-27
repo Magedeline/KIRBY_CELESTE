@@ -1,3 +1,5 @@
+using MaggyHelper.Entities;
+
 namespace MaggyHelper.Cutscenes
 {
   [HotReloadable]
@@ -5,7 +7,7 @@ namespace MaggyHelper.Cutscenes
   {
     private const float new_darkness_alpha = 0.3f;
     public const string FLAG = "seeMaddyInCrystal";
-    private TheoCrystal theo;
+    private Entity crystal;
 
     public override void OnBegin(Level level)
     {
@@ -21,9 +23,10 @@ namespace MaggyHelper.Cutscenes
       player.StateMachine.Locked = true;
       yield return 0.25f;
 
-      this.theo = this.Scene.Tracker.GetEntity<TheoCrystal>();
-      if (this.theo != null && Math.Sign(player.X - this.theo.X) != 0)
-        player.Facing = (global::Celeste.Facings)Math.Sign(this.theo.X - player.X);
+      this.crystal = this.Scene.Tracker.GetEntity<MaddyCrystal>() as Entity
+        ?? this.Scene.Tracker.GetEntity<TheoCrystal>();
+      if (this.crystal != null && Math.Sign(player.X - this.crystal.X) != 0)
+        player.Facing = (global::Celeste.Facings)Math.Sign(this.crystal.X - player.X);
 
       yield return 0.25f;
 
@@ -47,7 +50,10 @@ namespace MaggyHelper.Cutscenes
 
     private IEnumerator ZoomIn()
     {
-      yield return this.Level.ZoomTo(Vector2.Lerp(player.Position, this.theo.Position, 0.5f) - this.Level.Camera.Position + new Vector2(0.0f, -20f), 2f, 0.5f);
+      Vector2 zoomTarget = crystal != null
+        ? Vector2.Lerp(player.Position, this.crystal.Position, 0.5f)
+        : player.Position;
+      yield return this.Level.ZoomTo(zoomTarget - this.Level.Camera.Position + new Vector2(0.0f, -20f), 2f, 0.5f);
     }
 
     private IEnumerator MadelineTurnsAround()

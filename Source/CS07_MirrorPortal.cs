@@ -152,20 +152,44 @@ namespace MaggyHelper.Cutscenes
         level.UnloadLevel();
         level.Session.Dreaming = true;
         level.Session.Keys.Clear();
-        if (level.Session.Area.Mode == AreaMode.Normal)
+        bool useGenocidePath = CH7GenocideMirrorState.IsEnabled(level.Session)
+          && level.Session.Area.Mode == AreaMode.Normal
+          && CH7GenocideMirrorState.HasRoom(level, CH7GenocideMirrorState.VisionIntroRoom);
+        string targetRoom;
+        global::Celeste.Player.IntroTypes introType;
+        if (useGenocidePath)
         {
-          level.Session.Level = "tesseractzero";
-          level.Session.RespawnPoint = new Vector2?(level.GetSpawnPoint(new Vector2((float) level.Bounds.Left, (float) level.Bounds.Top)));
-          level.LoadLevel(global::Celeste.Player.IntroTypes.TempleMirrorVoid);
+          level.Session.SetFlag(CH7GenocideMirrorState.StartedFlag, true);
+          targetRoom = CH7GenocideMirrorState.VisionIntroRoom;
+          introType = global::Celeste.Player.IntroTypes.WakeUp;
+        }
+        else if (level.Session.Area.Mode == AreaMode.Normal)
+        {
+          targetRoom = "null";
+          introType = global::Celeste.Player.IntroTypes.TempleMirrorVoid;
         }
         else
         {
-          level.Session.Level = "c-00";
-          level.Session.RespawnPoint = new Vector2?(level.GetSpawnPoint(new Vector2((float) level.Bounds.Left, (float) level.Bounds.Top)));
-          level.LoadLevel(global::Celeste.Player.IntroTypes.WakeUp);
+          targetRoom = "d-00";
+          introType = global::Celeste.Player.IntroTypes.WakeUp;
+        }
+
+        level.Session.Level = targetRoom;
+        level.Session.RespawnPoint = new Vector2?(level.GetSpawnPoint(CH7GenocideMirrorState.GetRespawnProbe(level, targetRoom)));
+        level.LoadLevel(introType);
+        global::Celeste.Player loadedPlayer = level.Tracker.GetEntity<global::Celeste.Player>();
+        if (useGenocidePath && loadedPlayer != null && !level.Session.GetFlag(CH7GenocideMirrorState.VisionIntroPlayedFlag))
+        {
+          level.Add((Entity) new CS07_GenocideVisionIntro(loadedPlayer));
+        }
+        if (level.Session.Area.Mode != AreaMode.Normal && !useGenocidePath)
+        {
           Audio.SetMusicParam("fade", 1f);
         }
-        Leader.RestoreStrawberries(level.Tracker.GetEntity<global::Celeste.Player>().Leader);
+        if (loadedPlayer != null)
+        {
+          Leader.RestoreStrawberries(loadedPlayer.Leader);
+        }
         level.Camera.Y -= 8f;
         if (!this.WasSkipped && level.Wipe != null)
           level.Wipe.Cancel();

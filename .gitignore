@@ -10,3 +10,7 @@ loenn-mcp/
 
 .vscode/mcp.json
 .fake
+*.md
+*.ps1
+*.json
+*.md

@@ -10,6 +10,7 @@ namespace MaggyHelper.Entities
     /// A barrier that requires Soul Fragments to unlock
     /// Used in Chapter 22 and other void-themed areas
     /// </summary>
+    [CustomEntity(ids: "DesoloZantas/SoulBarrier,MaggyHelper/SoulBarrier")]
     [Tracked]
     public class SoulBarrier : Solid
     {
@@ -38,6 +39,12 @@ namespace MaggyHelper.Entities
         public override void Added(Scene scene)
         {
             base.Added(scene);
+
+            // Restore persistent progress so fragments can be collected across rooms/sessions.
+            if (!string.IsNullOrEmpty(barrierId))
+            {
+                fragmentsCollected = Celeste.Mod.MaggyHelper.MaggyHelperModule.SaveData?.GetCollectedSoulFragmentsForBarrier(barrierId) ?? 0;
+            }
             
             // Register with the session for fragment tracking
             if (!string.IsNullOrEmpty(barrierId))
@@ -50,8 +57,14 @@ namespace MaggyHelper.Entities
                     {
                         // Already dissolved in this session
                         RemoveSelf();
+                        return;
                     }
                 }
+            }
+
+            if (fragmentsCollected >= fragmentsRequired)
+            {
+                StartDissolve();
             }
         }
         
@@ -149,6 +162,7 @@ namespace MaggyHelper.Entities
     /// <summary>
     /// Collectible fragment that powers Soul Barriers
     /// </summary>
+    [CustomEntity(ids: "DesoloZantas/SoulFragment,MaggyHelper/SoulFragment")]
     [Tracked]
     public class SoulFragment : Entity
     {
@@ -210,6 +224,8 @@ namespace MaggyHelper.Entities
             {
                 string key = $"SoulFragment_{barrierId}_{Position.X}_{Position.Y}_collected";
                 session.SetFlag(key, true);
+
+                Celeste.Mod.MaggyHelper.MaggyHelperModule.SaveData?.CollectSoulFragment(key, barrierId);
             }
             
             // Find and notify the linked barrier

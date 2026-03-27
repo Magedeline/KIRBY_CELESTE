@@ -301,6 +301,52 @@
     <Loop id="hug" path="hug" delay="0.08"/>
   </maggy_chara>
 
+  <maggy_mainchara_vision path="characters/MaggyHelper/mainchara_vision/" start="idle_down">
+    <Justify x=".5" y="1" />
+
+    <Loop id="idle" path="down" delay="0" frames="0" />
+    <Loop id="idle_down" path="down" delay="0" frames="0" />
+    <Loop id="idle_right" path="right" delay="0" frames="0" />
+    <Loop id="idle_up" path="up" delay="0" frames="0" />
+    <Loop id="idle_left" path="left" delay="0" frames="0" />
+
+    <Loop id="walk" path="down" delay="0.14" frames="0-3" />
+    <Loop id="walk_down" path="down" delay="0.14" frames="0-3" />
+    <Loop id="walk_right" path="right" delay="0.14" frames="0-3" />
+    <Loop id="walk_up" path="up" delay="0.14" frames="0-3" />
+    <Loop id="walk_left" path="left" delay="0.14" frames="0-3" />
+
+    <Loop id="run" path="down" delay="0.1" frames="0-3" />
+    <Loop id="run_down" path="down" delay="0.1" frames="0-3" />
+    <Loop id="run_right" path="right" delay="0.1" frames="0-3" />
+    <Loop id="run_up" path="up" delay="0.1" frames="0-3" />
+    <Loop id="run_left" path="left" delay="0.1" frames="0-3" />
+
+    <Anim id="pickUp" path="down" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_down" />
+    <Anim id="pickUp_down" path="down" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_down" />
+    <Anim id="pickUp_right" path="right" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_right" />
+    <Anim id="pickUp_up" path="up" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_up" />
+    <Anim id="pickUp_left" path="left" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_left" />
+
+    <Anim id="pickup" path="down" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_down" />
+    <Anim id="pickup_down" path="down" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_down" />
+    <Anim id="pickup_right" path="right" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_right" />
+    <Anim id="pickup_up" path="up" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_up" />
+    <Anim id="pickup_left" path="left" delay="0.12" frames="0,1,2,3,2,1,0" goto="idle_left" />
+
+    <Anim id="attack_down" path="down" delay="0.08" frames="1-3" goto="idle_down" />
+    <Anim id="attack_right" path="right" delay="0.08" frames="1-3" goto="idle_right" />
+    <Anim id="attack_up" path="up" delay="0.08" frames="1-3" goto="idle_up" />
+    <Anim id="attack_left" path="left" delay="0.08" frames="1-3" goto="idle_left" />
+
+    <Anim id="slash_down" path="down" delay="0.08" frames="1-3" goto="idle_down" />
+    <Anim id="slash_right" path="right" delay="0.08" frames="1-3" goto="idle_right" />
+    <Anim id="slash_up" path="up" delay="0.08" frames="1-3" goto="idle_up" />
+    <Anim id="slash_left" path="left" delay="0.08" frames="1-3" goto="idle_left" />
+
+    <Loop id="lookUp" path="up" delay="0" frames="0" />
+  </maggy_mainchara_vision>
+
   <KirbySkin path="characters/kirby/" start="idle">
     <Justify x=".5" y="1" />
 
@@ -997,6 +1043,8 @@
     
     <Loop id="scaredIdle" path="scared" delay="0.06" frames="0-19"/>
     <Anim id="scaredTransition" path="scared" delay="0.1" frames="20-29" goto="calm"/>
+    <Loop id="chara_beam" path="chara_beam" delay="0.1" frames="0-36" />
+    <Loop id="beamStart" path="beamStart" delay="0.1" frames="0-4" />
     <Loop id="calm" path="scared" delay="0.06" frames="30"/>
     <Anim id="lookUp" path="scared" delay="0.08" frames="30-30" goto="lookingUp"/>
     <Loop id="lookingUp" path="scared" delay="0.08" frames="35"/>
@@ -2388,6 +2436,20 @@
     <Loop id="projectile" path="projectile" delay="0.1" frames="0-12" />
     <Loop id="scared" path="scared" delay="0.1" frames="0-36" />
   </badelineBoss>
+
+  <chara_beam path="characters/charaBoss/" start="charge">
+    <Justify x="0" y=".5" />
+
+    <Anim id="charge" path="charge" delay="0.06" frames="0-23" />
+    <Loop id="lock" path="charge" delay="0.06" frames="23" />
+    <Anim id="shoot" path="finalbeam" delay="0.06" frames="0-42" />
+  </chara_beam>
+
+  <chara_beam_start path="characters/charaBoss/" start="shoot">
+    <Justify x=".5" y=".5" />
+
+    <Anim id="shoot" path="beamStart" delay="0.1" frames="0-4" />
+  </chara_beam_start>
 
   <bird path="characters/bird/" start="idle">
     <Justify x=".5" y="1" />

@@ -19,6 +19,8 @@ namespace MaggyHelper.Entities {
         private string dialogKey;
         private string cutsceneId;
         private string npcName;
+        private string dialogProfile;
+        private bool useMiniTextbox;
         private bool isActive;
         private bool triggerOnce;
         private bool hasTriggered;
@@ -32,9 +34,12 @@ namespace MaggyHelper.Entities {
                 aiType = AiBehavior.Static;
             }
 
-            dialogKey = data.Attr(nameof(dialogKey), "NPC_DEFAULT");
+            // Support both old and Loenn-facing field names.
+            dialogKey = data.Attr(nameof(dialogKey), data.Attr("basicDialogID", "NPC_DEFAULT"));
             cutsceneId = data.Attr(nameof(cutsceneId), "");
-            npcName = data.Attr(nameof(npcName), nameof(NPC));
+            npcName = data.Attr(nameof(npcName), data.Attr("speaker", nameof(NPC)));
+            dialogProfile = data.Attr(nameof(dialogProfile), "");
+            useMiniTextbox = data.Bool(nameof(useMiniTextbox), false);
             isActive = data.Bool(nameof(isActive), true);
             triggerOnce = data.Bool(nameof(triggerOnce), true);
             hasTriggered = false;
@@ -202,9 +207,14 @@ namespace MaggyHelper.Entities {
         }
 
         private void showDialogCutscene(Level obj) {
-            if (!string.IsNullOrEmpty(dialogKey))
-                // Trigger the dialog sequence using the dialogKey
-                obj.Add(new Textbox(dialogKey));
+            string resolvedDialogKey = resolveDialogKey();
+            if (!string.IsNullOrEmpty(resolvedDialogKey)) {
+                if (useMiniTextbox) {
+                    obj.Add(new MiniTextbox(resolvedDialogKey));
+                } else {
+                    obj.Add(new Textbox(resolvedDialogKey));
+                }
+            }
 
             if (triggerOnce)
                 // Mark the NPC as triggered to prevent re-triggering
@@ -224,6 +234,31 @@ namespace MaggyHelper.Entities {
 
             // Trigger the custom cutscene sequence using the cutsceneId
             yield return Textbox.Say($"{npcName}_{cutsceneId}");
+        }
+
+        private string resolveDialogKey() {
+            if (string.IsNullOrEmpty(dialogKey)) {
+                return string.Empty;
+            }
+
+            string cleanedNpcName = npcName?.Trim();
+            string cleanedProfile = dialogProfile?.Trim();
+
+            if (!string.IsNullOrEmpty(cleanedNpcName)) {
+                string npcKey = $"{cleanedNpcName}_{dialogKey}";
+                if (Dialog.Has(npcKey)) {
+                    return npcKey;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(cleanedProfile)) {
+                string profileKey = $"{cleanedProfile}_{dialogKey}";
+                if (Dialog.Has(profileKey)) {
+                    return profileKey;
+                }
+            }
+
+            return dialogKey;
         }
     }
 }

@@ -22,12 +22,15 @@ public static class AreaModeExtender
     public const int TOTAL_MODES = 5;
 
     public const string MAP_PREFIX = "Maggy";
-    public const string MAP_MAIN_FOLDER = "Main";
-    public static readonly string MAP_ROOT = $"{MAP_PREFIX}/{MAP_MAIN_FOLDER}";
-
+    
+    /// <summary>Folder names for each side (A, B, C, D, DX)</summary>
     public static readonly string[] SideFolders =
     {
-        MAP_MAIN_FOLDER, MAP_MAIN_FOLDER, MAP_MAIN_FOLDER, MAP_MAIN_FOLDER, MAP_MAIN_FOLDER
+        "ASide",   // MODE_NORMAL (0)
+        "BSide",   // MODE_BSIDE (1)
+        "CSide",   // MODE_CSIDE (2)
+        "DSide",   // MODE_DSIDE (3)
+        "DXSide"   // MODE_DXSIDE (4)
     };
 
     public static readonly string[] SideSuffixes = { "", " B-Side", " C-Side", " D-Side", " DX-Side" };
@@ -65,9 +68,10 @@ public static class AreaModeExtender
     public static string BuildSideSID(string sideFolder, string mapName)
     {
         if (string.IsNullOrWhiteSpace(mapName))
-            return MAP_ROOT;
+            return MAP_PREFIX;
 
-        return $"{MAP_ROOT}/{mapName}";
+        // Map files are now organized by side: Maggy/ASide/01_City, Maggy/BSide/01_City, etc.
+        return $"{MAP_PREFIX}/{sideFolder}/{mapName}";
     }
 
     public static string BuildASideSID(string mapName)
@@ -215,11 +219,11 @@ public static class AreaModeExtender
         if (area?.Mode == null)
             return false;
 
-        if (!TryParseMainSideSID(area.SID, out string baseKey, out string suffix))
+        if (!TryParseMainSideSID(area.SID, out string baseKey, out string sideFolder))
             return false;
 
-        // Extend only chapter-parent A side entries.
-        if (!string.IsNullOrEmpty(suffix) && !suffix.Equals("_A", StringComparison.OrdinalIgnoreCase))
+        // Extend only chapter-parent A side entries (ASide folder).
+        if (!sideFolder.Equals("ASide", StringComparison.OrdinalIgnoreCase))
             return false;
 
         AreaMapData.ChapterDef chapterDef = AreaMapData.FindByAnySID(area.SID);
@@ -327,20 +331,22 @@ public static class AreaModeExtender
         for (int i = 0; i < AreaData.Areas.Count; i++)
         {
             AreaData area = AreaData.Areas[i];
-            if (!TryParseMainSideSID(area?.SID, out string baseKey, out string suffix))
+            if (!TryParseMainSideSID(area?.SID, out string baseKey, out string sideFolder))
                 continue;
 
-            if (string.IsNullOrEmpty(suffix) || suffix.Equals("_A", StringComparison.OrdinalIgnoreCase))
+            // Only A-side entries can be parents
+            if (sideFolder.Equals("ASide", StringComparison.OrdinalIgnoreCase))
                 parentByBase[baseKey] = (i, area.SID);
         }
 
         for (int i = 0; i < AreaData.Areas.Count; i++)
         {
             AreaData area = AreaData.Areas[i];
-            if (!TryParseMainSideSID(area?.SID, out string baseKey, out string suffix))
+            if (!TryParseMainSideSID(area?.SID, out string baseKey, out string sideFolder))
                 continue;
 
-            if (string.IsNullOrEmpty(suffix) || suffix.Equals("_A", StringComparison.OrdinalIgnoreCase))
+            // Skip A-side entries (they are parents, not children)
+            if (sideFolder.Equals("ASide", StringComparison.OrdinalIgnoreCase))
                 continue;
 
             if (!parentByBase.TryGetValue(baseKey, out (int id, string sid) parent) || parent.id == i)
@@ -974,8 +980,17 @@ public static class AreaModeExtender
 
     public static bool IsOurMap(AreaData area)
     {
-        return area?.SID != null
-            && area.SID.StartsWith(MAP_ROOT + "/", StringComparison.OrdinalIgnoreCase);
+        if (area?.SID == null)
+            return false;
+
+        // Check if SID starts with "Maggy/" followed by one of our side folder names
+        foreach (var sideFolder in SideFolders)
+        {
+            if (area.SID.StartsWith($"{MAP_PREFIX}/{sideFolder}/", StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
     }
 
     public static string GetModeName(int modeIndex)
@@ -1138,31 +1153,40 @@ public static class AreaModeExtender
         }
     }
 
-    private static bool TryParseMainSideSID(string sid, out string baseKey, out string suffix)
+    /// <summary>
+    /// Parses a map SID in the new folder structure (Maggy/ASide/01_City, etc.)
+    /// Returns the base map name and which side folder it's in.
+    /// baseKey: The map name (e.g., "01_City")
+    /// sideFolder: The side folder name (e.g., "ASide", "BSide", "DSide")
+    /// </summary>
+    private static bool TryParseMainSideSID(string sid, out string baseKey, out string sideFolder)
     {
         baseKey = null;
-        suffix = null;
+        sideFolder = null;
 
-        if (string.IsNullOrWhiteSpace(sid) || !sid.StartsWith(MAP_ROOT + "/", StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrWhiteSpace(sid))
             return false;
 
-        string mapName = sid[(MAP_ROOT.Length + 1)..];
-        if (string.IsNullOrWhiteSpace(mapName))
+        // Check if this is one of our chapters (format: Maggy/SideFolder/MapName)
+        string prefix = MAP_PREFIX + "/";
+        if (!sid.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             return false;
 
-        foreach (string candidate in new[] { "_DX", "_D", "_C", "_B", "_A" })
-        {
-            if (!mapName.EndsWith(candidate, StringComparison.OrdinalIgnoreCase))
-                continue;
+        // Extract everything after "Maggy/"
+        string remainder = sid[prefix.Length..];
+        var parts = remainder.Split('/');
 
-            baseKey = mapName[..^candidate.Length];
-            suffix = candidate;
-            return !string.IsNullOrWhiteSpace(baseKey);
-        }
+        if (parts.Length < 2)
+            return false;
 
-        baseKey = mapName;
-        suffix = string.Empty;
-        return true;
+        sideFolder = parts[0];
+        baseKey = parts[1];
+
+        // Verify it's a valid side folder
+        if (!SideFolders.Contains(sideFolder, StringComparer.OrdinalIgnoreCase))
+            return false;
+
+        return !string.IsNullOrWhiteSpace(baseKey);
     }
 
     private static bool TrySetMember(object target, DynamicData dyn, string name, object value)

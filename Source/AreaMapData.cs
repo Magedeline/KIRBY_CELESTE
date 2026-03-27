@@ -690,7 +690,7 @@ public static class AreaMapData
         if (string.IsNullOrEmpty(sid))
             return null;
 
-        if (!sid.StartsWith(AreaModeExtender.MAP_ROOT + "/", StringComparison.OrdinalIgnoreCase))
+        if (!sid.StartsWith(AreaModeExtender.MAP_PREFIX + "/", StringComparison.OrdinalIgnoreCase))
             return null;
 
         // Direct match
