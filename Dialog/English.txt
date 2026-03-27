@@ -3766,6 +3766,56 @@ well that a Real smooth Madeline.
 [RALSEI left distracted]
 anyways... Lets go find her.
 
+CH7_GENO_VORTEX_START=
+[none left]
+The mirror does not open like a door.
+It tears.
+
+[FLOWEY right normal]
+...?
+
+CH7_GENO_KNIFE_PICKUP=
+[FLOWEY right uneasy]
+That knife...
+No.
+This isn't the same feeling as before.
+
+CH7_GENO_LOCKET_PICKUP=
+[FLOWEY right uneasy]
+And the locket too...?
+You already know how this is supposed to end.
+
+CH7_GENO_FLOWEY_WRONGNESS=
+[FLOWEY right panic]
+Something's wrong.
+You're not just a human anymore.
+
+[FLOWEY right sad]
+...
+So that's it then.
+
+CH7_GENO_KIRBY_BADELINE_PANIC=
+[BADELINE right yell]
+Kirby, run.
+That thing is not stopping.
+
+[BADELINE right worriedalt]
+Don't look back.
+
+CH7_GENO_WAKEUP=
+[BADELINE left worriedalt]
+Kirby...?
+Hey. Wake up.
+
+[BADELINE left sad]
+That mirror showed us something it shouldn't have.
+We need to move before it pulls us back in.
+
+{trigger 0 badeline looks around}
+
+[BADELINE left worried]
+Wait a minute... where are we?
+
 CH7_SHADOW_CHARA_0=
 [BADELINE left yell]
 {*}Hey!{/*} Where are we?

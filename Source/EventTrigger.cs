@@ -375,6 +375,7 @@ public class IngesteEventTrigger : Trigger
                 break;
                 
             case "ch7_mirror_portal":
+                level.Session.SetFlag(MaggyHelper.Cutscenes.CH7GenocideMirrorState.EnabledFlag, false);
                 // Requires TesseractMirrorGateway entity
                 var tesseractMirror = Scene.Entities.FindFirst<TesseractMirrorGateway>();
                 if (tesseractMirror != null)
@@ -386,6 +387,40 @@ public class IngesteEventTrigger : Trigger
                     Logger.Log(LogLevel.Warn, "IngesteEventTrigger", "ch7_mirror_portal: TesseractMirrorGateway not found");
                     RemoveSelf();
                 }
+                break;
+
+            case "ch7_genocide_mirror_portal":
+                level.Session.SetFlag(MaggyHelper.Cutscenes.CH7GenocideMirrorState.EnabledFlag, true);
+                var genocideMirror = Scene.Entities.FindFirst<TesseractMirrorGateway>();
+                if (genocideMirror != null)
+                {
+                    TriggerOnce(level, "ch7_genocide_mirror_portal_trigger", () => new CS07_MirrorPortal(player, genocideMirror));
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Warn, "IngesteEventTrigger", "ch7_genocide_mirror_portal: TesseractMirrorGateway not found");
+                    RemoveSelf();
+                }
+                break;
+
+            case "ch7_genocide_vision_intro":
+                if (level.Session.GetFlag(MaggyHelper.Cutscenes.CH7GenocideMirrorState.StartedFlag))
+                {
+                    break;
+                }
+                TriggerOnce(level, "ch7_genocide_vision_intro_trigger", () => new MaggyHelper.Cutscenes.CS07_GenocideVisionIntro(player));
+                break;
+
+            case "ch7_genocide_vision_finale":
+                if (level.Session.GetFlag(MaggyHelper.Cutscenes.CH7GenocideMirrorState.StartedFlag))
+                {
+                    break;
+                }
+                TriggerOnce(level, "ch7_genocide_vision_finale_trigger", () => new MaggyHelper.Cutscenes.CS07_GenocideVisionFinale(player));
+                break;
+
+            case "ch7_genocide_wakeup":
+                TriggerOnce(level, "ch7_genocide_wakeup_trigger", () => new MaggyHelper.Cutscenes.CS07_GenocideWakeup(player));
                 break;
                 
             case "ch7_darker":

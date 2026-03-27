@@ -63,6 +63,37 @@ entities.MaggyHelper/KirbyActorPlayer.attributes.name.showSweat=Show Sweat Overl
 entities.MaggyHelper/KirbyActorPlayer.attributes.description.showSweat=If true, enables the kirby_player_sweat overlay sprite.
 entities.MaggyHelper/KirbyActorPlayer.attributes.name.sweatAnimation=Sweat Animation
 entities.MaggyHelper/KirbyActorPlayer.attributes.description.sweatAnimation=Animation used by the sweat overlay when Show Sweat Overlay is enabled.
+
+# -- MainCharaVisionActor Entity --
+entities.MaggyHelper/MainCharaVisionActor.placements.name.default=Main Chara Vision Actor
+entities.MaggyHelper/MainCharaVisionActor.placements.name.neutral=Main Chara Vision Actor (Neutral)
+entities.MaggyHelper/MainCharaVisionActor.placements.name.player_controlled=Main Chara Vision Actor (Player Controlled)
+entities.MaggyHelper/MainCharaVisionActor.placements.name.intro_right=Main Chara Vision Actor (Intro Right)
+entities.MaggyHelper/MainCharaVisionActor.placements.name.finale_left=Main Chara Vision Actor (Finale Left)
+entities.MaggyHelper/MainCharaVisionActor.placements.name.camera_off=Main Chara Vision Actor (Camera Off)
+entities.MaggyHelper/MainCharaVisionActor.placements.description.default=Spawns the grounded four-direction Chara vision actor used in Chapter 7 genocide scenes.
+entities.MaggyHelper/MainCharaVisionActor.placements.description.neutral=Spawns the same vision actor with genocide mode disabled for non-genocide or neutral cutscenes.
+entities.MaggyHelper/MainCharaVisionActor.placements.description.player_controlled=Spawns the vision actor with direct keyboard control and optional camera driving enabled.
+entities.MaggyHelper/MainCharaVisionActor.placements.description.intro_right=Spawns the actor already facing right for intro beats and opening walk-ins.
+entities.MaggyHelper/MainCharaVisionActor.placements.description.finale_left=Spawns the actor already facing left for finale framing and reverse-side staging.
+entities.MaggyHelper/MainCharaVisionActor.placements.description.camera_off=Spawns a player-controlled actor with camera driving disabled so cutscenes can manage the camera separately.
+entities.MaggyHelper/MainCharaVisionActor.attributes.name.facing=Facing
+entities.MaggyHelper/MainCharaVisionActor.attributes.description.facing=Initial facing direction used when the actor spawns in the room.
+entities.MaggyHelper/MainCharaVisionActor.attributes.name.genocideMode=Genocide Mode
+entities.MaggyHelper/MainCharaVisionActor.attributes.description.genocideMode=If true, uses genocide-mode animation naming and fallback behavior.
+entities.MaggyHelper/MainCharaVisionActor.attributes.name.playerControlled=Player Controlled
+entities.MaggyHelper/MainCharaVisionActor.attributes.description.playerControlled=If true, the actor reads arrow keys for movement and Z/X for confirm and attack input.
+entities.MaggyHelper/MainCharaVisionActor.attributes.name.clampToRoomBounds=Clamp To Room Bounds
+entities.MaggyHelper/MainCharaVisionActor.attributes.description.clampToRoomBounds=If true, keeps the actor inside the current room bounds while moving.
+entities.MaggyHelper/MainCharaVisionActor.attributes.name.driveCameraWhenControlled=Drive Camera When Controlled
+entities.MaggyHelper/MainCharaVisionActor.attributes.description.driveCameraWhenControlled=If true, a player-controlled actor smoothly pushes the camera toward its target position.
+entities.MaggyHelper/MainCharaVisionActor.attributes.name.maxMoveSpeed=Max Move Speed
+entities.MaggyHelper/MainCharaVisionActor.attributes.description.maxMoveSpeed=Maximum movement speed in pixels per second when the actor is under player control.
+entities.MaggyHelper/MainCharaVisionActor.attributes.name.acceleration=Acceleration
+entities.MaggyHelper/MainCharaVisionActor.attributes.description.acceleration=Movement acceleration in pixels per second squared while directional input is held.
+entities.MaggyHelper/MainCharaVisionActor.attributes.name.friction=Friction
+entities.MaggyHelper/MainCharaVisionActor.attributes.description.friction=How quickly the actor slows down when no directional input is held.
+
 # -- Mod Names --
 # mods.modName.*
 mods.SkinModHelper.name=Skin Mod Helper

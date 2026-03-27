@@ -5,6 +5,7 @@ namespace MaggyHelper.Entities
     [CustomEntity(ids: "MaggyHelper/Maddy_crystal")]
     [Tracked(true)]
     public sealed class MaddyCrystal : Actor {
+        private const string SpriteBankId = "madeline_crystal";
         private static ParticleType pImpact;
         public Vector2 Speed;
         public bool OnPedestal;
@@ -30,57 +31,68 @@ namespace MaggyHelper.Entities
 
         public MaddyCrystal(Vector2 position)
           : base(position) {
-            this.previousPosition = position;
-            this.Depth = 100;
-            this.Collider = (Collider)new Hitbox(8f, 10f, -4f, -10f);
-            this.Add((Component)(this.sprite = GFX.SpriteBank.Create("theoCrystal")));
-            this.sprite.Scale.X = -1f;
-            this.Add((Component)(this.hold = new Holdable()));
-            this.hold.PickupCollider = (Collider)new Hitbox(16f, 22f, -8f, -16f);
-            this.hold.SlowFall = false;
-            this.hold.SlowRun = true;
-            this.hold.OnPickup = new Action(this.OnPickup);
-            this.hold.OnRelease = new Action<Vector2>(this.OnRelease);
-            this.hold.DangerousCheck = new Func<HoldableCollider, bool>(this.dangerous);
-            this.hold.OnHitSeeker = new Action<Seeker>(this.hitSeeker1);
-            this.hold.OnSwat = new Action<HoldableCollider, int>(this.swat);
-            this.hold.OnHitSpring = new Func<Spring, bool>(this.hitSpring);
-            this.hold.OnHitSpinner = new Action<Entity>(this.hitSpinner);
-            this.hold.SpeedGetter = (Func<Vector2>)(() => this.Speed);
-            this.onCollideH = new Collision(this.OnCollideH);
-            this.onCollideV = new Collision(this.OnCollideV);
-            this.LiftSpeedGraceTime = 0.1f;
-            this.Add((Component)new VertexLight(this.Collider.Center, Color.White, 1f, 32, 64));
-            this.Tag = (int)Tags.TransitionUpdate;
-            this.Add((Component)new MirrorReflection());
+            Initialize(position);
         }
 
         public MaddyCrystal(IEnumerable<Component> components) : base(Vector2.One) {
-            previousPosition = Vector2.One;
+            Initialize(Vector2.One);
+
+            foreach (var component in components) Add(component);
+        }
+
+        private void Initialize(Vector2 position) {
+            previousPosition = position;
             Depth = 100;
             Collider = new Hitbox(8f, 10f, -4f, -10f);
-            Add((Component)(sprite = GFX.SpriteBank.Create("theoCrystal")));
+            Add(sprite = CreateSprite());
             sprite.Scale.X = -1f;
-            Add((Component)(hold = new Holdable()));
+            Add(hold = new Holdable());
             hold.PickupCollider = new Hitbox(16f, 22f, -8f, -16f);
             hold.SlowFall = false;
             hold.SlowRun = true;
-            hold.OnPickup = new Action(OnPickup);
-            hold.OnRelease = new Action<Vector2>(OnRelease);
-            hold.DangerousCheck = new Func<HoldableCollider, bool>(dangerous);
-            hold.OnHitSeeker = new Action<Seeker>(hitSeeker1);
-            hold.OnSwat = new Action<HoldableCollider, int>(swat);
-            hold.OnHitSpring = new Func<Spring, bool>(hitSpring);
-            hold.OnHitSpinner = new Action<Entity>(hitSpinner);
+            hold.OnPickup = OnPickup;
+            hold.OnRelease = OnRelease;
+            hold.DangerousCheck = dangerous;
+            hold.OnHitSeeker = hitSeeker1;
+            hold.OnSwat = swat;
+            hold.OnHitSpring = hitSpring;
+            hold.OnHitSpinner = hitSpinner;
             hold.SpeedGetter = () => Speed;
-            onCollideH = new Collision(OnCollideH);
-            onCollideV = new Collision(OnCollideV);
+            onCollideH = OnCollideH;
+            onCollideV = OnCollideV;
             LiftSpeedGraceTime = 0.1f;
             Add(new VertexLight(Collider.Center, Color.White, 1f, 32, 64));
             Tag = (int)Tags.TransitionUpdate;
             Add(new MirrorReflection());
+        }
 
-            foreach (var component in components) Add(component);
+        private static Sprite CreateSprite() {
+            if (!GFX.SpriteBank.Has(SpriteBankId)) {
+                throw new Exception($"Missing sprite bank entry '{SpriteBankId}' for {nameof(MaddyCrystal)}.");
+            }
+
+            return GFX.SpriteBank.Create(SpriteBankId);
+        }
+
+        private static void EnsureImpactParticle() {
+            if (pImpact != null) {
+                return;
+            }
+
+            pImpact = new ParticleType {
+                Color = Color.White,
+                Color2 = Color.AliceBlue,
+                ColorMode = ParticleType.ColorModes.Choose,
+                LifeMin = 0.5f,
+                LifeMax = 1.0f,
+                Size = 1f,
+                SizeRange = 0.5f,
+                DirectionRange = 0.5f,
+                SpeedMin = 40f,
+                SpeedMax = 80f,
+                FadeMode = ParticleType.FadeModes.Late,
+                Acceleration = new Vector2(0f, 40f)
+            };
         }
 
         public override void Added(Scene scene) {
@@ -324,6 +336,11 @@ namespace MaggyHelper.Entities
         }
 
         private void impactParticles(Vector2 dir) {
+            EnsureImpactParticle();
+            if (this.level?.Particles == null) {
+                return;
+            }
+
             float direction;
             Vector2 position;
             Vector2 positionRange;
@@ -390,21 +407,7 @@ namespace MaggyHelper.Entities
         }
 
         public static void Load() {
-            // Initialize the particle type for impact particles
-            pImpact = new ParticleType {
-                Color = Color.White,
-                Color2 = Color.AliceBlue,
-                ColorMode = ParticleType.ColorModes.Choose,
-                LifeMin = 0.5f,
-                LifeMax = 1.0f,
-                Size = 1f,
-                SizeRange = 0.5f,
-                DirectionRange = 0.5f,
-                SpeedMin = 40f,
-                SpeedMax = 80f,
-                FadeMode = ParticleType.FadeModes.Late,
-                Acceleration = new Vector2(0f, 40f)
-            };
+            EnsureImpactParticle();
         }
 
         /// <summary>

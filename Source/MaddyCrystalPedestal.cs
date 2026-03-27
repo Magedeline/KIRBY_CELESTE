@@ -4,13 +4,14 @@ namespace MaggyHelper.Entities
     [Tracked]
     public class MaddyCrystalPedestal : Solid
     {
+        private const string PedestalTexturePath = "characters/theoCrystal/pedestal";
         public Image sprite;
         public bool DroppedMaddy;
 
         public MaddyCrystalPedestal(EntityData data, Vector2 offset)
             : base(data.Position + offset, 32f, 32f, safe: false)
         {
-            Add(sprite = new Image(GFX.Game["characters/theoCrystal/pedestal"]));
+            Add(sprite = new Image(GFX.Game[PedestalTexturePath]));
             EnableAssistModeChecks = false;
             sprite.JustifyOrigin(0.5f, 1f);
             Depth = 8998;
@@ -18,14 +19,17 @@ namespace MaggyHelper.Entities
             Collidable = false;
             OnDashCollide = (Player player, Vector2 direction) =>
             {
-                MaddyCrystal entity = Scene.Tracker.GetEntity<MaddyCrystal>();
+                if (Scene is not Level level)
+                    return DashCollisionResults.NormalCollision;
+
+                MaddyCrystal entity = level.Tracker.GetEntity<MaddyCrystal>();
                 if (entity == null)
                     return DashCollisionResults.NormalCollision;
                 entity.OnPedestal = false;
                 entity.Speed = new Vector2(0f, -300f);
                 DroppedMaddy = true;
                 Collidable = false;
-                (Scene as Level).Flash(Color.White);
+                level.Flash(Color.White);
                 Celeste.Celeste.Freeze(0.1f);
                 Input.Rumble(RumbleStrength.Medium, RumbleLength.Short);
                 Audio.Play("event:/game/05_mirror_temple/crystaltheo_break_free", entity.Position);
@@ -37,7 +41,10 @@ namespace MaggyHelper.Entities
         public override void Awake(Scene scene)
         {
             base.Awake(scene);
-            if ((scene as Level).Session.GetFlag("foundMaddyInCrystal"))
+            if (scene is not Level level)
+                return;
+
+            if (level.Session.GetFlag("foundMaddyInCrystal"))
             {
                 DroppedMaddy = true;
                 return;
@@ -51,7 +58,7 @@ namespace MaggyHelper.Entities
 
         public override void Update()
         {
-            MaddyCrystal entity = Scene.Tracker.GetEntity<MaddyCrystal>();
+            MaddyCrystal entity = Scene?.Tracker?.GetEntity<MaddyCrystal>();
             if (entity != null && !DroppedMaddy)
             {
                 entity.Position = Position + new Vector2(0f, -32f);

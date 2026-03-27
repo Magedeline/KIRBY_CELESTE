@@ -24,6 +24,8 @@ namespace Celeste.Mod.MaggyHelper
         // Achievement tracking
         private HashSet<string> Achievements { get; set; } = new HashSet<string>();
         private HashSet<string> CollectedHeartGems { get; set; } = new HashSet<string>();
+        private HashSet<string> CollectedSoulFragments { get; set; } = new HashSet<string>();
+        private Dictionary<string, int> SoulBarrierFragmentCounts { get; set; } = new Dictionary<string, int>();
         private HashSet<string> CompletedChapters { get; set; } = new HashSet<string>();
         private HashSet<string> DefeatedBosses { get; set; } = new HashSet<string>();
 
@@ -49,6 +51,42 @@ namespace Celeste.Mod.MaggyHelper
         public bool HasCollectedHeartGem(string heartId)
         {
             return CollectedHeartGems.Contains(heartId);
+        }
+
+        public bool CollectSoulFragment(string fragmentKey, string barrierId)
+        {
+            if (string.IsNullOrEmpty(fragmentKey))
+            {
+                return false;
+            }
+
+            if (!CollectedSoulFragments.Add(fragmentKey))
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(barrierId))
+            {
+                SoulBarrierFragmentCounts.TryGetValue(barrierId, out int count);
+                SoulBarrierFragmentCounts[barrierId] = count + 1;
+            }
+
+            return true;
+        }
+
+        public int GetCollectedSoulFragmentsForBarrier(string barrierId)
+        {
+            if (string.IsNullOrEmpty(barrierId))
+            {
+                return 0;
+            }
+
+            return SoulBarrierFragmentCounts.TryGetValue(barrierId, out int count) ? count : 0;
+        }
+
+        public int GetTotalCollectedSoulFragments()
+        {
+            return CollectedSoulFragments.Count;
         }
 
         public void RecordBossDefeat(string bossName)

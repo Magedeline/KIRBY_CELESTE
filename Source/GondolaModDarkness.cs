@@ -10,11 +10,14 @@ public class GondolaModDarkness : Entity
     private float anxietyStutter;
     private WindSnowFG windSnowFg;
 
-    public GondolaModDarkness()
+    public GondolaModDarkness(string handsSpriteId = "gondolaHands", string darknessSpriteId = "gondolaDarkness")
     {
-        Add(sprite = GFX.SpriteBank.Create("gondolaDarkness"));
+        string resolvedDarknessSpriteId = GFX.SpriteBank.Has(darknessSpriteId) ? darknessSpriteId : "gondolaDarkness";
+        string resolvedHandsSpriteId = GFX.SpriteBank.Has(handsSpriteId) ? handsSpriteId : "gondolaHands";
+
+        Add(sprite = GFX.SpriteBank.Create(resolvedDarknessSpriteId));
         sprite.Play("appear");
-        Add(hands = GFX.SpriteBank.Create("gondolaHands"));
+        Add(hands = GFX.SpriteBank.Create(resolvedHandsSpriteId));
         hands.Visible = false;
         Visible = false;
         Depth = -999900;
@@ -50,6 +53,14 @@ public class GondolaModDarkness : Entity
         yield return 0.4f;
         hands.Play("pull");
         gondola.PullSides();
+    }
+
+    public IEnumerator Reach(Action pullSides)
+    {
+        hands.Play("grab");
+        yield return 0.4f;
+        hands.Play("pull");
+        pullSides?.Invoke();
     }
 
     public override void Update()

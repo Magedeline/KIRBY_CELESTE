@@ -13,6 +13,7 @@ namespace MaggyHelper.Entities
     private VertexLight light;
     private BloomPoint bloom;
     private SoundSource loopSfx;
+    private bool lit;
 
     public TesseractPortalTorch(Vector2 pos)
       : base(pos)
@@ -25,12 +26,16 @@ namespace MaggyHelper.Entities
       this.Depth = 8999;
     }
 
-    public void Light(int count = 0)
+    public void Light(int count = 0, bool silent = false)
     {
+      if (this.lit)
+        return;
+      this.lit = true;
       this.sprite.Play("lit");
       this.Add((Component) (this.bloom = new BloomPoint(1f, 16f)));
       this.Add((Component) (this.light = new VertexLight(Color.LightSeaGreen, 0.0f, 32, 128)));
-      Audio.Play(count == 0 ? "event:/game/05_mirror_temple/mainmirror_torch_lit_1" : "event:/game/05_mirror_temple/mainmirror_torch_lit_2", this.Position);
+      if (!silent)
+        Audio.Play(count == 0 ? "event:/game/05_mirror_temple/mainmirror_torch_lit_1" : "event:/game/05_mirror_temple/mainmirror_torch_lit_2", this.Position);
       this.Add((Component) (this.loopSfx = new SoundSource()));
       this.loopSfx.Play("event:/game/05_mirror_temple/mainmirror_torch_loop");
     }

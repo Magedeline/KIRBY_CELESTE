@@ -12,9 +12,11 @@ namespace MaggyHelper.Entities
   [CustomEntity(ids: "MaggyHelper/TesseractMirrorPortal")]
   public class TesseractMirrorGateway : Entity
   {
+    private readonly string flagPrefix;
     public static ParticleType PCurtainDrop;
     public float DistortionFade = 1f;
     private bool canTrigger;
+    private bool revealTriggered;
     private int switchCounter;
     private VirtualRenderTarget buffer;
     private float bufferAlpha;
@@ -27,9 +29,20 @@ namespace MaggyHelper.Entities
     private TesseractPortalTorch leftTorch;
     private TesseractPortalTorch rightTorch;
 
+    public TesseractMirrorGateway(EntityData data, Vector2 offset)
+      : this(data.Position + offset, data.Level.Name, data.ID)
+    {
+    }
+
     public TesseractMirrorGateway(Vector2 position)
+      : this(position, null, -1)
+    {
+    }
+
+    private TesseractMirrorGateway(Vector2 position, string levelName, int entityId)
       : base(position)
     {
+      this.flagPrefix = TesseractMirrorGateway.BuildFlagPrefix(levelName, entityId, position);
       this.Depth = 2000;
       this.Collider = (Collider) new Hitbox(120f, 64f, -60f, -32f);
       this.Add((Component)new PlayerCollider(new System.Action<global::Celeste.Player>(this.OnPlayer)));
@@ -42,11 +55,63 @@ namespace MaggyHelper.Entities
       scene.Add((Entity) new TesseractMirrorGateway.Bg(this.Position));
       scene.Add((Entity) (this.leftTorch = new TesseractPortalTorch(this.Position + new Vector2(-90f, 0.0f))));
       scene.Add((Entity) (this.rightTorch = new TesseractPortalTorch(this.Position + new Vector2(90f, 0.0f))));
+      this.RestoreState();
+    }
+
+    public bool TryActivateSide(int side)
+    {
+      Level level = this.SceneAs<Level>();
+      if (level == null)
+        return false;
+      string sideFlag = this.GetSideFlag(side);
+      if (level.Session.GetFlag(sideFlag))
+        return false;
+      level.Session.SetFlag(sideFlag, true);
+      this.OnSwitchHit(side);
+      return true;
     }
 
     public void OnSwitchHit(int side)
     {
       this.Add((Component) new Coroutine(this.OnSwitchRoutine(side)));
+    }
+
+    private static string BuildFlagPrefix(string levelName, int entityId, Vector2 position)
+    {
+      if (!string.IsNullOrEmpty(levelName) && entityId >= 0)
+        return $"tesseract_mirror_{levelName}_{entityId}";
+      return $"tesseract_mirror_{(int) position.X}_{(int) position.Y}";
+    }
+
+    private string GetSideFlag(int side) => this.flagPrefix + (side < 0 ? "_left" : "_right");
+
+    private string GetUnlockedFlag() => this.flagPrefix + "_unlocked";
+
+    private void RestoreState()
+    {
+      Level level = this.SceneAs<Level>();
+      if (level == null)
+        return;
+      this.switchCounter = 0;
+      bool flag1 = level.Session.GetFlag(this.GetSideFlag(-1));
+      bool flag2 = level.Session.GetFlag(this.GetSideFlag(1));
+      if (flag1)
+      {
+        this.leftTorch.Light(0, true);
+        ++this.switchCounter;
+      }
+      if (flag2)
+      {
+        this.rightTorch.Light(flag1 ? 1 : 0, true);
+        ++this.switchCounter;
+      }
+      if (!level.Session.GetFlag(this.GetUnlockedFlag()) && this.switchCounter >= 2)
+        level.Session.SetFlag(this.GetUnlockedFlag(), true);
+      if (!level.Session.GetFlag(this.GetUnlockedFlag()))
+        return;
+      this.canTrigger = true;
+      this.revealTriggered = true;
+      this.curtain.SetDroppedInstantly();
     }
 
     private IEnumerator OnSwitchRoutine(int side)
@@ -67,18 +132,23 @@ namespace MaggyHelper.Entities
         lighting = (LightingRenderer) null;
       }
       yield return (object) 0.15f;
-      if (templeMirrorPortal.switchCounter >= 2)
+      Level level = templeMirrorPortal.SceneAs<Level>();
+      if (level != null && templeMirrorPortal.switchCounter >= 2 && !templeMirrorPortal.revealTriggered)
       {
+        templeMirrorPortal.revealTriggered = true;
+        level.Session.SetFlag(templeMirrorPortal.GetUnlockedFlag(), true);
         yield return (object) 0.1f;
         Audio.Play("event:/game/05_mirror_temple/mainmirror_reveal", templeMirrorPortal.Position);
         templeMirrorPortal.curtain.Drop();
         templeMirrorPortal.canTrigger = true;
         yield return (object) 0.1f;
-        Level level = templeMirrorPortal.SceneAs<Level>();
-        for (int index1 = 0; index1 < 120; index1 += 12)
+        if (TesseractMirrorGateway.PCurtainDrop != null)
         {
-          for (int index2 = 0; index2 < 60; index2 += 6)
-            level.Particles.Emit(TesseractMirrorGateway.PCurtainDrop, 1, templeMirrorPortal.curtain.Position + new Vector2((float) (index1 - 57), (float) (index2 - 27)), new Vector2(6f, 3f));
+          for (int index1 = 0; index1 < 120; index1 += 12)
+          {
+            for (int index2 = 0; index2 < 60; index2 += 6)
+              level.Particles.Emit(TesseractMirrorGateway.PCurtainDrop, 1, templeMirrorPortal.curtain.Position + new Vector2((float) (index1 - 57), (float) (index2 - 27)), new Vector2(6f, 3f));
+          }
         }
       }
     }
@@ -276,6 +346,15 @@ namespace MaggyHelper.Entities
           flag = player.MoveV(-1f);
           this.Collidable = true;
         }
+      }
+
+      public void SetDroppedInstantly()
+      {
+        this.Sprite.Play("fall");
+        this.Sprite.Rate = 0.0f;
+        this.Sprite.SetAnimationFrame(this.Sprite.CurrentAnimationTotalFrames - 1);
+        this.Depth = -8999;
+        this.Collidable = true;
       }
     }
   }

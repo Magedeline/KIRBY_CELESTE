@@ -50,6 +50,7 @@ namespace MaggyHelper.Cutscenes
 			}
 
 			public void BreakLever() { if (_maggy != null) _maggy.BreakLever(); else _mod.BreakLever(); }
+			public void PullSides() { if (_maggy != null) _maggy.PullSides(); else _mod.PullSides(); }
 			public void CancelPullSides() { if (_maggy != null) _maggy.CancelPullSides(); else _mod.CancelPullSides(); }
 			public Vector2 GetRotatedFloorPositionAt(float x, float y = 52f) =>
 				_maggy != null ? _maggy.GetRotatedFloorPositionAt(x, y) : _mod.GetRotatedFloorPositionAt(x, y);
@@ -125,6 +126,11 @@ namespace MaggyHelper.Cutscenes
 		// Token: 0x0600130F RID: 4879 RVA: 0x00067874 File Offset: 0x00065A74
 		public override void OnEnd(Level level)
 		{
+			if (this.gondolaDarkness != null)
+			{
+				this.gondolaDarkness.RemoveSelf();
+				this.gondolaDarkness = null;
+			}
 			if (this.rumbler != null)
 			{
 				this.rumbler.RemoveSelf();
@@ -365,6 +371,15 @@ namespace MaggyHelper.Cutscenes
 			this.Level.NextColorGrade("panicattack", 1f);
 			this.Level.Shake(0.3f);
 			Input.Rumble(RumbleStrength.Light, RumbleLength.Medium);
+			if (this.gondolaDarkness == null)
+			{
+				string handSpriteId = this.Level?.Session?.GetFlag("ch6_gaster_hands") == true
+					? "gasterHands"
+					: (this.Level?.Session?.GetFlag("ch6_master_hands") == true ? "masterHands" : "gondolaHands");
+				this.gondolaDarkness = new global::MaggyHelper.GondolaModDarkness(handSpriteId);
+				this.Level.Add(this.gondolaDarkness);
+				yield return this.gondolaDarkness.Appear(this.windSnowFg);
+			}
 			this.BurstTentacles(3, 90f, 200f);
 			Audio.Play("event:/desolozantas/game/06_stronghold/gondola_scaryhair_01", this.gondola.Position);
 			for (float p = 0f; p < 1f; p += Engine.DeltaTime / 2f)
@@ -387,6 +402,11 @@ namespace MaggyHelper.Cutscenes
 			this.Level.Shake(0.3f);
 			Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
 			Audio.Play("event:/desolozantas/game/06_stronghold/gondola_scaryvines_02", this.gondola.Position);
+			if (this.gondolaDarkness != null)
+			{
+				yield return this.gondolaDarkness.Expand();
+				yield return this.gondolaDarkness.Reach(() => this.gondola.PullSides());
+			}
 			this.BurstTentacles(2, 60f, 200f);
 			yield return this.MoveTheoOnGondola(0f, true);
 			this.theo.Sprite.Play("comfortStart", false, false);
@@ -425,6 +445,11 @@ namespace MaggyHelper.Cutscenes
 			this.anxiety = 0f;
 			this.Level.Background.Fade = 0f;
 			this.Level.SnapColorGrade(null);
+			if (this.gondolaDarkness != null)
+			{
+				this.gondolaDarkness.RemoveSelf();
+				this.gondolaDarkness = null;
+			}
 			this.gondola.CancelPullSides();
 			this.Level.ResetZoom();
 			yield return 0.5f;
@@ -738,6 +763,8 @@ namespace MaggyHelper.Cutscenes
 
 		// Token: 0x04000F14 RID: 3860
 		private HeartGemRumbler rumbler;
+
+		private global::MaggyHelper.GondolaModDarkness gondolaDarkness;
 
 		// Token: 0x04000F15 RID: 3861
 		private CS06_Gondola.GondolaStates gondolaState;

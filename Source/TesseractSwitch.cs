@@ -1,115 +1,146 @@
-namespace MaggyHelper.Entities 
+namespace MaggyHelper.Entities
 {
     [CustomEntity(ids: "MaggyHelper/TesseractSwitch")]
-    public class TesseractSwitch : Entity
+    public class TesseractSwitch : Solid
     {
-        // Entity properties
-        private Sprite sprite;
-        private bool activated = false;
-        private string targetFlag;
-        
-        // Constructor for Ahorn/L�nn
-        public TesseractSwitch(EntityData data, Vector2 offset) 
-            : base(data.Position + offset) {
-            InitializeFromEntityData(data, offset);
-        }
-        
-        public void InitializeFromEntityData(EntityData data, Vector2 offset) {
-            targetFlag = data.Attr(nameof(targetFlag), "tesseract_activated");
-            // Initialize other properties from data
-            
-            // Set up the sprite
-            sprite = new Sprite(GFX.Game, "objects/IngesteHelper/tesseractswitch/");
-            sprite.AddLoop("idle", "", 0.1f, 0, 1, 2, 3);
-            sprite.AddLoop(nameof(activated), "", 0.1f, 4, 5, 6, 7);
-            sprite.Play(activated ? nameof(activated) : "idle");
-            sprite.CenterOrigin();
-            
-            // Add components
-            Add(sprite);
-            
-            // Set collision properties
-            Collider = new Hitbox(16, 16, -8, -8);
-            Depth = -1000; // Adjust as needed
+        private const string DefaultSpritePath = "objects/tesseract_temple/dashButton";
+        private const string ActivatedSpritePath = "objects/tesseract_temple/dashButtonMirror";
 
-            activated = false;
+        private readonly bool allGates;
+        private readonly bool ceiling;
+        private readonly EntityID entityID;
+        private readonly bool persistent;
+        private readonly string switchFlag;
+
+        private Image sprite;
+        private bool activated;
+
+        public TesseractSwitch(EntityData data, Vector2 offset)
+            : base(data.Position + offset, 16f, 16f, safe: true)
+        {
+            allGates = data.Bool("allGates");
+            ceiling = data.Bool("ceiling");
+            persistent = data.Bool("persistent");
+            entityID = new EntityID(data.Level.Name, data.ID);
+
+            string configuredFlag = data.Attr("targetFlag", string.Empty);
+            switchFlag = string.IsNullOrWhiteSpace(configuredFlag)
+                ? $"tesseract_switch_{entityID.Level}_{entityID.ID}"
+                : configuredFlag;
+
+            Depth = -1000;
+            OnDashCollide = OnDashed;
+
+            Add(sprite = new Image(GFX.Game[DefaultSpritePath + "00"]));
+            sprite.CenterOrigin();
+            sprite.Position = new Vector2(8f, ceiling ? 0f : 8f);
+            sprite.Rotation = ceiling ? -MathHelper.PiOver2 : MathHelper.PiOver2;
+
+            UpdateSprite();
         }
 
         public override void Added(Scene scene)
         {
             base.Added(scene);
 
-            // Check if the switch should start activated based on session flag
-            if (SceneAs<Level>().Session.GetFlag(targetFlag))
+            Level level = SceneAs<Level>();
+            if (level != null && level.Session.GetFlag(switchFlag))
             {
                 activated = true;
-                sprite.Play(nameof(activated));
+                UpdateSprite();
             }
         }
 
-        public override void Update() {
-            base.Update();
-            // Custom update logic
-        }
-
-        public void Toggle()
+        private DashCollisionResults OnDashed(global::Celeste.Player player, Vector2 direction)
         {
-            activated = !activated;
-            sprite.Play(activated ? nameof(activated) : "idle");
-
-            // Play sound effect
-            // activationSound.Play(activated ? "event:/game/general/crystalheart_pulse" : "event:/game/general/crystalheart_fadeout");
-
-            // Set session flag if persistent
-            if (!string.IsNullOrEmpty(targetFlag))
+            if (!activated)
             {
-                SceneAs<Level>().Session.SetFlag(targetFlag, activated);
+                Activate();
             }
 
-            // Create visual effect
-            SceneAs<Level>().Particles.Emit(ParticleTypes.SparkyDust, 12, Position, Vector2.One * 4f);
-
-            // Optional: Add a screen shake
-            SceneAs<Level>().Shake(0.3f);
-
-            // Trigger any connected entities
-            triggerConnectedEntities();
+            return DashCollisionResults.Rebound;
         }
 
-        private void triggerConnectedEntities()
+        private void Activate()
         {
-            // Example: Look for entities that might be affected by this switch
-            foreach (var entity in Scene.Tracker.GetEntities<TesseractMirror>())
+            Level level = SceneAs<Level>();
+            if (level == null)
             {
-                // You could implement custom behavior based on proximity or other rules
-                if (Vector2.Distance(Position, entity.Position) < 200f)
+                return;
+            }
+
+            activated = true;
+            UpdateSprite();
+
+            if (persistent || !string.IsNullOrWhiteSpace(switchFlag))
+            {
+                level.Session.SetFlag(switchFlag, true);
+            }
+
+            Audio.Play("event:/game/05_mirror_temple/button_activate", Position);
+            if (ParticleTypes.SparkyDust != null)
+            {
+                level.Particles.Emit(ParticleTypes.SparkyDust, 12, Position, Vector2.One * 4f);
+            }
+            level.Shake(0.2f);
+
+            if (allGates)
+            {
+                foreach (TesseractMirrorGateway gateway in GetGateways())
                 {
-                    // Affect the entity in some way
-                    // This is a placeholder - you would need to implement actual behavior
+                    gateway.TryActivateSide(GetPortalSide(gateway));
+                }
+            }
+            else
+            {
+                TesseractMirrorGateway nearestPortal = FindNearestPortal();
+                nearestPortal?.TryActivateSide(GetPortalSide(nearestPortal));
+            }
+        }
+
+        private TesseractMirrorGateway FindNearestPortal()
+        {
+            TesseractMirrorGateway nearestPortal = null;
+            float nearestDistanceSq = float.MaxValue;
+
+            foreach (TesseractMirrorGateway gateway in GetGateways())
+            {
+                float distanceSq = Vector2.DistanceSquared(Position, gateway.Position);
+                if (distanceSq < nearestDistanceSq)
+                {
+                    nearestDistanceSq = distanceSq;
+                    nearestPortal = gateway;
+                }
+            }
+
+            return nearestPortal;
+        }
+
+        private IEnumerable<TesseractMirrorGateway> GetGateways()
+        {
+            if (Scene == null)
+            {
+                yield break;
+            }
+
+            foreach (Entity entity in Scene.Entities)
+            {
+                if (entity is TesseractMirrorGateway gateway)
+                {
+                    yield return gateway;
                 }
             }
         }
 
-        // Static methods for hooking into game events
-        public static void Load()
+        private int GetPortalSide(TesseractMirrorGateway gateway)
         {
-            // Hook into any necessary game events
-            On.Celeste.Level.LoadLevel += OnLoadLevel;
+            return Position.X <= gateway.Position.X ? -1 : 1;
         }
 
-        public static void Unload()
+        private void UpdateSprite()
         {
-            // Unhook from game events
-            On.Celeste.Level.LoadLevel -= OnLoadLevel;
-        }
-
-        private static void OnLoadLevel(On.Celeste.Level.orig_LoadLevel orig, Level self, global::Celeste.Player.IntroTypes playerIntro, bool isFromLoader)
-        {
-            orig(self, playerIntro, isFromLoader);
-
-            // Additional logic when level loads
-            // For example, you could initialize or reset switch states based on level conditions
-            Logger.Log(nameof(TesseractSwitch), $"Level {self.Session.Level} loaded");
+            string spritePath = activated ? ActivatedSpritePath : DefaultSpritePath;
+            sprite.Texture = GFX.Game[spritePath + "00"];
         }
     }
 }
