@@ -9,14 +9,16 @@ namespace Celeste.Cutscenes
         private global::Celeste.Player player;
         private BadelineDummy badeline;
         private CharaDummy chara;
-        private Npc08MaddyAndTheoEnding theoNMaddy;
+        private NPC08_Madeline_Ending_Bandage madelineBandage;
+        private NPC08_Theo_Ending theo;
         private Npc08MaggyEnding magolor;
 
-        public Cs08End(global::Celeste.Player player, Npc08MaddyAndTheoEnding theoNMaddy, Npc08MaggyEnding magolor)
+        public Cs08End(global::Celeste.Player player, NPC08_Madeline_Ending_Bandage madelineBandage, NPC08_Theo_Ending theo, Npc08MaggyEnding magolor)
             : base(false, true)
         {
             this.player = player;
-            this.theoNMaddy = theoNMaddy;
+            this.madelineBandage = madelineBandage;
+            this.theo = theo;
             this.magolor = magolor;
         }
 
@@ -73,9 +75,11 @@ namespace Celeste.Cutscenes
             yield return 0.25f;
             this.badeline.Sprite.Scale.X = 1f;
             yield return 0.1f;
-            this.theoNMaddy.Visible = true;
+            this.madelineBandage.Visible = true;
+            this.theo.Visible = true;
             base.Add(new Coroutine(this.badeline.FloatTo(new Vector2(this.badeline.X - 10f, this.badeline.Y), 1, false), true));
-            yield return this.theoNMaddy.WalkTo(this.player.Position + new Vector2(40f, 0.0f));
+            yield return this.madelineBandage.WalkTo(this.player.Position + new Vector2(40f, 0.0f));
+            yield return this.theo.WalkTo(this.player.Position + new Vector2(45f, 0.0f));
         }
 
         private IEnumerator MagolorEnter()
@@ -89,6 +93,12 @@ namespace Celeste.Cutscenes
             base.Add(new Coroutine(this.badeline.FloatTo(new Vector2(this.badeline.X + 6f, this.badeline.Y + 4f), -1, false), true));
             yield return this.magolor.MoveTo(this.player.Position + new Vector2(-32f, 0.0f));
             this.magolor.Sprite.Play("idle");
+        }
+
+        private IEnumerator MaggyStopTired()
+        {
+            this.magolor.Sprite.Play("idle");
+            yield return null;
         }
 
         private IEnumerator KirbyTurnsRight()
@@ -130,6 +140,12 @@ namespace Celeste.Cutscenes
             yield return 0.4f;
         }
 
+        private IEnumerator TheoRaiseHand()
+        {
+            this.magolor.Sprite.Play("yolo");
+            yield return 0.8f;
+        }
+
         private IEnumerator TurnToLeft()
         {
             yield return 0.1f;
@@ -137,12 +153,6 @@ namespace Celeste.Cutscenes
             yield return 0.05f;
             this.badeline.Sprite.Scale.X = -1f;
             yield return 0.1f;
-        }
-
-        private IEnumerator MaggyStopTired()
-        {
-            this.magolor.Sprite.Play("idle");
-            yield return null;
         }
 
         public override void OnEnd(Level level)
@@ -153,6 +163,7 @@ namespace Celeste.Cutscenes
         }
     }
 }
+
 
 
 
