@@ -836,10 +836,11 @@ namespace Celeste.Entities
         protected override void OnTalk(global::Celeste.Player player)
         {
             var magolor = Scene.Tracker.GetEntity<Npc08MaggyEnding>();
-            var theoNMaddy = Scene.Tracker.GetEntity<Npc08MaddyAndTheoEnding>();
-            if (theoNMaddy != null && magolor != null)
+            var madelineBandage = Scene.Tracker.GetEntity<Npc08MadelineEndingBandage>();
+            var theo = Scene.Tracker.GetEntity<Npc08TheoEnding>();
+            if (madelineBandage != null && theo != null && magolor != null)
             {
-                TryAddCutscene(new Cs08End(player, theoNMaddy, magolor));
+                TryAddCutscene(new Cs08End(player, madelineBandage, theo, magolor));
             }
         }
     }
