@@ -104,6 +104,7 @@ namespace Celeste
         private int psfx;             // Sound effect handle
         private bool attacked;        // Attack completed flag
         private float mycommand;        // Random command value
+        private float bgExpand;           // Continuous bg expansion counter (wraps 0-1)
         private float vol;            // Music volume for fade
         private int songcon;          // Song controller state
         private int savecon_a;        // Save controller state
@@ -174,8 +175,8 @@ namespace Celeste
                    gravityMult: 0f,
                    collider: new Hitbox(64, 96, -32, -96))
         {
-            Health = data.Int("health", 2500);
-            MaxHealth = data.Int("maxHealth", 2500);
+            Health = data.Int("health", 9999);
+            MaxHealth = data.Int("maxHealth", 9999);
             autoStart = data.Bool("autoStart", false);
             Initialize();
         }
@@ -183,13 +184,16 @@ namespace Celeste
         private void Initialize()
         {
             // Set up basic properties
-            if (Health <= 0) Health = MaxHealth = 2500;
+            if (Health <= 0) Health = MaxHealth = 9999;
             CurrentPhase = BossPhase.Dormant;
             IsVulnerable = false;
             SoulsRescued = 0;
             PlayerIsTrapped = false;
             barrierActive = false;
             
+            // Render behind player, fg/bg tilesets
+            Depth = -86000;
+
             // Store base position
             basePosition = Position;
             riseStartPosition = Position + new Vector2(0, 400); // Start below screen
@@ -546,48 +550,43 @@ namespace Celeste
 
             switch (attack)
             {
-                case AttackType.UltimaBullet:
-                    yield return UltimaBulletAttack();
-                    break;
-                case AttackType.CrossShocker:
-                    yield return CrossShockerAttack();
-                    break;
-                case AttackType.StarStormUltra:
-                    yield return StarStormUltraAttack();
-                    break;
+                case AttackType.UltimaBullet:    yield return UltimaBulletAttack();    break;
+                case AttackType.CrossShocker:    yield return CrossShockerAttack();    break;
+                case AttackType.StarStormUltra:  yield return StarStormUltraAttack();  break;
+                case AttackType.CosmicSweep:     yield return CosmicSweepAttack();     break;
+                case AttackType.DivineLightning: yield return DivineLightningAttack(); break;
+                case AttackType.ShockerBreaker3: yield return ShockerBreaker3Attack(); break;
+                case AttackType.GalacticNova:    yield return GalacticNovaAttack();    break;
+                case AttackType.HyperGoner:      yield return HyperGonerAttack();      break;
+                case AttackType.RainbowDelta:    yield return RainbowDeltaAttack();    break;
+                case AttackType.FinalBeam:       yield return FinalBeamPhase();        break;
             }
         }
 
         private IEnumerator StarStormUltraAttack()
         {
-            if (Sprite != null)
-            {
-                Sprite.Play("attack_starstormultra_start");
-            }
-            
-            yield return 0.5f;
-            
-            // Rain projectiles from above
+            Sprite?.Play("attack_starstormultra_start");
+            yield return TelegraphIntent(BossTelegraphType.PositioningOrange, 0.6f);
+
             if (player != null && level != null)
             {
                 for (int wave = 0; wave < 3; wave++)
                 {
-                    for (int i = 0; i < 6; i++)
+                    for (int i = 0; i < 7; i++)
                     {
-                        float x = player.Position.X + Calc.Random.Range(-100f, 100f);
-                        Audio.Play("event:/desolozantas/sfx/boss/star_fall", new Vector2(x, Position.Y));
-                        yield return 0.15f;
+                        float x = player.Position.X + Calc.Random.Range(-120f, 120f);
+                        Vector2 spawnPos = new Vector2(x, level.Camera.Top - 16f);
+                        Vector2 vel = new Vector2(Calc.Random.Range(-20f, 20f), Calc.Random.Range(140f, 200f));
+                        level.Add(new AsrielBossProjectile(spawnPos, vel, Color.Cyan, 5f, 2f));
+                        Audio.Play("event:/desolozantas/sfx/boss/star_fall", spawnPos);
+                        yield return 0.12f;
                     }
-                    yield return 0.5f;
+                    yield return 0.45f;
                 }
             }
-            
-            if (Sprite != null)
-            {
-                Sprite.Play("idle");
-            }
-            
-            yield return 0.5f;
+
+            Sprite?.Play("idle");
+            yield return 0.4f;
         }
 
         private void CreateBarrier()
@@ -659,7 +658,7 @@ namespace Celeste
             yield return Textbox.Say("CH20_ASRIEL_ZERO_VOID_ANSWERS");
             
             // Switch music to His Theme (hopeful version)
-            Audio.SetMusic(MUSIC_HIS_THEME_01);
+            Audio.SetMusic(MUSIC_KIRBY_VS_ASRIEL);
             
             // Re-enable player with new determination
             if (player != null)
@@ -801,7 +800,7 @@ namespace Celeste
         private IEnumerator FlashbackTriggerPhase()
         {
             // Switch to emotional His Theme version
-            Audio.SetMusic(MUSIC_HIS_THEME_02);
+            Audio.SetMusic(MUSIC_HIS_THEME_01);
             
             // Player realizes they can call out to Asriel directly
             yield return Textbox.Say("CH20_ASRIEL_ZERO_CALL_AZZY");
@@ -874,7 +873,7 @@ namespace Celeste
         private IEnumerator FinalBeamPhase()
         {
             // Switch to intense battle music
-            Audio.SetMusic(MUSIC_KIRBY_VS_ASRIEL);
+            Audio.SetMusic(MUSIC_HIS_THEME_02);
             
             // Els forces one final attack
             yield return Textbox.Say("CH20_ASRIEL_REMEMBER_FINAL");
@@ -984,76 +983,262 @@ namespace Celeste
         #endregion
 
         #region Attack Implementations
+
+        // ── Ultima Bullet ────────────────────────────────────────────────────────
+        // Three expanding rings of 8 aimed bullets fired in sequence.
         private IEnumerator UltimaBulletAttack()
         {
-            if (Sprite != null)
+            Sprite?.Play("attack_ultimabullet_start");
+            yield return TelegraphIntent(BossTelegraphType.DangerRed, 0.5f);
+
+            if (player == null || level == null) { yield break; }
+
+            for (int wave = 0; wave < 3; wave++)
             {
-                Sprite.Play("attack_ultimabullet_start");
-            }
-            
-            yield return 0.5f;
-            
-            // Fire projectiles at player
-            if (player != null && level != null)
-            {
-                Vector2 targetPos = player.Position;
-                for (int i = 0; i < 8; i++)
+                Vector2 toPlayer = (player.Center - Center).SafeNormalize();
+                float baseAngle = (float)Math.Atan2(toPlayer.Y, toPlayer.X);
+                int count = 8 + wave * 2;
+                float speed = 110f + wave * 25f;
+
+                for (int i = 0; i < count; i++)
                 {
-                    float angle = (i / 8f) * MathHelper.TwoPi;
-                    Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                    
-                    // Spawn projectile (would be actual entity in full implementation)
-                    Audio.Play("event:/desolozantas/sfx/boss/bullet_fire", Position);
-                    yield return 0.1f;
+                    float a = baseAngle + (i / (float)count) * MathHelper.TwoPi;
+                    Vector2 vel = new Vector2((float)Math.Cos(a), (float)Math.Sin(a)) * speed;
+                    level.Add(new AsrielBossProjectile(Position, vel, Color.Gold, 5f, 3f));
                 }
+                Audio.Play("event:/desolozantas/sfx/boss/bullet_fire", Position);
+                level.DirectionalShake(Vector2.One * 0.15f, 0.1f);
+                yield return 0.45f;
             }
-            
-            if (Sprite != null)
-            {
-                Sprite.Play("idle");
-            }
-            
-            yield return 1f;
+
+            Sprite?.Play("idle");
+            yield return 0.8f;
         }
 
+        // ── Cross Shocker ────────────────────────────────────────────────────────
+        // Four cardinal lightning bolts that fire simultaneously, then again rotated 45°.
         private IEnumerator CrossShockerAttack()
         {
-            if (Sprite != null)
+            Sprite?.Play("attack_crossshocker_start");
+            yield return TelegraphIntent(BossTelegraphType.DangerRed, 0.55f);
+
+            if (level == null) { yield break; }
+
+            for (int pass = 0; pass < 2; pass++)
             {
-                Sprite.Play("attack_crossshocker_start");
+                float rot = pass * (MathHelper.Pi / 4f);
+                for (int i = 0; i < 4; i++)
+                {
+                    float a = rot + i * (MathHelper.Pi / 2f);
+                    Vector2 vel = new Vector2((float)Math.Cos(a), (float)Math.Sin(a)) * 160f;
+                    level.Add(new AsrielBossProjectile(Position, vel, Color.Yellow, 6f, 2.5f));
+                }
+                level.DirectionalShake(Vector2.UnitY, 0.4f);
+                Audio.Play("event:/desolozantas/sfx/boss/lightning", Position);
+                yield return 0.4f;
             }
-            
+
+            Sprite?.Play("attack_crossshocker_end");
             yield return 0.3f;
-            
-            // Create cross-shaped lightning pattern
-            level?.DirectionalShake(Vector2.UnitY, 0.5f);
-            Audio.Play("event:/desolozantas/sfx/boss/lightning", Position);
-            
-            yield return 1f;
-            
-            if (Sprite != null)
-            {
-                Sprite.Play("attack_crossshocker_end");
-            }
-            
+            Sprite?.Play("idle");
+            yield return 0.3f;
+        }
+
+        // ── Cosmic Sweep ─────────────────────────────────────────────────────────
+        // A slow laser beam that sweeps left-to-right across the arena.
+        private IEnumerator CosmicSweepAttack()
+        {
+            Sprite?.Play("charging");
+            yield return TelegraphIntent(BossTelegraphType.DashCyan, 0.7f);
+
+            if (level == null) { yield break; }
+
+            var beam = new AsrielSweepBeam(Position, level, Color.Cyan * 0.85f, sweepDuration: 2.5f);
+            level.Add(beam);
+            Audio.Play("event:/desolozantas/sfx/boss/asriel_final_beam", Position);
+            level.DirectionalShake(Vector2.UnitX, 0.3f);
+
+            yield return 2.8f;
+
+            Sprite?.Play("idle");
             yield return 0.5f;
         }
 
+        // ── Divine Lightning ─────────────────────────────────────────────────────
+        // Three columns of warning markers drop on the player's location, then strike.
+        private IEnumerator DivineLightningAttack()
+        {
+            Sprite?.Play("attacking");
+            yield return TelegraphIntent(BossTelegraphType.PositioningOrange, 0.4f);
+
+            if (player == null || level == null) { yield break; }
+
+            float[] strikeXs = new float[3];
+            for (int i = 0; i < 3; i++)
+                strikeXs[i] = player.Center.X + Calc.Random.Range(-80f, 80f);
+
+            // Warn phase – show column markers
+            var warnings = new AsrielLightningWarning[3];
+            for (int i = 0; i < 3; i++)
+            {
+                warnings[i] = new AsrielLightningWarning(new Vector2(strikeXs[i], level.Camera.Top), level);
+                level.Add(warnings[i]);
+            }
+            yield return 0.8f;
+
+            // Strike phase
+            for (int i = 0; i < 3; i++)
+            {
+                warnings[i].RemoveSelf();
+                level.Add(new AsrielBossProjectile(
+                    new Vector2(strikeXs[i], level.Camera.Top - 8f),
+                    new Vector2(0f, 600f),
+                    Color.White, 4f, 1.2f));
+                Audio.Play("event:/desolozantas/sfx/boss/lightning", new Vector2(strikeXs[i], Position.Y));
+                level.DirectionalShake(Vector2.UnitY, 0.5f);
+                yield return 0.12f;
+            }
+
+            Sprite?.Play("idle");
+            yield return 0.6f;
+        }
+
+        // ── Shocker Breaker 3 ────────────────────────────────────────────────────
+        // Three expanding hexagonal shockwave rings.
+        private IEnumerator ShockerBreaker3Attack()
+        {
+            Sprite?.Play("attack_shockerbreaker3_start");
+            yield return TelegraphIntent(BossTelegraphType.SpecialPurple, 0.5f);
+
+            if (level == null) { yield break; }
+
+            for (int ring = 0; ring < 3; ring++)
+            {
+                int count = 12 + ring * 4;
+                float speed = 90f + ring * 30f;
+                for (int i = 0; i < count; i++)
+                {
+                    float a = (i / (float)count) * MathHelper.TwoPi;
+                    Vector2 vel = new Vector2((float)Math.Cos(a), (float)Math.Sin(a)) * speed;
+                    level.Add(new AsrielBossProjectile(Position, vel, Color.Magenta, 4f, 3.5f));
+                }
+                Audio.Play("event:/desolozantas/sfx/boss/lightning", Position);
+                level.DirectionalShake(Vector2.One * 0.2f, 0.15f);
+                yield return 0.55f;
+            }
+
+            Sprite?.Play("idle");
+            yield return 0.6f;
+        }
+
+        // ── Galactic Nova ────────────────────────────────────────────────────────
+        // A tight outward spiral of bullets.
+        private IEnumerator GalacticNovaAttack()
+        {
+            Sprite?.Play("els_control");
+            yield return TelegraphIntent(BossTelegraphType.SpecialPurple, 0.6f);
+
+            if (level == null) { yield break; }
+
+            const int arms = 4;
+            const int bulletsPerArm = 10;
+            float spiralStep = MathHelper.TwoPi / arms;
+            float angleOffset = 0f;
+
+            for (int b = 0; b < bulletsPerArm; b++)
+            {
+                for (int arm = 0; arm < arms; arm++)
+                {
+                    float a = angleOffset + arm * spiralStep;
+                    float speed = 80f + b * 8f;
+                    Vector2 vel = new Vector2((float)Math.Cos(a), (float)Math.Sin(a)) * speed;
+                    level.Add(new AsrielBossProjectile(Position, vel, Color.DeepPink, 4f, 4f));
+                }
+                angleOffset += 0.22f;
+                yield return 0.07f;
+            }
+
+            Audio.Play("event:/desolozantas/sfx/boss/bullet_fire", Position);
+            Sprite?.Play("idle");
+            yield return 0.8f;
+        }
+
+        // ── HyperGoner ───────────────────────────────────────────────────────────
+        // Massive horizontal beam that fills the screen, telegraphed with darkening.
+        private IEnumerator HyperGonerAttack()
+        {
+            Sprite?.Play("attack_finalbeam_charge");
+            darker = true;
+            yield return TelegraphIntent(BossTelegraphType.DangerRed, 1.2f);
+
+            if (level == null) { yield break; }
+
+            level.DirectionalShake(Vector2.One, 0.8f);
+            Audio.Play("event:/desolozantas/sfx/boss/asriel_final_beam", Position);
+
+            var beam = new AsrielHyperBeam(Position, level);
+            level.Add(beam);
+
+            Sprite?.Play("attack_finalbeam_fire");
+            yield return 3.0f;
+
+            beam.RemoveSelf();
+            darker = false;
+            darker_x = 0f;
+            Sprite?.Play("idle");
+            yield return 0.5f;
+        }
+
+        // ── Rainbow Delta ────────────────────────────────────────────────────────
+        // Five aimed bursts in a fan, followed by eight bouncing projectiles.
+        private IEnumerator RainbowDeltaAttack()
+        {
+            Sprite?.Play("attacking");
+            yield return TelegraphIntent(BossTelegraphType.DangerRed, 0.5f);
+
+            if (player == null || level == null) { yield break; }
+
+            Color[] rainbow = { Color.Red, Color.Orange, Color.Yellow, Color.Lime, Color.Cyan };
+            Vector2 toPlayer = (player.Center - Center).SafeNormalize();
+            float baseAngle = (float)Math.Atan2(toPlayer.Y, toPlayer.X);
+
+            // Fan burst
+            for (int i = 0; i < 5; i++)
+            {
+                float a = baseAngle - 0.4f + i * 0.2f;
+                Vector2 vel = new Vector2((float)Math.Cos(a), (float)Math.Sin(a)) * 150f;
+                level.Add(new AsrielBossProjectile(Position, vel, rainbow[i], 5f, 3f));
+            }
+            Audio.Play("event:/desolozantas/sfx/boss/bullet_fire", Position);
+            yield return 0.5f;
+
+            // Eight bouncing diagonals
+            for (int i = 0; i < 8; i++)
+            {
+                float a = (i / 8f) * MathHelper.TwoPi;
+                Vector2 vel = new Vector2((float)Math.Cos(a), (float)Math.Sin(a)) * 100f;
+                level.Add(new AsrielBossProjectile(Position, vel, rainbow[i % 5], 5f, 4f, bounces: 2));
+            }
+            Audio.Play("event:/desolozantas/sfx/boss/bullet_fire", Position);
+
+            Sprite?.Play("idle");
+            yield return 0.8f;
+        }
+
+        // ── Weak Cosmic Burst (desperation) ──────────────────────────────────────
         private IEnumerator WeakCosmicBurst()
         {
-            // Very weak attack when nearly defeated
-            level?.DirectionalShake(Vector2.One * 0.1f, 0.2f);
-            
-            // Small particle burst
-            if (level != null)
+            if (level == null) { yield break; }
+
+            level.DirectionalShake(Vector2.One * 0.1f, 0.2f);
+            int count = 6;
+            for (int i = 0; i < count; i++)
             {
-                for (int i = 0; i < 5; i++)
-                {
-                    level.ParticlesFG.Emit(ParticleTypes.Dust, Position + Calc.Random.Range(new Vector2(-30, -30), new Vector2(30, 30)));
-                }
+                float a = (i / (float)count) * MathHelper.TwoPi;
+                Vector2 vel = new Vector2((float)Math.Cos(a), (float)Math.Sin(a)) * 60f;
+                level.Add(new AsrielBossProjectile(Position, vel, Color.LightBlue, 3f, 2f));
             }
-            
-            yield return 0.5f;
+            yield return 0.6f;
         }
         #endregion
 
@@ -1451,17 +1636,7 @@ namespace Celeste
 
         private void UpdateSpriteLayers()
         {
-            // Position all sprite layers relative to boss
-            Vector2 offset = Vector2.Zero;
-            
-            if (bgSprite != null) bgSprite.Position = offset;
-            if (cosmowingSprite != null) cosmowingSprite.Position = new Vector2(0, -140) + offset;
-            if (orbwingSprite != null) orbwingSprite.Position = new Vector2(0, -140) + offset;
-            if (shoulderSprite != null) shoulderSprite.Position = offset;
-            if (stemSprite != null) stemSprite.Position = offset;
-            if (orbSprite != null) orbSprite.Position = new Vector2(0, -60) + offset;
-            if (faceSprite != null) faceSprite.Position = new Vector2(0, -60) + offset;
-            if (crySprite != null) crySprite.Position = new Vector2(0, -60) + offset;
+            // Sprites are positioned manually in Render(); nothing to do here.
         }
         #endregion
 
@@ -1478,68 +1653,77 @@ namespace Celeste
                 side -= 800f;
 
             // Calculate vertical offsets (GML: yoff = sin(siner / 4); yoff2 = sin(siner / 16);)
-            yoff = (float)Math.Sin(siner / 4f) - 60f;
-            yoff2 = (float)Math.Sin(siner / 16f) - 60f;
+            yoff = (float)Math.Sin(siner / 4f);
+            yoff2 = (float)Math.Sin(siner / 16f);
 
-            // Draw black background overlay (GML: draw_set_color(c_black); ossafe_fill_rectangle(-10, 240, 999, -10);)
+            // Draw black background overlay
             Draw.Rect(Position.X - 500, Position.Y - 500, 2000, 2000, Color.Black);
 
-            // Calculate HSV color for background (GML: thiscolor = make_color_hsv(siner * 6, 200, 200);)
+            // Advance expand counter (wraps 0-1, speed tunable)
+            bgExpand = (bgExpand + Engine.DeltaTime * 0.18f) % 1f;
+
+            // Calculate HSV color for background
             Color thiscolor = ColorFromHSV((siner * 6f) % 360f, 200f / 255f, 200f / 255f);
 
-            // Draw background sprite parts with extended parameters
-            // GML: draw_sprite_part_ext(spr_asrielbg, 0, side, 0, 276, 216, 640, 0, -1, 1, thiscolor, 0.5);
-            DrawBackgroundSpritePart(side, 640, 0, -1, 1, thiscolor, 0.5f);
-            DrawBackgroundSpritePart(side + 60, 640, 0, -1, 1, thiscolor, 0.5f);
-            DrawBackgroundSpritePart(side + 120, 640, 0, -1, 1, thiscolor, 0.5f);
+            // Draw bg as 5 expanding layers centered on the boss.
+            // Each layer starts small at the center and grows outward; as one reaches
+            // full size it wraps back to small, giving a continuous outward-pulse look.
+            // Layers are drawn back-to-front (smallest scale last so center is sharpest).
+            const int BG_LAYERS = 5;
+            for (int li = BG_LAYERS - 1; li >= 0; li--)
+            {
+                // phase 0..1 per layer, offset evenly so they form a continuous stream
+                float phase = ((bgExpand + li / (float)BG_LAYERS) % 1f);
+                // scale ramps from ~0.3 up to ~3.0
+                float layerScale = MathHelper.Lerp(0.3f, 3.0f, phase);
+                // fade out as each layer reaches full size
+                float layerAlpha = 0.5f * (1f - phase * phase);
+                // scroll offset still applies so the texture moves
+                float scroll = side * (1f - phase * 0.5f);
+                DrawBackgroundCentered(scroll, layerScale, thiscolor, layerAlpha);
+            }
 
-            // Draw at x=0 (GML: draw_sprite_part_ext(..., 0, 0, 1, 1, ...))
-            DrawBackgroundSpritePart(side, 0, 0, 1, 1, thiscolor, 0.5f);
-            DrawBackgroundSpritePart(side + 60, 0, 0, 1, 1, thiscolor, 0.5f);
-            DrawBackgroundSpritePart(side + 120, 0, 0, 1, 1, thiscolor, 0.5f);
-
-            // Draw wings (GML: draw_sprite_ext(spr_afinal_cosmoswing, floor(anim / 6), x + 42, (y - 52) + (yoff2 * 4), 2, 2, 0, image_blend, image_alpha);)
-            // Raised by 60 pixels for visibility
+            // GML: draw_sprite_ext(spr_afinal_cosmoswing, floor(anim/6), x+42, (y-52)+(yoff2*4), 2, 2, 0, ...)
+            // GML: mirrored at x-44 for right wing (xscale=-2)
             string wingAnim = "wing" + ((int)(anim / 6f) % 4);
-            Vector2 wingOffset = new Vector2(0, yoff2 * 4f - 60f);
+            Vector2 wingOffset = new Vector2(0, yoff2 * 4f);
             
             if (cosmowingSprite != null)
             {
-                string anim = cosmowingSprite.Has(wingAnim) ? wingAnim : (cosmowingSprite.Has("idle") ? "idle" : null);
-                // Right wing
-                cosmowingSprite.Position = new Vector2(42, -112) + wingOffset;
-                cosmowingSprite.Scale = new Vector2(-2, 2); // -1 xscale = flipped
-                if (anim != null) cosmowingSprite.Play(anim);
-                cosmowingSprite.Render();
-                
-                // Left wing
-                cosmowingSprite.Position = new Vector2(-44, -112) + wingOffset;
+                string canim = cosmowingSprite.Has(wingAnim) ? wingAnim : (cosmowingSprite.Has("idle") ? "idle" : null);
+                // Left wing (xscale=2)
+                cosmowingSprite.Position = new Vector2(-44, -52) + wingOffset;
                 cosmowingSprite.Scale = new Vector2(2, 2);
-                if (anim != null) cosmowingSprite.Play(anim);
+                if (canim != null) cosmowingSprite.Play(canim);
+                cosmowingSprite.Render();
+                // Right wing (xscale=-2, flipped)
+                cosmowingSprite.Position = new Vector2(42, -52) + wingOffset;
+                cosmowingSprite.Scale = new Vector2(-2, 2);
+                if (canim != null) cosmowingSprite.Play(canim);
                 cosmowingSprite.Render();
             }
 
-            // Draw orb wings (GML: draw_sprite_ext(spr_afinal_orbwing, floor(anim / 6), x - 110, y - 52, 2, 2, 0, image_blend, image_alpha);)
-            // Raised by 60 pixels for visibility
+            // GML: draw_sprite_ext(spr_afinal_orbwing, floor(anim/6), x-110, y-52, 2, 2, 0, ...)
+            // GML: mirrored at x+108 (xscale=-2)
             if (orbwingSprite != null)
             {
-                string anim = orbwingSprite.Has(wingAnim) ? wingAnim : (orbwingSprite.Has("idle") ? "idle" : null);
-                orbwingSprite.Position = new Vector2(-110, -112);
+                string owanim = orbwingSprite.Has(wingAnim) ? wingAnim : (orbwingSprite.Has("idle") ? "idle" : null);
+                // Left orb wing
+                orbwingSprite.Position = new Vector2(-110, -52);
                 orbwingSprite.Scale = new Vector2(2, 2);
-                if (anim != null) orbwingSprite.Play(anim);
+                if (owanim != null) orbwingSprite.Play(owanim);
                 orbwingSprite.Render();
-                
-                orbwingSprite.Position = new Vector2(108, -112);
+                // Right orb wing (flipped)
+                orbwingSprite.Position = new Vector2(108, -52);
                 orbwingSprite.Scale = new Vector2(-2, 2);
-                if (anim != null) orbwingSprite.Play(anim);
+                if (owanim != null) orbwingSprite.Play(owanim);
                 orbwingSprite.Render();
             }
 
-            // Draw stem (GML: draw_sprite_ext(spr_afinal_stem, floor(anim / 6), x - 2, y + 146, 2, 2, 0, image_blend, image_alpha);)
-            // Raised by 60 pixels for visibility
+            // GML: draw_sprite_ext(spr_afinal_stem, floor(anim/6), x-2, y+146, 2, 2, 0, ...)
             if (stemSprite != null)
             {
-                stemSprite.Position = new Vector2(-2, 86);
+                stemSprite.Position = new Vector2(-2, 146);
                 stemSprite.Scale = new Vector2(2, 2);
                 if (stemSprite.Has(wingAnim))
                     stemSprite.Play(wingAnim);
@@ -1548,11 +1732,10 @@ namespace Celeste
                 stemSprite.Render();
             }
 
-            // Draw orb (GML: draw_sprite_ext(spr_afinal_orb, floor(anim / 6), x - 2, y + 68, 2, 2, 0, image_blend, image_alpha);)
-            // Raised by 60 pixels for visibility
+            // GML: draw_sprite_ext(spr_afinal_orb, floor(anim/6), x-2, y+68, 2, 2, 0, ...)
             if (orbSprite != null)
             {
-                orbSprite.Position = new Vector2(-2, 8);
+                orbSprite.Position = new Vector2(-2, 68);
                 orbSprite.Scale = new Vector2(2, 2);
                 if (orbSprite.Has(wingAnim))
                     orbSprite.Play(wingAnim);
@@ -1576,44 +1759,40 @@ namespace Celeste
             // Draw face based on cry state
             DrawFace(0, rx, ry);
 
-            // Draw arms (GML: draw_sprite_ext(spr_afinal_arm, floor(anim / 6), (x - 58) + rx, y + 56 + (yoff * 2) + ry, 2, 2, armrot, image_blend, image_alpha - bodyfader);)
-            // Arms raised by 60 pixels for visibility
+            // GML: draw_sprite_ext(spr_afinal_arm, floor(anim/6), (x-58)+rx, y+56+(yoff*2)+ry, 2, 2, armrot, ...)
             if (shoulderSprite != null)
             {
-                string anim = shoulderSprite.Has(wingAnim) ? wingAnim : (shoulderSprite.Has("idle") ? "idle" : null);
+                string sanim = shoulderSprite.Has(wingAnim) ? wingAnim : (shoulderSprite.Has("idle") ? "idle" : null);
                 // Left arm
-                shoulderSprite.Position = new Vector2(-58 + rx, -4 + (yoff * 2) + ry);
+                shoulderSprite.Position = new Vector2(-58 + rx, 56 + (yoff * 2) + ry);
                 shoulderSprite.Scale = new Vector2(2, 2);
-                shoulderSprite.Rotation = armrot * MathHelper.Pi / 180f; // Convert to radians
+                shoulderSprite.Rotation = armrot * MathHelper.Pi / 180f;
                 shoulderSprite.Color = Color.White * (1f - bodyfader);
-                if (anim != null) shoulderSprite.Play(anim);
+                if (sanim != null) shoulderSprite.Play(sanim);
                 shoulderSprite.Render();
-                
-                // Right arm (GML: x + 56 + rx, ... -armrot)
-                shoulderSprite.Position = new Vector2(56 + rx, -4 + (yoff * 2) + ry);
+                // Right arm (GML: x+56+rx, -armrot)
+                shoulderSprite.Position = new Vector2(56 + rx, 56 + (yoff * 2) + ry);
                 shoulderSprite.Scale = new Vector2(-2, 2);
                 shoulderSprite.Rotation = -armrot * MathHelper.Pi / 180f;
                 shoulderSprite.Color = Color.White * (1f - bodyfader);
-                if (anim != null) shoulderSprite.Play(anim);
+                if (sanim != null) shoulderSprite.Play(sanim);
                 shoulderSprite.Render();
             }
 
-            // Draw shoulders (GML: draw_sprite_ext(spr_afinal_shoulder, ...))
-            // Shoulders raised by 60 pixels for visibility
+            // GML: draw_sprite_ext(spr_afinal_shoulder, floor(anim/6), x-84, y, 2, 2, 0, ...) — centered origin, shoulder sprite
             if (Sprite != null)
             {
-                string anim = Sprite.Has(wingAnim) ? wingAnim : (Sprite.Has("idle") ? "idle" : null);
+                string shanim = Sprite.Has(wingAnim) ? wingAnim : (Sprite.Has("idle") ? "idle" : null);
                 // Left shoulder
-                Sprite.Position = new Vector2(-84, -28);
+                Sprite.Position = new Vector2(-84, 0);
                 Sprite.Scale = new Vector2(2, 2);
-                if (anim != null) Sprite.Play(anim);
+                if (shanim != null) Sprite.Play(shanim);
                 Sprite.Color = Color.White * (1f - bodyfader);
                 Sprite.Render();
-                
-                // Right shoulder
-                Sprite.Position = new Vector2(82, -28);
+                // Right shoulder (flipped)
+                Sprite.Position = new Vector2(82, 0);
                 Sprite.Scale = new Vector2(-2, 2);
-                if (anim != null) Sprite.Play(anim);
+                if (shanim != null) Sprite.Play(shanim);
                 Sprite.Color = Color.White * (1f - bodyfader);
                 Sprite.Render();
             }
@@ -1630,51 +1809,63 @@ namespace Celeste
                 Draw.Rect(Position.X - 500, Position.Y - 500, 2000, 2000, Color.Black * Math.Min(darker_x, 1f));
             }
 
-            // Render existing sprite layers that weren't handled above
-            faceSprite?.Render();
-            crySprite?.Render();
+            // faceSprite and crySprite are fully rendered inside DrawFace(); do not render again here.
         }
 
-        private void DrawBackgroundSpritePart(float sideOffset, float x, float y, float xscale, float yscale, Color color, float alpha)
+        private void DrawBackgroundCentered(float scroll, float scale, Color color, float alpha)
         {
             if (bgSprite == null) return;
-            
-            // Calculate source rectangle for sprite part
-            float srcX = sideOffset % 276f;
-            
-            bgSprite.Position = new Vector2(x, y);
-            bgSprite.Scale = new Vector2(xscale, yscale);
-            bgSprite.Color = color * alpha;
-            bgSprite.Render();
+
+            // bg sprite is 3200x1200 with centered origin.
+            // Tile width/height in screen pixels at this scale.
+            float tileW = 3200f * scale;
+            float tileH = 1200f * scale;
+
+            bgSprite.Scale = new Vector2(scale, scale);
+            bgSprite.Color = color * MathHelper.Clamp(alpha, 0f, 1f);
+
+            // Normalize scroll into one tile-width so seam never drifts
+            float scrolled = (scroll * scale % tileW + tileW) % tileW;
+
+            // Draw enough horizontal tiles to always fill the screen (3 tiles covers any offset)
+            for (int tx = -1; tx <= 1; tx++)
+            {
+                float px = -scrolled + tx * tileW;
+                // Draw enough vertical tiles to cover the screen height
+                for (int ty = -1; ty <= 1; ty++)
+                {
+                    bgSprite.Position = new Vector2(px, ty * tileH);
+                    bgSprite.Render();
+                }
+            }
         }
 
         private void DrawFace(int animFrame, float rx, float ry)
         {
-            // Face raised by 60 pixels for visibility
-            // GML: if (cry == 0) draw_sprite_ext(spr_afinal_face, global.faceemotion, x, y, 2, 2, 0, image_blend, image_alpha);
+            // GML: if (cry == 0) draw_sprite_ext(spr_afinal_face, global.faceemotion, x, y, 2, 2, 0, ...)
             if (cry == 0 && faceSprite != null)
             {
-                faceSprite.Position = new Vector2(0, -60);
+                faceSprite.Position = new Vector2(0, 0);
                 faceSprite.Scale = new Vector2(2, 2);
-                faceSprite.Play("face0"); // global.faceemotion would be mapped here
+                faceSprite.Play("face0");
                 faceSprite.Color = Color.White;
                 faceSprite.Render();
             }
-            // GML: if (cry == 1) draw_sprite_ext(spr_afinal_face_cry, floor(siner / 8), x + (rx / 3), y + (ry / 3), 2, 2, 0, image_blend, image_alpha);
+            // GML: if (cry == 1) draw_sprite_ext(spr_afinal_face_cry, floor(siner/8), x+(rx/3), y+(ry/3), 2, 2, 0, ...)
             else if (cry == 1 && crySprite != null)
             {
                 string cryAnim = "cry" + ((int)(siner / 8f) % 4);
-                crySprite.Position = new Vector2(rx / 3f, ry / 3f - 60f);
+                crySprite.Position = new Vector2(rx / 3f, ry / 3f);
                 crySprite.Scale = new Vector2(2, 2);
                 crySprite.Play(cryAnim);
                 crySprite.Color = Color.White;
                 crySprite.Render();
             }
-            // GML: if (cry == 2) draw_sprite_ext(spr_afinal_face_cry2, floor(siner / 2), x + (rx / 3), y + (ry / 3), 2, 2, 0, image_blend, image_alpha);
+            // GML: if (cry == 2) draw_sprite_ext(spr_afinal_face_cry2, floor(siner/2), x+(rx/3), y+(ry/3), 2, 2, 0, ...)
             else if (cry == 2 && crySprite != null)
             {
                 string cryAnim = "cry2_" + ((int)(siner / 2f) % 4);
-                crySprite.Position = new Vector2(rx / 3f, ry / 3f - 60f);
+                crySprite.Position = new Vector2(rx / 3f, ry / 3f);
                 crySprite.Scale = new Vector2(2, 2);
                 crySprite.Play(cryAnim);
                 crySprite.Color = Color.White;
@@ -1925,6 +2116,187 @@ namespace Celeste
                 Draw.Circle(Position, 12, soulColor, 16);
                 Draw.Circle(Position, 8, Color.White * 0.8f, 12);
             }
+        }
+    }
+    /// <summary>
+    /// General-purpose boss projectile: moves at constant velocity, kills player on touch,
+    /// auto-expires after lifetime seconds. Supports optional wall bouncing.
+    /// </summary>
+    [Tracked]
+    public class AsrielBossProjectile : Entity
+    {
+        private Vector2 velocity;
+        private Color color;
+        private float radius;
+        private float lifetime;
+        private float age;
+        private int bouncesLeft;
+
+        public AsrielBossProjectile(Vector2 position, Vector2 velocity, Color color,
+                                    float radius = 5f, float lifetime = 3f, int bounces = 0)
+            : base(position)
+        {
+            this.velocity  = velocity;
+            this.color     = color;
+            this.radius    = radius;
+            this.lifetime  = lifetime;
+            this.bouncesLeft = bounces;
+            Collider = new Circle(radius);
+            Add(new PlayerCollider(OnPlayer));
+            Depth = -86500;
+        }
+
+        private void OnPlayer(global::Celeste.Player p) => p.Die((p.Center - Position).SafeNormalize());
+
+        public override void Update()
+        {
+            base.Update();
+            age += Engine.DeltaTime;
+            if (age >= lifetime) { RemoveSelf(); return; }
+
+            Position += velocity * Engine.DeltaTime;
+
+            if (bouncesLeft > 0)
+            {
+                Level lv = SceneAs<Level>();
+                if (lv != null)
+                {
+                    if (Position.X < lv.Bounds.Left  || Position.X > lv.Bounds.Right)  { velocity.X = -velocity.X; bouncesLeft--; }
+                    if (Position.Y < lv.Bounds.Top   || Position.Y > lv.Bounds.Bottom) { velocity.Y = -velocity.Y; bouncesLeft--; }
+                }
+            }
+        }
+
+        public override void Render()
+        {
+            base.Render();
+            float alpha = 1f - Math.Max(0f, (age - lifetime * 0.75f) / (lifetime * 0.25f));
+            Draw.Circle(Position, radius + 2f, color * (alpha * 0.35f), 12);
+            Draw.Circle(Position, radius,       color * alpha,           12);
+            Draw.Circle(Position, radius * 0.4f, Color.White * alpha,    8);
+        }
+    }
+
+    /// <summary>
+    /// Horizontal sweep beam for CosmicSweep: a tall vertical hitbox that travels
+    /// left-to-right across the level bounds over sweepDuration seconds.
+    /// </summary>
+    [Tracked]
+    public class AsrielSweepBeam : Entity
+    {
+        private Level level;
+        private Color color;
+        private float sweepDuration;
+        private float age;
+        private float beamWidth = 18f;
+        private float startX;
+        private float endX;
+
+        public AsrielSweepBeam(Vector2 origin, Level level, Color color, float sweepDuration = 2.5f)
+            : base(origin)
+        {
+            this.level         = level;
+            this.color         = color;
+            this.sweepDuration = sweepDuration;
+            startX = level.Bounds.Left  - beamWidth;
+            endX   = level.Bounds.Right + beamWidth;
+            Position.X = startX;
+            Collider = new Hitbox(beamWidth, level.Bounds.Height, 0f, level.Bounds.Top - origin.Y);
+            Add(new PlayerCollider(OnPlayer));
+            Depth = -86200;
+        }
+
+        private void OnPlayer(global::Celeste.Player p) => p.Die(Vector2.UnitX);
+
+        public override void Update()
+        {
+            base.Update();
+            age += Engine.DeltaTime;
+            float t = Math.Min(age / sweepDuration, 1f);
+            Position.X = MathHelper.Lerp(startX, endX, t);
+            if (t >= 1f) RemoveSelf();
+        }
+
+        public override void Render()
+        {
+            base.Render();
+            float alpha = 1f - Math.Max(0f, (age / sweepDuration - 0.85f) / 0.15f);
+            float camTop    = level.Camera.Top    - 32f;
+            float camBottom = level.Camera.Bottom + 32f;
+            float height    = camBottom - camTop;
+            Draw.Rect(Position.X - beamWidth * 0.5f, camTop, beamWidth * 2f, height, color * (alpha * 0.25f));
+            Draw.Rect(Position.X - beamWidth * 0.25f, camTop, beamWidth * 0.5f, height, color * alpha);
+        }
+    }
+
+    /// <summary>
+    /// Vertical warning column for DivineLightning: a flashing marker shown before the strike.
+    /// </summary>
+    [Tracked]
+    public class AsrielLightningWarning : Entity
+    {
+        private Level level;
+        private float age;
+
+        public AsrielLightningWarning(Vector2 position, Level level) : base(position)
+        {
+            this.level = level;
+            Depth = -86100;
+        }
+
+        public override void Update() { base.Update(); age += Engine.DeltaTime; }
+
+        public override void Render()
+        {
+            base.Render();
+            float flash = ((float)Math.Sin(age * MathHelper.TwoPi * 5f) + 1f) * 0.5f;
+            Color c = Color.Lerp(Color.Orange, Color.White, flash) * 0.7f;
+            float camTop    = level.Camera.Top    - 8f;
+            float camBottom = level.Camera.Bottom + 8f;
+            Draw.Rect(Position.X - 3f, camTop, 6f, camBottom - camTop, c);
+        }
+    }
+
+    /// <summary>
+    /// Full-screen horizontal beam for HyperGoner: a wide persistent hitbox centered
+    /// on the boss Y coordinate that persists until RemoveSelf() is called.
+    /// </summary>
+    [Tracked]
+    public class AsrielHyperBeam : Entity
+    {
+        private Level level;
+        private float age;
+        private const float BeamHalfHeight = 22f;
+
+        public AsrielHyperBeam(Vector2 origin, Level level) : base(origin)
+        {
+            this.level = level;
+            float bLeft  = level.Bounds.Left  - 64f;
+            float bWidth = level.Bounds.Width + 128f;
+            Collider = new Hitbox(bWidth, BeamHalfHeight * 2f, bLeft - origin.X, -BeamHalfHeight);
+            Add(new PlayerCollider(OnPlayer));
+            Depth = -86300;
+        }
+
+        private void OnPlayer(global::Celeste.Player p) => p.Die(Vector2.Zero);
+
+        public override void Update() { base.Update(); age += Engine.DeltaTime; }
+
+        public override void Render()
+        {
+            base.Render();
+            float pulse = ((float)Math.Sin(age * MathHelper.TwoPi * 3f) + 1f) * 0.5f;
+            float camLeft  = level.Camera.Left  - 32f;
+            float camRight = level.Camera.Right + 32f;
+            float width    = camRight - camLeft;
+            // Glow halo
+            Draw.Rect(camLeft, Position.Y - BeamHalfHeight * 2f, width, BeamHalfHeight * 4f,
+                      Color.White * (0.12f + pulse * 0.08f));
+            // Core beam
+            Draw.Rect(camLeft, Position.Y - BeamHalfHeight, width, BeamHalfHeight * 2f,
+                      Color.White * (0.7f + pulse * 0.3f));
+            // Bright center line
+            Draw.Rect(camLeft, Position.Y - 3f, width, 6f, Color.White);
         }
     }
     #endregion

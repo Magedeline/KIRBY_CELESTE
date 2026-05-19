@@ -352,7 +352,7 @@ MAGGY_CREDIT_NO_SPECIAL_THANKS=No Special Thanks
 MAGGY_CREDIT_NO_SPECIAL_THANKS_1=CustomerOn & Cudtok
 MAGGY_CREDIT_NO_SPECIAL_THANKS_2=Fytos
 MAGGY_CREDIT_NO_SPECIAL_THANKS_3=Daxaroodle & Daxcr
-MAGGY_CREDIT_NO_SPECIAL_THANKS_4=and Other People who wern't involved 
+MAGGY_CREDIT_NO_SPECIAL_THANKS_4=and Other People who weren't involved 
 
 # Powered By
 MAGGY_CREDIT_POWERED_BY=Powered By
@@ -562,7 +562,7 @@ Maggy_CSide_18_Heart_C=Core of Existence
 
 Maggy_DSide_01_City_D=Forbidden Metropolis
 Maggy_DSide_02_Nightmare_D=Veil of Shadows
-Maggy_DSide_03_Stars_D=Arrivial
+Maggy_DSide_03_Stars_D=Arrival
 Maggy_DSide_04_Legend_D=Chronicles of Destiny
 Maggy_DSide_05_Restore_D=Fractured Memories
 Maggy_DSide_06_Stronghold_D=Fortress of Solitude
@@ -16748,12 +16748,15 @@ I... I can't {~}MOVE{/~}!
 
 {trigger 4 faded back to black and show the soul of kirby and mad with bad floating in the air}
 
+CH20_ASRIEL_ZERO_STRUGGLE_START=
 []
 you struggle against the overwhelming power of Asriel Zero, but your determination and love for your friends and family keep you going.
 yet you refuse to give up, even as your soul is lifted out of your body and into the afterlife.
 Asriel Zero's power is immense, but your will to live and protect those you care about is stronger.
 How will you overcome this seemingly insurmountable obstacle and save your friends and family from oblivion?
 {trigger 5 save point ui apears}
+
+CH20_ASRIEL_ZERO_CALL_FOR_HELP=
 []
 no that wouldn't work,
 theres has to be a way to save everyone, and stop Asriel Zero from taking you all away, but how?
@@ -16761,24 +16764,67 @@ theres has to be a way to save everyone, and stop Asriel Zero from taking you al
 ... unless...
 I reach out to the abyss and call someone else for help.
 So I Call out for help one last time...
+
+CH20_ASRIEL_ZERO_CALL_MADELINE=
+[KIRBY right desperate]
+{# FFAAFF}Madeline...!{#}
+[Madeline left panic]
+{# AAAAFF}I... I'm here... but I can't reach you...{#}
+
+CH20_ASRIEL_ZERO_CALL_BADELINE=
+[KIRBY right desperate]
+{# FF88FF}Badeline...! Anyone...!{#}
+[BADELINE left sad]
+{# FF00FF}I'm trying... I can't break through his power...!{#}
+
+CH20_ASRIEL_ZERO_CALL_ANYONE=
+[]
 ...
 ...
 ...
 ...
+Is there anyone out there...?
+Anyone at all...?
+
+CH20_ASRIEL_ZERO_CALL_VOID=
+[]
+...
+... I reach out to the deepest darkness... to the void beyond all voids...
 ... THE VOID ANSWERS YOUR CALL!!!
 
 # ====================================================================
 # PHASE 4: ASTRAL BIRTH VOID ANSWERS
 # ====================================================================
-CH20_VOID_ANSWERS=
+
+CH20_ASRIEL_ZERO_VOID_ANSWERS=
 []
 the Void is with you this time, and it has heard your call for help.
-Asriel Soul within him are still in there... Somewhere... Are they?
-... Within the Void, you can feel a presence... a familiar one... a comforting one... Something shaking you out of nowhere...
+Asriel's soul is still within him... somewhere... buried beneath all that darkness.
+... Within the Void, you can feel a presence... a familiar one... a comforting one...
+Something is shaking you out of the abyss...
+
+CH20_ASRIEL_ZERO_VOID_GUIDANCE=
+[]
+The Void speaks without words.
+It shows you the truth: the souls of everyone Asriel absorbed are still alive inside him.
+Lost. Afraid. Forgotten.
+But not gone.
+If you can reach them... if you can remind them who they are...
+... you can save them all.
+... and maybe, just maybe, save Asriel too.
 
 # ====================================================================
 # PHASE 5: LOST SOULS - SAVING EACH CHARACTER
 # ====================================================================
+
+CH20_ASRIEL_ZERO_LOST_SOULS_INTRO=
+[]
+Within the heart of Asriel Zero, countless souls drift in darkness.
+Each one has forgotten who they are... replaced by despair and regret.
+You must reach out to each of them.
+Remind them of who they were.
+Remind them that they are {~}LOVED{/~}.
+Only then can they break free from his grasp.
 
 CH20_ASRIEL_ZERO_LOST_SOUL_=
 []

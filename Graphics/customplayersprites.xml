@@ -393,6 +393,12 @@
     <Loop id="wing_glide"  path="wing/glide"  delay="0.1"  frames="0-1" />
 
     <!-- ──────────────────────────────────────────────────────────────────
+         COMMUNALHELPER ELYTRA MOD COMPATIBILITY
+         anim_player_elytra_fly : Required by CommunalHelper Elytra state
+    ────────────────────────────────────────────────────────────────────── -->
+    <Loop id="anim_player_elytra_fly" path="wing/fly" delay="0.08" frames="0-1" />
+
+    <!-- ──────────────────────────────────────────────────────────────────
          POWER STATE — ARCHER
          archer/idle  : 4 frames (00-03)
          archer/aim   : 5 frames (00-04)

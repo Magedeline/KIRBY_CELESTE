@@ -40,10 +40,7 @@ public static class MountainOverworldManager
     // ── Custom Mountain Models ───────────────────────────────────────────
 
     /// <summary>Base path for Desolo Zantas mountain OBJ models.</summary>
-    private const string MOUNTAIN_MODEL_DIR = "Mountain/Maggy/Celeste";
-
-    /// <summary>Base path for Desolo Zantas alt mirror mountain OBJ models.</summary>
-    private const string MIRROR_MODEL_DIR = "Mountain/Maggy/Mirror";
+    private const string MOUNTAIN_MODEL_DIR = "Mountain/Maggy/Desolo_Zantas";
 
     /// <summary>Whether custom mountain models have been registered.</summary>
     private static bool _modelsRegistered;
@@ -102,10 +99,13 @@ public static class MountainOverworldManager
     /// </summary>
     private static void ApplyMountainCameraData()
     {
+        // Ensure AreaMapData is initialized before accessing its data
+        AreaMapData.Initialize();
+
         if (AreaMapData.Chapters == null || AreaMapData.Chapters.Count == 0)
         {
             Logger.Log(LogLevel.Warn, "MaggyHelper",
-                "MountainOverworld: AreaMapData not initialized yet");
+                "MountainOverworld: AreaMapData has no chapters registered");
             return;
         }
 
@@ -165,52 +165,40 @@ public static class MountainOverworldManager
     {
         if (_modelsRegistered) return;
 
+        // Ensure AreaMapData is initialized before accessing its data
+        AreaMapData.Initialize();
+
         if (AreaMapData.Chapters == null || AreaMapData.Chapters.Count == 0)
             return;
 
         try
         {
-            // Load custom OBJ models from Mountain/Maggy/Celeste/
-            // Prefer mountain_blender (consolidated single-object mesh) over
-            // the raw multi-object mountain.obj for better Celeste compatibility.
-            ObjModel terrain = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "mountain_blender")
-                            ?? TryLoadObjModel(MOUNTAIN_MODEL_DIR, "mountain");
-            ObjModel wall = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "mountain_wall");
-            ObjModel bird = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "bird");
-            ObjModel moon = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "moon");
-            ObjModel buildings = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "buildings");
+            // Load alt mirror models from same directory (Desolo_Zantas serves both)
+            ObjModel mirrorTerrain = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "building")
+                                  ?? TryLoadObjModel(MOUNTAIN_MODEL_DIR, "mountain");
+            ObjModel mirrorWall = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "mountain_wall");
+            ObjModel mirrorBird = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "bird");
+            ObjModel mirrorMoon = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "moon");
+            ObjModel mirrorBuildings = TryLoadObjModel(MOUNTAIN_MODEL_DIR, "buildings");
 
-            // Load alt mirror models from Mountain/Maggy/Mirror/
-            ObjModel mirrorTerrain = TryLoadObjModel(MIRROR_MODEL_DIR, "mountain_blender")
-                                  ?? TryLoadObjModel(MIRROR_MODEL_DIR, "mountain");
-            ObjModel mirrorWall = TryLoadObjModel(MIRROR_MODEL_DIR, "mountain_wall");
-            ObjModel mirrorBird = TryLoadObjModel(MIRROR_MODEL_DIR, "bird");
-            ObjModel mirrorMoon = TryLoadObjModel(MIRROR_MODEL_DIR, "moon");
-            ObjModel mirrorBuildings = TryLoadObjModel(MIRROR_MODEL_DIR, "buildings");
-
-            if (terrain == null)
+            if (mirrorTerrain == null)
             {
                 Logger.Log(LogLevel.Warn, "MaggyHelper",
-                    "MountainOverworld: mountain_blender.obj / mountain.obj not found — skipping model registration");
+                    "MountainOverworld: building.obj / mountain.obj not found — skipping model registration");
                 return;
             }
 
-            // Build mirror resources (falls back to normal models if mirror OBJ not found)
-            bool hasMirror = mirrorTerrain != null;
-            MountainResources mirrorResources = null;
-            if (hasMirror)
+            // Build mirror resources
+            MountainResources mirrorResources = new MountainResources
             {
-                mirrorResources = new MountainResources
-                {
-                    MountainTerrain = mirrorTerrain,
-                    MountainBuildings = mirrorBuildings ?? buildings,
-                    MountainCoreWall = mirrorWall ?? wall,
-                    MountainBird = mirrorBird ?? bird,
-                    MountainMoon = mirrorMoon ?? moon
-                };
-                Logger.Log(LogLevel.Info, "MaggyHelper",
-                    "MountainOverworld: Alt mirror mountain models loaded");
-            }
+                MountainTerrain = mirrorTerrain,
+                MountainBuildings = mirrorBuildings,
+                MountainCoreWall = mirrorWall,
+                MountainBird = mirrorBird,
+                MountainMoon = mirrorMoon
+            };
+            Logger.Log(LogLevel.Info, "MaggyHelper",
+                "MountainOverworld: Alt mirror mountain models loaded");
 
             // Register a MountainResources entry for each chapter SID so the
             // patched MountainModel.BeforeRender draws our geometry.
@@ -227,19 +215,8 @@ public static class MountainOverworldManager
                 if (MTNExt.MountainMappings.ContainsKey(sid))
                     continue; // another mod already registered this SID
 
-                // Use mirror models for B-side chapters, normal for everything else
-                bool isBSide = sid.EndsWith("_B", StringComparison.OrdinalIgnoreCase)
-                    || chapter.MountainState == STATE_DARK;
-                var resources = (isBSide && mirrorResources != null)
-                    ? mirrorResources
-                    : new MountainResources
-                    {
-                        MountainTerrain = terrain,
-                        MountainBuildings = buildings,
-                        MountainCoreWall = wall,
-                        MountainBird = bird,
-                        MountainMoon = moon
-                    };
+                // Use mirror models for all chapters
+                var resources = mirrorResources;
 
                 MTNExt.MountainMappings[sid] = resources;
                 registered++;

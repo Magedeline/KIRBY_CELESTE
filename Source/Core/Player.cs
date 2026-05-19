@@ -947,7 +947,10 @@ namespace Celeste.Entities
 
                 //Highest Air Y
                 if (onGround)
+                {
                     highestAirY = Y;
+                    kirbyFloatTimer = KirbyFloatMaxTime;
+                }
                 else
                     highestAirY = Math.Min(Y, highestAirY);
 
@@ -6321,8 +6324,11 @@ namespace Celeste.Entities
 
         private void KirbyFloatBegin()
         {
-            kirbyFloatTimer = KirbyFloatMaxTime;
-            Speed.Y = KirbyFloatSpeed;
+            if (kirbyFloatTimer <= 0f)
+                kirbyFloatTimer = KirbyFloatMaxTime;
+
+            if (Speed.Y > KirbyFloatSpeed)
+                Speed.Y = KirbyFloatSpeed;
 
             Sprite.Play(PlayerSprite.FallSlow);
             Sprite.Scale = new Vector2(1.2f, .8f);
@@ -6348,6 +6354,13 @@ namespace Celeste.Entities
             // gentle float gravity
             Speed.Y = Calc.Approach(Speed.Y, 20f, KirbyFloatGravity * Engine.DeltaTime);
 
+            // fast-fall: down input exits float immediately
+            if (Input.MoveY.Value > 0)
+            {
+                Speed.Y = 200f;
+                return StNormal;
+            }
+
             // flap on jump press
             if (Input.Jump.Pressed)
             {
@@ -6360,16 +6373,19 @@ namespace Celeste.Entities
                 level.Particles.Emit(P_DashA, 2, BottomCenter, Vector2.UnitX * 4, Calc.Down);
             }
 
-            // land
+            // land — reset float timer so next airtime starts fresh
             if (onGround && Speed.Y >= 0)
+            {
+                kirbyFloatTimer = KirbyFloatMaxTime;
                 return StNormal;
+            }
 
             // time out
             if (kirbyFloatTimer <= 0)
                 return StNormal;
 
-            // cancel with dash
-            if (CanDash)
+            // cancel with dash (only on press)
+            if (Input.Dash.Pressed && CanDash)
                 return StartDash();
 
             // cancel with grab to grab walls

@@ -781,15 +781,8 @@ public static class AreaMapData
         area.Name = chapter.Name;
         area.Icon = ResolveChapterIconPath(chapter);
         area.Interlude_Safe = chapter.IsInterlude;
-        area.MountainState = chapter.MountainState;
-
-        if (chapter.MountainData != null)
-        {
-            area.MountainCursor = chapter.MountainData.Cursor;
-            area.MountainIdle = new MountainCamera(chapter.MountainData.IdlePos, chapter.MountainData.IdleTarget);
-            area.MountainSelect = new MountainCamera(chapter.MountainData.SelectPos, chapter.MountainData.SelectTarget);
-            area.MountainZoom = new MountainCamera(chapter.MountainData.ZoomPos, chapter.MountainData.ZoomTarget);
-        }
+        // Note: MountainState and MountainCamera data are applied by MountainOverworldManager
+        // to avoid duplication and ensure proper hook timing
 
         bool hasAltSides = chapter.HasBSide || chapter.HasCSide || chapter.HasDSide || chapter.HasDXSide;
         if (hasAltSides)
