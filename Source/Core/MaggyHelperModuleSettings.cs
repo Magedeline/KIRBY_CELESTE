@@ -49,6 +49,9 @@ namespace Celeste.Mod.MaggyHelper
         [DefaultButtonBinding(Buttons.LeftTrigger, Keys.F10)]
         public ButtonBinding InGameMapEditor { get; set; }
 
+        [DefaultButtonBinding(0, Keys.P)]
+        public ButtonBinding PCGQuickMenu { get; set; }
+
         #endregion
 
         public bool BossesExampleResetKeysForSession { get; set; }
@@ -111,6 +114,17 @@ namespace Celeste.Mod.MaggyHelper
 
         [SettingIgnore]
         public int LastPlayedSideIndex { get; set; }
+
+        #endregion
+
+        #region PCG Settings
+
+        [SettingSubHeader("MAGGYHELPER_PCG_HEADER")]
+        [SettingRange(1, 20)]
+        [SettingName("MAGGYHELPER_PCG_FADE")]
+        public int PCGWarpFadeDurationTenths { get; set; } = 5;
+
+        public float PCGWarpFadeDuration => PCGWarpFadeDurationTenths / 10f;
 
         #endregion
 

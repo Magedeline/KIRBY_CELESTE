@@ -259,6 +259,12 @@ namespace Celeste.Mod.MaggyHelper
 
             // Initialize Deathlink integration
             global::Celeste.DeathlinkIntegration.Initialize();
+
+            // Hook PCG quick menu keybind
+            On.Celeste.Level.Update += OnLevelUpdate_PCGQuickMenu;
+
+            // Initialize PCG area registrar (CelesteRandomizer-style dynamic area registration)
+            PCGAreaRegistrar.Load();
         }
 
         private static void OnLevelExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow)
@@ -276,6 +282,22 @@ namespace Celeste.Mod.MaggyHelper
         {
             if (level.Tracker.GetEntity<global::Celeste.Mod.MaggyHelper.HotReload.HotReloadController>() == null)
                 level.Add(new global::Celeste.Mod.MaggyHelper.HotReload.HotReloadController());
+        }
+
+        /// <summary>
+        /// Hook to detect PCGQuickMenu keybind while in a level.
+        /// </summary>
+        private static void OnLevelUpdate_PCGQuickMenu(On.Celeste.Level.orig_Update orig, Level self)
+        {
+            orig(self);
+            if (Settings?.PCGQuickMenu?.Pressed ?? false)
+            {
+                if (!self.Paused && self.Tracker.GetEntity<PCGQuickMenu>() == null)
+                {
+                    self.Paused = true;
+                    self.Add(new PCGQuickMenu());
+                }
+            }
         }
 
         public override void Unload()
@@ -301,6 +323,12 @@ namespace Celeste.Mod.MaggyHelper
             Everest.Events.Level.OnExit -= OnLevelExit;
             // Unhook hot-reload controller insertion (matches += in Load)
             Everest.Events.Level.OnLoadLevel -= OnLoadLevel_EnsureHotReloadController;
+
+            // Unhook PCG quick menu keybind
+            On.Celeste.Level.Update -= OnLevelUpdate_PCGQuickMenu;
+
+            // Unload PCG area registrar
+            PCGAreaRegistrar.Unload();
 
             // Reset credits state
             LaunchPart1Credits = false;
@@ -1435,8 +1463,6 @@ namespace Celeste.Mod.MaggyHelper
                 if (Engine.Scene is Level level && level.Session?.MapData?.Filename != null)
                 {
                     mapPath = level.Session.MapData.Filename + ".bin";
-                    // Filename is usually relative like "Maps/Maggy/ASide/01_City"
-                    mapPath = Path.Combine(Everest.Content.Path, mapPath);
                 }
                 else
                 {
@@ -1465,6 +1491,118 @@ namespace Celeste.Mod.MaggyHelper
                 Engine.Commands?.Log("[MaggyHelper] No templates extracted. Check log for errors.");
             }
         }
+
+        /// <summary>
+        /// Console command: maggy_pcg_inspect - Dump a .bin map to a human-readable JSON file.
+        /// Usage: maggy_pcg_inspect [mapPath] [outputJsonPath]
+        /// </summary>
+        [Command("maggy_pcg_inspect", "Inspect a .bin map as JSON. Usage: maggy_pcg_inspect [mapPath] [outputJsonPath]")]
+        private static void CmdPcgInspect(string mapPath = "", string outputJsonPath = "")
+        {
+            if (string.IsNullOrEmpty(mapPath))
+            {
+                // Default to latest generated map
+                var generatedDir = "PCG/Generated";
+                if (Directory.Exists(generatedDir))
+                {
+                    var newest = Directory.GetFiles(generatedDir, "*.bin")
+                        .Select(f => new FileInfo(f))
+                        .OrderByDescending(fi => fi.LastWriteTime)
+                        .FirstOrDefault();
+                    if (newest != null)
+                        mapPath = newest.FullName;
+                }
+            }
+
+            if (string.IsNullOrEmpty(mapPath) || !File.Exists(mapPath))
+            {
+                Engine.Commands?.Log("[MaggyHelper] No map found. Provide a path or generate one first with maggy_pcg_generate.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(outputJsonPath))
+            {
+                outputJsonPath = Path.ChangeExtension(mapPath, ".inspect.json");
+            }
+
+            try
+            {
+                var root = BinaryPacker.FromBinary(mapPath);
+                if (root == null)
+                {
+                    Engine.Commands?.Log("[MaggyHelper] Failed to parse map binary.");
+                    return;
+                }
+
+                var tree = SerializeElement(root);
+                var json = System.Text.Json.JsonSerializer.Serialize(tree, new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase
+                });
+
+                Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(outputJsonPath)));
+                File.WriteAllText(outputJsonPath, json);
+                Engine.Commands?.Log($"[MaggyHelper] Map dumped to JSON: {Path.GetFullPath(outputJsonPath)}");
+                Engine.Commands?.Log($"  Levels: {(root.Children?.FirstOrDefault(c => c.Name == "levels")?.Children?.Count ?? 0)}");
+            }
+            catch (Exception ex)
+            {
+                Engine.Commands?.Log($"[MaggyHelper] Inspect failed: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Recursively convert a BinaryPacker.Element into a serializable dictionary tree.
+        /// </summary>
+        public static Dictionary<string, object> SerializeElement(BinaryPacker.Element element)
+        {
+            var dict = new Dictionary<string, object>();
+            if (element == null) return dict;
+
+            dict["name"] = element.Name ?? "";
+            if (element.Attributes != null && element.Attributes.Count > 0)
+            {
+                var attrs = new Dictionary<string, object>();
+                foreach (var kv in element.Attributes)
+                {
+                    object val = kv.Value;
+                    if (val is BinaryPacker.Element childEl)
+                        val = SerializeElement(childEl);
+                    else if (val is System.Collections.IEnumerable enumerable && val is not string)
+                    {
+                        var list = new List<object>();
+                        foreach (var item in enumerable)
+                        {
+                            if (item is BinaryPacker.Element itemEl)
+                                list.Add(SerializeElement(itemEl));
+                            else
+                                list.Add(item?.ToString());
+                        }
+                        val = list;
+                    }
+                    else
+                    {
+                        val = val?.ToString() ?? "";
+                    }
+                    attrs[kv.Key] = val;
+                }
+                dict["attributes"] = attrs;
+            }
+            if (element.Children != null && element.Children.Count > 0)
+            {
+                var children = new List<Dictionary<string, object>>();
+                foreach (var child in element.Children)
+                    children.Add(SerializeElement(child));
+                dict["children"] = children;
+            }
+            return dict;
+        }
+
+        /// <summary>
+        /// Public static wrapper for external callers.
+        /// </summary>
+        public static Dictionary<string, object> SerializeElementStatic(BinaryPacker.Element element) => SerializeElement(element);
 
         /// <summary>
         /// Checks if Chapter 10 (Ruins) is unlocked.
