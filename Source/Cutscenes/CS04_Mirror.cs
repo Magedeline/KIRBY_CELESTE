@@ -40,7 +40,7 @@ namespace Celeste.Cutscenes
             this.sfx.Position = this.mirror.Center;
             
             this.direction = Math.Sign(this.player.X - this.mirror.X);
-            this.player.StateMachine.State = 11;
+            this.player.StateMachine.State = Player.StDummy;
             this.playerEndX = 8 * this.direction;
             
             // Pre-intro dialog - Badeline talking about the place
@@ -62,7 +62,7 @@ namespace Celeste.Cutscenes
             yield return 0.5f;
             
             // Play sound effect when breaking the mirror
-            this.sfx.Play("event:/desolozantas/music/lvl4/dreamblock_sting_pt1");
+            this.sfx.Play("event:/desolo_zantas/music/lvl4/dreamblock_sting_pt1");
             yield return this.mirror.BreakRoutine(this.direction);
             
             // Ralsei freed dialog
@@ -157,7 +157,7 @@ namespace Celeste.Cutscenes
             global::Celeste.Player entity1 = this.Scene?.Tracker?.GetEntity<global::Celeste.Player>();
             if (entity1 != null)
             {
-                entity1.StateMachine.State = 0;
+                entity1.StateMachine.State = Player.StNormal;
                 entity1.DummyAutoAnimate = true;
                 entity1.Speed = Vector2.Zero;
                 entity1.X = this.mirror.X + this.playerEndX;
@@ -190,7 +190,7 @@ namespace Celeste.Cutscenes
 
             level.ResetZoom();
             level.Session.Inventory.DreamDash = true;
-            level.Session.Audio.Music.Event = "event:/desolozantas/music/lvl4/alliances";
+            level.Session.Audio.Music.Event = "event:/desolo_zantas/music/lvl4/alliances";
             level.Session.Audio.Apply();
         }
     }

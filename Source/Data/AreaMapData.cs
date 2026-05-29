@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Celeste.Cutscenes;
+using Celeste.Mod.Meta;
 using Microsoft.Xna.Framework;
 using Monocle;
 
@@ -75,8 +76,15 @@ public static class AreaMapData
         /// <summary>Mountain camera data</summary>
         public MountainCameraData MountainData { get; set; }
 
-        /// <summary>3D overworld state index (0=normal, 1=dark, etc.)</summary>
+        /// <summary>3D overworld state index (0=normal, 1=dark, 2=void)</summary>
         public int MountainState { get; set; }
+
+        /// <summary>
+        /// Optional override for the mountain model/texture directory used by
+        /// MountainOverworldManager when registering this chapter's MountainResources.
+        /// Null means use the shared default (Mountain/Maggy/Desolo_Zantas).
+        /// </summary>
+        public string MountainModelDir { get; set; }
     }
 
     /// <summary>Camera positions for the 3D mountain overworld per chapter.</summary>
@@ -142,8 +150,8 @@ public static class AreaMapData
             Icon = "areas/prologue",
             IsInterlude = true,
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
-            MusicEvents = new[] { "event:/desolozantas/music/lvl0/intro" },
-            AmbienceEvents = new[] { "event:/desolozantas/env/00_prologue" },
+            MusicEvents = new[] { "event:/desolo_zantas/music/lvl0/intro" },
+            AmbienceEvents = new[] { "event:/desolo_zantas/env/00_prologue" },
             MountainState = 0,
             MountainData = new MountainCameraData
             {
@@ -214,7 +222,7 @@ public static class AreaMapData
         // ── Chapter 7: Infernal Reflections ──
         // Image 5: position=(9.626, 8.824, -4.140) target=(7.924, 8.240, -3.267)
         RegisterStandardChapter(7, "infornoreflection", "07_Hell",
-            "areas/hell", 1,
+            "areas/hell", MountainOverworldManager.STATE_DARK,
             idle:   (new Vector3( 9.626f,  8.824f, -2.540f), new Vector3( 7.924f,  8.240f, -1.667f)),
             select: (new Vector3( 9.626f,  8.824f, -4.140f), new Vector3( 7.924f,  8.240f, -3.267f)),
             zoom:   (new Vector3( 9.993f,  8.462f, -5.146f), new Vector3( 8.291f,  7.878f, -4.273f)),
@@ -265,7 +273,7 @@ public static class AreaMapData
 
         // ── Chapter 13: Blazing Territories ──
         RegisterStandardChapter(13, "balzingteritory", "13_Fire",
-            "areas/fire", 1,
+            "areas/fire", MountainOverworldManager.STATE_DARK,
             idle:   (new Vector3(-1.583f, 19.949f, 10.635f), new Vector3(-1.590f, 19.376f,  8.163f)),
             select: (new Vector3(-1.583f, 19.949f, 10.035f), new Vector3(-1.590f, 19.376f,  7.563f)),
             zoom:   (new Vector3(-1.216f, 19.587f,  9.029f), new Vector3(-1.223f, 19.014f,  6.557f)),
@@ -297,9 +305,9 @@ public static class AreaMapData
             Icon = "areas/corruption",
             IsInterlude = false,
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
-            MusicEvents = new[] { "event:/desolozantas/music/lvl16/cinematic/intro01" },
-            AmbienceEvents = new[] { "event:/desolozantas/env/16_myworld" },
-            MountainState = 1,
+            MusicEvents = new[] { "event:/desolo_zantas/music/lvl16/cinematic/intro01" },
+            AmbienceEvents = new[] { "event:/desolo_zantas/env/16_myworld" },
+            MountainState = MountainOverworldManager.STATE_DARK,
             MountainData = new MountainCameraData
             {
                 IdlePos    = new Vector3(-1.916f, 33.050f, 11.185f),
@@ -322,8 +330,8 @@ public static class AreaMapData
             Icon = "areas/epilogue",
             IsInterlude = true,
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
-            MusicEvents = new[] { "event:/desolozantas/music/lvl17/main" },
-            AmbienceEvents = new[] { "event:/desolozantas/env/00_main" },
+            MusicEvents = new[] { "event:/desolo_zantas/music/lvl17/main" },
+            AmbienceEvents = new[] { "event:/desolo_zantas/env/00_main" },
             MountainState = 0,
             MountainData = new MountainCameraData
             {
@@ -339,7 +347,7 @@ public static class AreaMapData
 
         // ── Chapter 18: Core of Existence ──
         RegisterStandardChapter(18, "coreexistence", "18_Heart",
-            "areas/heart", 1,
+            "areas/heart", MountainOverworldManager.STATE_DARK,
             idle:   (new Vector3(-1.916f, 37.850f, 11.185f), new Vector3(-1.479f, 37.738f,  9.236f)),
             select: (new Vector3(-1.916f, 37.850f,  9.585f), new Vector3(-1.479f, 37.738f,  7.636f)),
             zoom:   (new Vector3(-1.549f, 37.488f,  8.579f), new Vector3(-1.112f, 37.376f,  6.630f)),
@@ -354,9 +362,9 @@ public static class AreaMapData
             Icon = "areas/space",
             IsInterlude = false,
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
-            MusicEvents = new[] { "event:/desolozantas/music/lvl18/main" },
-            AmbienceEvents = new[] { "event:/desolozantas/env/18_main" },
-            MountainState = 0,
+            MusicEvents = new[] { "event:/desolo_zantas/music/lvl18/main" },
+            AmbienceEvents = new[] { "event:/desolo_zantas/env/18_main" },
+            MountainState = MountainOverworldManager.STATE_VOID,
             MountainData = new MountainCameraData
             {
                 IdlePos    = new Vector3(-1.916f, 40.250f, 11.185f),
@@ -380,7 +388,7 @@ public static class AreaMapData
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
             MusicEvents = new[] { "event:/" },
             AmbienceEvents = new[] { "event:/" },
-            MountainState = 1,
+            MountainState = MountainOverworldManager.STATE_DARK,
             MountainData = new MountainCameraData
             {
                 IdlePos    = new Vector3(-1.916f, 42.650f, 11.185f),
@@ -500,7 +508,7 @@ public static class AreaMapData
         Vector3 cursor)
     {
         string numStr = number.ToString("D2");
-        string mainMusic = $"event:/desolozantas/music/lvl{numStr}/main";
+        string mainMusic = $"event:/desolo_zantas/music/lvl{numStr}/main";
         string ambience = GetStandardAmbienceEvent(number);
 
         Register(new ChapterDef
@@ -549,20 +557,20 @@ public static class AreaMapData
     {
         return chapterNumber switch
         {
-            2 => "event:/desolozantas/env/02_awake",
-            4 => "event:/desolozantas/env/04_awake",
-            5 => "event:/desolozantas/env/05_exterior",
-            7 => "event:/desolozantas/env/07_interior_main",
-            8 => "event:/desolozantas/env/08_main",
-            9 => "event:/desolozantas/env/09_summit",
-            10 => "event:/desolozantas/env/10_ruins",
-            11 => "event:/desolozantas/env/11_snow_daytime",
-            12 => "event:/desolozantas/env/12_waterfall",
-            13 => "event:/desolozantas/env/13_factory",
-            14 => "event:/desolozantas/env/14_digital",
-            15 => "event:/desolozantas/env/15_castle",
-            18 => "event:/desolozantas/env/18_main",
-            _ => $"event:/desolozantas/env/{chapterNumber:D2}_main"
+            2 => "event:/desolo_zantas/env/02_awake",
+            4 => "event:/desolo_zantas/env/04_awake",
+            5 => "event:/desolo_zantas/env/05_exterior",
+            7 => "event:/desolo_zantas/env/07_interior_main",
+            8 => "event:/desolo_zantas/env/08_main",
+            9 => "event:/desolo_zantas/env/09_summit",
+            10 => "event:/desolo_zantas/env/10_ruins",
+            11 => "event:/desolo_zantas/env/11_snow_daytime",
+            12 => "event:/desolo_zantas/env/12_waterfall",
+            13 => "event:/desolo_zantas/env/13_factory",
+            14 => "event:/desolo_zantas/env/14_digital",
+            15 => "event:/desolo_zantas/env/15_castle",
+            18 => "event:/desolo_zantas/env/18_main",
+            _ => $"event:/desolo_zantas/env/{chapterNumber:D2}_main"
         };
     }
 
@@ -787,8 +795,23 @@ public static class AreaMapData
         area.Name = chapter.Name;
         area.Icon = ResolveChapterIconPath(chapter);
         area.Interlude_Safe = chapter.IsInterlude;
-        // Note: MountainState and MountainCamera data are applied by MountainOverworldManager
-        // to avoid duplication and ensure proper hook timing
+
+        // Build and apply a vanilla MapMeta so the Everest meta pipeline is
+        // exercised for overworld cameras, fog, audio state, and mode properties.
+        // This makes DZ chapters behave identically to vanilla/Everest-modded chapters.
+        MapMeta meta = BuildMapMeta(chapter, area);
+        meta.ApplyTo(area);
+
+        // Hard-override mountain cameras and state after ApplyTo so our code-defined
+        // positions always win over anything already stored in area.Meta at load time.
+        if (chapter.MountainData != null)
+        {
+            area.MountainCursor = chapter.MountainData.Cursor;
+            area.MountainIdle   = new MountainCamera(chapter.MountainData.IdlePos,   chapter.MountainData.IdleTarget);
+            area.MountainSelect = new MountainCamera(chapter.MountainData.SelectPos, chapter.MountainData.SelectTarget);
+            area.MountainZoom   = new MountainCamera(chapter.MountainData.ZoomPos,   chapter.MountainData.ZoomTarget);
+        }
+        area.MountainState = chapter.MountainState;
 
         bool hasAltSides = chapter.HasBSide || chapter.HasCSide || chapter.HasDSide || chapter.HasDXSide;
         if (hasAltSides)
@@ -804,6 +827,69 @@ public static class AreaMapData
                 $"ApplyHardcodedRuntimeData: '{area.SID}' is A-Side only");
             EnsureASideMode(area, chapter);
         }
+    }
+
+    /// <summary>
+    /// Constructs a vanilla <see cref="MapMeta"/> from a <see cref="ChapterDef"/> so that
+    /// Everest's standard <c>MapMeta.ApplyTo</c> pipeline is exercised for this chapter.
+    /// This covers mountain cameras, fog/star colors, audio state, and mode properties —
+    /// matching exactly how vanilla Celeste chapters and Everest YAML mods work.
+    /// </summary>
+    private static MapMeta BuildMapMeta(ChapterDef chapter, AreaData area)
+    {
+        // ── Mountain (overworld 3-D model / cameras / fog) ────────────────
+        MapMetaMountain mountain = null;
+        if (chapter.MountainData != null)
+        {
+            mountain = new MapMetaMountain
+            {
+                State = chapter.MountainState,
+                ShowSnow = true,
+
+                Idle = new MapMetaMountainCamera
+                {
+                    Position = new[] { chapter.MountainData.IdlePos.X,   chapter.MountainData.IdlePos.Y,   chapter.MountainData.IdlePos.Z },
+                    Target   = new[] { chapter.MountainData.IdleTarget.X, chapter.MountainData.IdleTarget.Y, chapter.MountainData.IdleTarget.Z }
+                },
+                Select = new MapMetaMountainCamera
+                {
+                    Position = new[] { chapter.MountainData.SelectPos.X,   chapter.MountainData.SelectPos.Y,   chapter.MountainData.SelectPos.Z },
+                    Target   = new[] { chapter.MountainData.SelectTarget.X, chapter.MountainData.SelectTarget.Y, chapter.MountainData.SelectTarget.Z }
+                },
+                Zoom = new MapMetaMountainCamera
+                {
+                    Position = new[] { chapter.MountainData.ZoomPos.X,   chapter.MountainData.ZoomPos.Y,   chapter.MountainData.ZoomPos.Z },
+                    Target   = new[] { chapter.MountainData.ZoomTarget.X, chapter.MountainData.ZoomTarget.Y, chapter.MountainData.ZoomTarget.Z }
+                },
+
+                Cursor = new[] { chapter.MountainData.Cursor.X, chapter.MountainData.Cursor.Y, chapter.MountainData.Cursor.Z },
+
+                // DZ fog palette — deep space/indigo theme
+                FogColors = new[]
+                {
+                    "0d0a1f", // normal
+                    "050310", // dark
+                    "040d1a", // void
+                    "0d0a1f"  // summit
+                },
+                StarFogColor    = "040d1a",
+                StarStreamColors = new[] { "000000", "9228e2", "30ffff" },
+                StarBeltColors1  = new[] { "ffb8e6", "c8b8ff" },
+                StarBeltColors2  = new[] { "80ffff", "b8ffff" },
+
+                BackgroundMusic   = chapter.MusicEvents?.Length > 0 ? chapter.MusicEvents[0] : null,
+                BackgroundAmbience = chapter.AmbienceEvents?.Length > 0 ? chapter.AmbienceEvents[0] : null,
+            };
+        }
+
+        return new MapMeta
+        {
+            Interlude         = chapter.IsInterlude,
+            Dreaming          = false,
+            CassetteSong      = chapter.CassetteSong,
+            Mountain          = mountain,
+            OverrideASideMeta = false,
+        };
     }
 
     private static bool HasGuiTexture(string path)

@@ -40,7 +40,7 @@ public class StarJumpCutsceneControlV2 : Entity
         : base(data.Position + offset)
     {
         // Configurable properties from Loenn
-        musicEvent = data.Attr("musicEvent", "event:/desolozantas/music/lvl8/starjump");
+        musicEvent = data.Attr("musicEvent", "event:/desolo_zantas/music/lvl8/starjump");
         cutsceneFlag = data.Attr("cutsceneFlag", CS08_StarJumpEnd.Flag);
         triggerHeight = data.Float("triggerHeight", 32f);
         triggerWidth = data.Float("triggerWidth", 64f);
@@ -149,7 +149,7 @@ public class StarJumpCutsceneControlV2 : Entity
         
         // Now set up for the star fly cutscene
         player.Speed = new Vector2(0f, -80f);  // Upward momentum matching cutscene
-        player.StateMachine.State = 19;  // StStarFly state
+        player.StateMachine.State = Player.StStarFly;  // StStarFly state
         player.Sprite.Play("fallSlow", false, false);  // Match cutscene animation
         player.Dashes = 1;
         player.Facing = Facings.Right;
@@ -222,7 +222,7 @@ public class StarJumpCutsceneControlV2 : Entity
                 else
                     this.CameraOffsetTimer = 0.0f;
             }
-            else if (entity.StateMachine.State == 19)
+            else if (entity.StateMachine.State == Player.StStarFly)
             {
                 this.CameraOffsetTimer += Engine.DeltaTime;
                 if ((double)this.CameraOffsetTimer >= 0.10000000149011612)

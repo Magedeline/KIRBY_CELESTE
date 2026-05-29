@@ -25,7 +25,7 @@ public class CS09_Arrivial : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IEnumerator Cutscene(Level level)
     {
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.Speed = Vector2.Zero;
 
         yield return 0.35f;
@@ -89,6 +89,6 @@ public class CS09_Arrivial : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void OnEnd(Level level)
     {
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
     }
 }

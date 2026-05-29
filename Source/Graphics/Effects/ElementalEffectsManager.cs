@@ -427,24 +427,24 @@ namespace Celeste.Effects
             PlayEffect(effectId, level, position);
         }
 
+        private static readonly Dictionary<(ElementType, ElementType), string> comboEffects = new Dictionary<(ElementType, ElementType), string>
+        {
+            { (ElementType.Fire, ElementType.Ice), "steam_explosion" },
+            { (ElementType.Ice, ElementType.Fire), "steam_explosion" },
+            { (ElementType.Lightning, ElementType.Ice), "ice_lightning" },
+            { (ElementType.Ice, ElementType.Lightning), "ice_lightning" },
+            { (ElementType.Fire, ElementType.Earth), "lava_eruption" },
+            { (ElementType.Earth, ElementType.Fire), "lava_eruption" },
+            { (ElementType.Wind, ElementType.Fire), "fire_tornado" },
+            { (ElementType.Fire, ElementType.Wind), "fire_tornado" },
+            { (ElementType.Light, ElementType.Dark), "twilight_blast" },
+            { (ElementType.Dark, ElementType.Light), "twilight_blast" },
+        };
+
         private static string GetComboEffectId(ElementType element1, ElementType element2)
         {
-            // Define combination effects
-            var combos = new Dictionary<(ElementType, ElementType), string>
-            {
-                { (ElementType.Fire, ElementType.Ice), "steam_explosion" },
-                { (ElementType.Ice, ElementType.Fire), "steam_explosion" },
-                { (ElementType.Lightning, ElementType.Ice), "ice_lightning" },
-                { (ElementType.Ice, ElementType.Lightning), "ice_lightning" },
-                { (ElementType.Fire, ElementType.Earth), "lava_eruption" },
-                { (ElementType.Earth, ElementType.Fire), "lava_eruption" },
-                { (ElementType.Wind, ElementType.Fire), "fire_tornado" },
-                { (ElementType.Fire, ElementType.Wind), "fire_tornado" },
-                { (ElementType.Light, ElementType.Dark), "twilight_blast" },
-                { (ElementType.Dark, ElementType.Light), "twilight_blast" },
-            };
-
-            return combos.ContainsKey((element1, element2)) ? combos[(element1, element2)] : null;
+            comboEffects.TryGetValue((element1, element2), out string comboId);
+            return comboId;
         }
     }
 

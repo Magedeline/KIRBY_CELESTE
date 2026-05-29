@@ -249,10 +249,10 @@ namespace Celeste.Cutscenes
             level.AllowHudHide     = false;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
 
             Audio.SetAmbience(null, true);
-            Audio.SetMusic("event:/desolozantas/music/menu/dodge_credit");
+            Audio.SetMusic("event:/desolo_zantas/music/menu/dodge_credit");
 
             Add(new Coroutine(RunSequence(level)));
         }
@@ -309,7 +309,7 @@ namespace Celeste.Cutscenes
             level.AllowHudHide     = true;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
 
             // Chain into the branching final cutscenes
             level.Add(new CS21_FinalCutscenes(player));

@@ -17,11 +17,11 @@ namespace Celeste.Effects
         public static ParticleType P_MistyCold;
 
         // Audio events
-        public const string SFX_ICE_FREEZE = "event:/desolozantas/ice/freeze";
-        public const string SFX_ICE_SHATTER = "event:/desolozantas/ice/shatter";
-        public const string SFX_ICE_CRYSTALLIZE = "event:/desolozantas/ice/crystallize";
-        public const string SFX_ICE_BLIZZARD = "event:/desolozantas/ice/blizzard";
-        public const string SFX_ICE_CRACK = "event:/desolozantas/ice/crack";
+        public const string SFX_ICE_FREEZE = "event:/desolo_zantas/ice/freeze";
+        public const string SFX_ICE_SHATTER = "event:/desolo_zantas/ice/shatter";
+        public const string SFX_ICE_CRYSTALLIZE = "event:/desolo_zantas/ice/crystallize";
+        public const string SFX_ICE_BLIZZARD = "event:/desolo_zantas/ice/blizzard";
+        public const string SFX_ICE_CRACK = "event:/desolo_zantas/ice/crack";
 
         private static readonly Dictionary<Entity, FreezeEffect> frozenEntities = new Dictionary<Entity, FreezeEffect>();
 
@@ -414,7 +414,7 @@ namespace Celeste.Effects
                 // Add a delayed damage effect
                 player.Scene.Add(new IceDamageDelay(player, 1f));
             }
-            else if (entity.GetType().Name.Contains("Enemy"))
+            else if (entity is global::Celeste.Entities.Enemy)
             {
                 FreezeEntity(entity, 2f);
             }
@@ -439,6 +439,8 @@ namespace Celeste.Effects
         /// <summary>
         /// Update frozen entities (call this from the level update) - Optimized
         /// </summary>
+        private static readonly List<Entity> toRemoveFrozen = new List<Entity>();
+
         public static void UpdateFrozenEntities()
         {
             // Throttle updates to reduce performance impact
@@ -448,17 +450,17 @@ namespace Celeste.Effects
                 
             lastUpdateTime = currentTime;
             
-            var toRemove = new List<Entity>();
+            toRemoveFrozen.Clear();
             
             foreach (var kvp in frozenEntities)
             {
                 if (kvp.Key.Scene == null || kvp.Value.Update())
                 {
-                    toRemove.Add(kvp.Key);
+                    toRemoveFrozen.Add(kvp.Key);
                 }
             }
             
-            foreach (var entity in toRemove)
+            foreach (var entity in toRemoveFrozen)
             {
                 if (frozenEntities.ContainsKey(entity))
                 {

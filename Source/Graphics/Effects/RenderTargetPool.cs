@@ -64,13 +64,13 @@ namespace Celeste.Effects.ShaderEffects
             {
                 foreach (var rt in kv.Value)
                 {
-                    try { rt.Dispose(); } catch { }
+                    try { rt.Dispose(); } catch (Exception ex) { Logger.Log(LogLevel.Warn, "RenderTargetPool", $"Failed to dispose render target: {ex.Message}"); }
                 }
             }
 
             foreach (var rt in checkedOut)
             {
-                try { rt.Dispose(); } catch { }
+                try { rt.Dispose(); } catch (Exception ex) { Logger.Log(LogLevel.Warn, "RenderTargetPool", $"Failed to dispose render target: {ex.Message}"); }
             }
 
             pool.Clear();

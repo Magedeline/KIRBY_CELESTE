@@ -29,7 +29,7 @@ public class Cs07PreIngeste : CutsceneEntity
     {
         if (player?.StateMachine == null) yield break;
 
-        player.StateMachine.State = 11; // Dummy state
+        player.StateMachine.State = Player.StDummy; // Dummy state
         yield return 0.5f;
 
         // Spawn Badeline floating near Kirby
@@ -74,7 +74,7 @@ public class Cs07PreIngeste : CutsceneEntity
     public override void OnEnd(Level level)
     {
         if (player != null)
-            player.StateMachine.State = 11; // Normal state
+            player.StateMachine.State = Player.StDummy; // Normal state
 
         // Clean up companions if cutscene was skipped
         if (badeline?.Scene != null)

@@ -46,7 +46,7 @@ public class CS_Powerup : CutsceneEntity
       this.player = ((Entity) this).Scene.Tracker.GetEntity<Player>();
       yield return (object) null;
     }
-    this.player.StateMachine.State = 11;
+    this.player.StateMachine.State = Player.StDummy;
     this.player.StateMachine.Locked = true;
     this.player.ForceCameraUpdate = true;
     ((Entity) this.player).Position = Calc.Floor(((Entity) this.player).Position);
@@ -222,7 +222,7 @@ public class CS_Powerup : CutsceneEntity
     if (this.player == null)
       this.player = ((Entity) this).Scene.Tracker.GetEntity<Player>();
     this.player.StateMachine.Locked = false;
-    this.player.StateMachine.State = 0;
+    this.player.StateMachine.State = Player.StNormal;
     if (this.WasSkipped)
       ((Entity) this.player).Position = level.Session.RespawnPoint.Value;
     this.player.Speed.Y = 0.0f;

@@ -55,7 +55,7 @@ public class Cs08CharaBossEnd : CutsceneEntity
 
     private IEnumerator Cutscene(Level level)
     {
-        this.player.StateMachine.State = 11;
+        this.player.StateMachine.State = Player.StDummy;
         this.player.StateMachine.Locked = true;
         while (!this.player.OnGround(1))
         {
@@ -64,7 +64,7 @@ public class Cs08CharaBossEnd : CutsceneEntity
         this.player.Facing = Facings.Right;
         yield return 1f;
         Level level2 = base.SceneAs<Level>();
-        level2.Session.Audio.Music.Event = "event:/desolozantas/music/lvl8/chara_acoustic";
+        level2.Session.Audio.Music.Event = "event:/desolo_zantas/music/lvl8/chara_acoustic";
         level2.Session.Audio.Apply(false);
         yield return Textbox.Say("CH8_CHARA_BOSS_ENDING",
         [
@@ -122,7 +122,7 @@ public class Cs08CharaBossEnd : CutsceneEntity
     private IEnumerator StartMusic()
     {
         Level level = base.SceneAs<Level>();
-        level.Session.Audio.Music.Event = "event:/desolozantas/music/lvl8/chara_acoustic";
+        level.Session.Audio.Music.Event = "event:/desolo_zantas/music/lvl8/chara_acoustic";
         level.Session.Audio.Apply(false);
         yield return 0.5f;
         yield break;
@@ -202,25 +202,13 @@ public class Cs08CharaBossEnd : CutsceneEntity
         Audio.SetParameter(Audio.CurrentAmbienceEventInstance, "charapostboss", 0f);
         level.ResetZoom();
         level.Session.Inventory.Dashes = 5;
-        level.Session.Audio.Music.Event = "event:/desolozantas/music/lvl8/chara_acoustic";
+        level.Session.Audio.Music.Event = "event:/desolo_zantas/music/lvl8/chara_acoustic";
         if (this.WasSkipped)
         {
             level.Session.Audio.Music.Param("levelup", 2f);
         }
         level.Session.Audio.Apply(false);
         if (this.WasSkipped)
-        {
-            level.Add(new LevelUpEffect(this.player.Position));
-        }
-        this.player.DummyAutoAnimate = true;
-        this.player.StateMachine.Locked = false;
-        this.player.StateMachine.State = 0;
-        CharaBossStarfield charaBossStarfield = this.Level.Background.Get<CharaBossStarfield>();
-        if (charaBossStarfield != null)
-        {
-            charaBossStarfield.Alpha = 0f;
-        }
-        this.chara.RemoveSelf();
         level.Session.SetFlag("chara_connection", true);
     }
 

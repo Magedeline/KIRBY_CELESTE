@@ -28,7 +28,7 @@ namespace Celeste.Cutscenes
     private IEnumerator routine()
     {
       var cs02Journal = this;
-      cs02Journal.player.StateMachine.State = 11;
+      cs02Journal.player.StateMachine.State = Player.StDummy;
       cs02Journal.player.StateMachine.Locked = true;
       if (!cs02Journal.Level.Session.GetFlag("poem_read"))
       {
@@ -54,7 +54,7 @@ namespace Celeste.Cutscenes
         public override void OnEnd(Level level)
     {
       player.StateMachine.Locked = false;
-      player.StateMachine.State = 0;
+      player.StateMachine.State = Player.StNormal;
       level.Session.SetFlag("poem_read");
       if (poem == null)
         return;

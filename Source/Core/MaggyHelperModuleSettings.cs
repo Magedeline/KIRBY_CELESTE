@@ -2,6 +2,11 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Celeste.Mod.MaggyHelper
 {
+    /// <summary>
+    /// Persistent settings for MaggyHelper mod.
+    /// Includes: Hot reload config, key bindings, boss/Kirby settings,
+    /// overworld 3D preferences, area data display options.
+    /// </summary>
     public class MaggyHelperModuleSettings : EverestModuleSettings
     {
         #region Hot Reload Settings (Development)
@@ -49,5 +54,70 @@ namespace Celeste.Mod.MaggyHelper
         public bool DebugMode { get; set; }
         public bool SkipModIntro { get; set; }
         public bool HasSeenIntroWarning { get; set; }
+
+        #region Overworld 3D Settings
+
+        [SettingSubHeader("MAGGYHELPER_OVERWORLD_HEADER")]
+        public bool EnableCustomMountainModels { get; set; } = true;
+
+        public bool LockMountainCameraRotation { get; set; } = true;
+
+        public bool SmoothCameraTransitions { get; set; } = true;
+
+        public bool EnableMountainFogEffects { get; set; } = true;
+
+        public bool ShowChapterPreviewInOverworld { get; set; } = true;
+
+        [SettingRange(0, 2)]
+        public int DefaultMountainStateOverride { get; set; } = 0;
+
+        #endregion
+
+        #region Area Data Display Settings
+
+        [SettingSubHeader("MAGGYHELPER_AREADATA_HEADER")]
+        public bool ShowSideUnlockNotifications { get; set; } = true;
+
+        public bool ShowChapterMasteryOnPanel { get; set; } = true;
+
+        public bool EnableCosmicBackgroundEffect { get; set; } = true;
+
+        public bool ShowDSideDXSideInMenu { get; set; } = true;
+
+        [SettingRange(0, 5)]
+        public int ChapterDisplayMode { get; set; } = 0;
+
+        #endregion
+
+        #region Chapter Progression Settings
+
+        [SettingSubHeader("MAGGYHELPER_PROGRESSION_HEADER")]
+        public bool EnableLateChapterUnlockFlow { get; set; } = true;
+
+        public bool AutoUnlockBSides { get; set; } = false;
+
+        public bool AutoUnlockCSides { get; set; } = false;
+
+        public bool EnableCassetteCollectibles { get; set; } = true;
+
+        [SettingIgnore]
+        public string LastPlayedChapterSID { get; set; }
+
+        [SettingIgnore]
+        public int LastPlayedSideIndex { get; set; }
+
+        #endregion
+
+        #region Mod Integration Settings
+
+        [SettingSubHeader("MAGGYHELPER_INTEGRATIONS_HEADER")]
+        [SettingName("MAGGYHELPER_DEATHLINK_DAMAGE")]
+        public bool DeathlinkDamageEnabled
+        {
+            get => global::Celeste.DeathlinkIntegration.IsDamageModeEnabled();
+            set => global::Celeste.DeathlinkIntegration.SetDamageModeEnabled(value);
+        }
+
+        #endregion
     }
 }

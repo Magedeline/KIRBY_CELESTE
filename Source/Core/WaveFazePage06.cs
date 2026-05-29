@@ -29,7 +29,8 @@ namespace Celeste
 
         public override void Render()
         {
-            Presentation.Gfx["Dog Clip Art"].DrawCentered(new Vector2(Width, Height) / 2f, Color.White, 1.5f);
+            if (Presentation?.Gfx != null)
+                Presentation.Gfx["Dog Clip Art"].DrawCentered(new Vector2(Width, Height) / 2f, Color.White, 1.5f);
             if (title == null)
                 return;
             title.Render();

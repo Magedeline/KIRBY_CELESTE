@@ -14,7 +14,7 @@ namespace Celeste.Cutscenes;
         private IEnumerator routine()
         {
             Cs05Diary cs03Diary = this;
-            cs03Diary.player.StateMachine.State = 11;
+            cs03Diary.player.StateMachine.State = Player.StDummy;
             cs03Diary.player.StateMachine.Locked = true;
             yield return Textbox.Say("CH5_DIARY");
             yield return 0.1f;
@@ -29,7 +29,7 @@ namespace Celeste.Cutscenes;
     public override void OnEnd(Level level)
         {
             player.StateMachine.Locked = false;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
         }
     }
 

@@ -88,7 +88,7 @@ public static class RoomTransitionHandler
             return;
 
         // Check if our player is already there (e.g. tagged Persistent and carried over)
-        var existing = level.Tracker.GetEntity<global::Celeste.Entities.Player>();
+        var existing = level.Tracker.GetEntity<global::Celeste.Entities.K_Player>();
         if (existing != null)
         {
             // Just re-hide vanilla and update position
@@ -102,7 +102,7 @@ public static class RoomTransitionHandler
         HideVanillaPlayer(vanillaPlayer);
 
         // Spawn our player
-        var maggyPlayer = new global::Celeste.Entities.Player(
+        var maggyPlayer = new global::Celeste.Entities.K_Player(
             spawnPos, PlayerSpriteMode.Madeline);
         maggyPlayer.KirbyModeActive = true;
         maggyPlayer.CombatEnabled = true;
@@ -146,7 +146,7 @@ public static class RoomTransitionHandler
         // If vanilla player is hidden, relay the death to our player
         if (self.Scene is Level level && PlayerCompatShim.IsMaggyPlayerActive(level))
         {
-            var maggyPlayer = level.Tracker.GetEntity<global::Celeste.Entities.Player>();
+            var maggyPlayer = level.Tracker.GetEntity<global::Celeste.Entities.K_Player>();
             if (maggyPlayer != null)
             {
                 // Kill our player
@@ -166,7 +166,7 @@ public static class RoomTransitionHandler
     /// Handles our Player's death: plays effects, then triggers level reload.
     /// </summary>
     private static void KillMaggyPlayer(
-        global::Celeste.Entities.Player maggyPlayer,
+        global::Celeste.Entities.K_Player maggyPlayer,
         Level level,
         Vector2 direction)
     {
@@ -211,7 +211,7 @@ public static class RoomTransitionHandler
         if (!PlayerCompatShim.IsMaggyPlayerActive(level))
             return;
 
-        var maggyPlayer = level.Tracker.GetEntity<global::Celeste.Entities.Player>();
+        var maggyPlayer = level.Tracker.GetEntity<global::Celeste.Entities.K_Player>();
         if (maggyPlayer == null)
             return;
 

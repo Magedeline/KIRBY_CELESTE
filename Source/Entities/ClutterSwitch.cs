@@ -85,7 +85,7 @@ public class ClutterSwitch : Solid
     /// Creates a new ClutterSwitch at the specified position with the given color
     /// </summary>
     public ClutterSwitch(Vector2 position, ClutterBlock.Colors color,
-        string musicEvent = "event:/desolozantas/music/lvl5/clean",
+        string musicEvent = "event:/desolo_zantas/music/lvl5/clean",
         string absorbCutsceneSound = "event:/game/03_resort/clutterswitch_books",
         bool progressMusic = true,
         float configLightingAlphaAdd = LightingAlphaAdd)
@@ -113,7 +113,7 @@ public class ClutterSwitch : Solid
         : this(
             data.Position + offset,
             data.Enum("type", ClutterBlock.Colors.Green),
-            data.Attr("musicEvent", "event:/desolozantas/music/lvl5/clean"),
+            data.Attr("musicEvent", "event:/desolo_zantas/music/lvl5/clean"),
             data.Attr("absorbCutsceneSound", "event:/game/03_resort/clutterswitch_books"),
             data.Bool("progressMusic", true),
             data.Float("lightingAlphaAdd", LightingAlphaAdd))
@@ -332,7 +332,7 @@ public class ClutterSwitch : Solid
         SetupAbsorptionAudio();
 
         // Lock player state following Ingeste state management
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
 
         // Create absorption effect
         Vector2 target = Position + new Vector2(Width / 2f, 0f);
@@ -460,7 +460,7 @@ public class ClutterSwitch : Solid
     private IEnumerator CompleteAbsorption(global::Celeste.Player player)
     {
         // Restore player state following Ingeste state management
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
 
         Level level = SceneAs<Level>();
         Vector2 target = Position + new Vector2(Width / 2f, 0f);

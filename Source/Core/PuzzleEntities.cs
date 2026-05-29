@@ -19,6 +19,7 @@ namespace Celeste
         private bool activated = false;
         private int requiredWeight;
         private int currentWeight = 0;
+        private Level level;
 
         public WeightSwitch(EntityData data, Vector2 offset)
             : base(data.Position + offset)
@@ -27,6 +28,12 @@ namespace Celeste
             requiredWeight = data.Int("requiredWeight", 1);
             Collider = new Hitbox(data.Width, 8f, 0f, -4f);
             Depth = 10;
+        }
+
+        public override void Added(Scene scene)
+        {
+            base.Added(scene);
+            level = scene as Level;
         }
 
         public override void Update()
@@ -38,16 +45,16 @@ namespace Celeste
             if (player != null && CollideCheck(player))
                 currentWeight++;
 
-            // Check for pushable solids on top
-            foreach (Solid solid in Scene.Tracker.GetEntities<Solid>())
+            // Check for pushable solids on top using spatial hashing (much faster than iterating all solids)
+            foreach (Solid solid in CollideAll<Solid>())
             {
-                if (CollideCheck(solid))
-                    currentWeight++;
+                currentWeight++;
             }
 
             bool wasActive = activated;
             activated = currentWeight >= requiredWeight;
-            SceneAs<Level>().Session.SetFlag(flagName, activated);
+            if (level != null)
+                level.Session.SetFlag(flagName, activated);
 
             if (activated && !wasActive)
                 Audio.Play("event:/game/general/touchswitch_last_cutoff", Position);

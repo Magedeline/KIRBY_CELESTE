@@ -217,7 +217,7 @@ namespace Celeste
         private IEnumerator InteractRoutine(global::Celeste.Player player)
         {
             Level level = Scene as Level;
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.StateMachine.Locked = true;
             yield return CutsceneEntity.CameraTo(new Vector2(X, Y - 30f) - new Vector2(160f, 90f), 0.25f, Ease.CubeOut);
             yield return level.ZoomTo(new Vector2(160f, 90f), 10f, 1f);
@@ -232,7 +232,7 @@ namespace Celeste
             }
             yield return level.ZoomTo(new Vector2(160f, 90f), interactStartZoom, 1f);
             player.StateMachine.Locked = false;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             inCutscene = false;
             level.EndCutscene();
             Audio.SetAltMusic(null);

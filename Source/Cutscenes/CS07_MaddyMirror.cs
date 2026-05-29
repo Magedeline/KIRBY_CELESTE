@@ -24,7 +24,7 @@ namespace Celeste.Cutscenes
             // Handle player state
             if (player != null)
             {
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
                 player.StateMachine.Locked = true;
             }
 

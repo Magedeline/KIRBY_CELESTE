@@ -31,7 +31,7 @@ namespace Celeste.Cutscenes
             // Set player to dummy state and make invisible
             if (player != null)
             {
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
                 player.DummyGravity = true;
                 player.Speed = Vector2.Zero;
                 player.Visible = false;
@@ -212,7 +212,7 @@ namespace Celeste.Cutscenes
         {
             if (player != null)
             {
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
                 // Keep player invisible - will be restored by area complete
             }
             

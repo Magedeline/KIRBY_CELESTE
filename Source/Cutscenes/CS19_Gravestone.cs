@@ -74,7 +74,7 @@ namespace Celeste.Cutscenes
 
         private IEnumerator cutscene()
         {
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.ForceCameraUpdate = true;
             player.DummyGravity = false;
             player.Speed.Y = 0.0f;
@@ -164,7 +164,7 @@ namespace Celeste.Cutscenes
             yield return 0.3f;
             player.DummyAutoAnimate = false;
             player.Sprite.Play("duck");
-            Audio.Play("event:/desolozantas/char/kirby/jump_superslide", player.Position);
+            Audio.Play("event:/desolo_zantas/char/kirby/jump_superslide", player.Position);
             yield return 0.5f;
         }
 
@@ -173,7 +173,7 @@ namespace Celeste.Cutscenes
             for (int i = 0; i < 3; i++)
             {
                 Level.Displacement.AddBurst(player.Center, 0.5f, 8f, 64f, 0.5f);
-                Audio.Play("event:/desolozantas/final_content/game/19_the_end/lightning_strike", player.Position);
+                Audio.Play("event:/desolo_zantas/final_content/game/19_the_end/lightning_strike", player.Position);
                 yield return 0.3f;
             }
             yield return 0.2f;
@@ -423,7 +423,7 @@ namespace Celeste.Cutscenes
             player.Facing = Facings.Right;
             player.DummyAutoAnimate = true;
             player.DummyGravity = true;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             Level.Session.Inventory.Dashes = 5;
             player.Dashes = 5;
 

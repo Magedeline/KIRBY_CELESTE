@@ -15474,7 +15474,7 @@ CH19_BEYOND_THE_VOID=
 Kirby, where exactly are you leading us?
 
 [KIRBY left sad]
-That Swven bird... we need to track it.
+That Seven bird... we need to track it.
 
 [CHARA left upset]
 Something tells me this path leads nowhere good.
@@ -15715,7 +15715,7 @@ Want to abandon us? {*}Then go!{/*}
 Fine.
 Best of luck.
 
-CH19_KILL_THE BIRD=
+CH19_KILL_THE_BIRD=
 [KIRBY left surprised]
 Caught you at last!
 
@@ -17642,37 +17642,103 @@ CH20_ASCEND_VS_ELS_11=
 {# AAAAFF}Now were here to climb this mountain!{#}
 {# AAAAFF}It's time to finish this once and for all!{#}
 
-CH20_ASCEND_VS_ELS_FINAL_0=
+CH21_ASCEND_VS_ELS_FINAL=
 [ELS left furious]
-{# 000000}HOW DISAPPOINTING!{#}
-{# 000000}I EXPECTED MORE FROM YOU!{#}
+{# 000000}HOW DISAPPOINTING...{#}
+{# 000000}I EXPECTED MORE FROM YOU....{#}
 {# 000000}darker than darkness, colder than cold, more desolate than desolation itself!{#}
 {# 000000}I EXPECTED YOU TO BE NOTHING BUT A PILE OF ASHES BY NOW!{#}
 {# 000000}BUT NO, YOU KEEP CLIMBING AND CLIMBING!{#}
 {# 000000}HOW IRRITATING!!!{#}
 
-CH20_ASCEND_VS_ELS_FINAL_1=
-[els left furious]
-{# 000000}Ugh is this all you got?{#}
-{# 000000}Is this all you will ever be?!{#}
-{# 000000}So be it!{#}
+[GRANNY left normal]
+{# AAAAFF}Listen ELS I know this may seem hard but look on the bright side!{#}
+{# AAAAFF}She May not be strongs as yours, but she isn't alone!{#}
 
-CH20_ASCEND_VS_ELS_FINAL_2=
-[ELS left furious]
-{# 000000}YOU PICES OF FUCKING FAGGOTS!{#}
-{# 000000}I HOPE YOU ALL DIE IN THE MOST PAINFUL WAY POSSIBLE!{#}
-{# 000000}I HOPE YOU SUFFER FOR ETERNITY IN THE DEPTHS OF OBLIVION!{#}
-{# 000000}I HOPE YOU BURN IN THE FIRES OF HELL FOREVER!{#}
-{# 000000}I HOPE YOU ALL FUCKING DIE!!!{#}
+[MADELINE left distracted]
+To Be clear we have something that you may not gonna Like
+and that is deltarune and star warrior
 
-CH20_ASCEND_VS_ELS_FINAL_3=
-[ELS left mocking]
-{# 000000}YOU KNOW WHAT THE BEST PART IS?!{#}
-{# 000000}YOU DID THIS TO MAKE YOUR CHOICES LONG TIME AGO!!!{#}
+[ELS right furious]
+DELTARUNE!?... STAR WARRIOR!!!?
+How did you know of I have witness
 
-CH20_ASCEND_VS_ELS_TRUE_FINAL=
-[ELS left oof]
-{# 000000}GWAAAAAAHHH!!!!!{#}
+[KIRBY left angry]
+It's because it's the way that it were design
+
+[ELS right thinking]
+...
+I know since you already knew it that blew my secrets from them
+I will tell you about my origin and at the very beginnging
+{trigger 0 fade to white}
+
+CH21_ELS_FLASHBACK=
+it began after I abandon my army and my mother ship
+I was in shambles trying to get out
+{trigger 0 escape pod destroyed}
+by the time I realized...
+{trigger 1 suited man burned in flames}
+it was too late.
+I was hovering dead in Spaces
+and call anyone for help
+... but nobdoy came
+and nobody save me
+I was so alone for trillions of years
+until the dark matter found me
+that then I was not only being experminted on
+my body has change worst than them worst than giygas, I became something that fill my rage
+ultimately I knew of what I have become,
+however you already fought void termina back then and multiple zero
+but you were wrong
+there more dark matter than you might not expect
+there thoundsand of titan army, and quinliion of dark matter who came for one purpose
+to consume of one scientist who knew that they would consume this heart called "DETERMINATION"
+that cultimated being has more power than love, and more soruce power than anything combined.
+with my goal to bring them of what they needed for me I would not only have my body back but to have my mind my soul. and my purpose to restore
+however the royal scientist wouldn't allowed them to be taken,
+he sacrafice himself to seal the barrier of the even horizon leaving no dark matter escape,
+standing in the blackhole alone waiting for a victim to lower them in
+
+[ELS right truthful]
+as you know they want your soul to take as full admin control
+and they wanted back from what he has taken
+
+[ASRIEL left Iknewit]
+more dark matter...
+so this is why that zero keep reincarnating himself
+
+[badeline left yell]
+listen you dark creep
+you may think that your gonna manipulated us
+well try harder than that you freak
+
+[els right breakingpoint]
+you seriously absoloutly pathetic bitch...
+how dar you say that to us...
+[madeline left angry]
+to be clear since they want our heart that made of pure love and determination
+then come at us and fight...!
+
+[els right finalheh]
+...
+alright then
+lets see if your soul can fight against THIS!
+
+CH21_ELS_TERMINA_BOSS_INTRO=
+[els right none]
+I am no longer the dark matter you have seen, no longer zero.
+I am els termina
+I am the titan of the size as the mountian, as you have climb
+I will not only consume everything I will dominated and conquered worlds after worlds
+that is what we were made of
+
+ELS TERMINA
+THE FORCE OF NATURE
+
+[ELS right none]
+don't forget...
+when I have your determination I will reshape this universe
+and reset everything into a new world.
 
 CH20_PENUMBRA_PHASTASM_INTRO=
 [ELS left none]
@@ -18922,6 +18988,11 @@ MAGGYHELPER_BIND_HOTRELOAD_TOGGLE=Toggle Hot Reload (F5)
 MAGGYHELPER_BIND_HOTRELOAD_RELOAD=Manual Reload (F6)
 MAGGYHELPER_BIND_HOTRELOAD_RELOAD_ALL=Reload All (F7)
 MAGGYHELPER_BIND_HOTRELOAD_UI=Toggle UI (F8)
+
+# Mod Integration Settings
+MAGGYHELPER_INTEGRATIONS_HEADER=Mod Integration Settings
+MAGGYHELPER_DEATHLINK_DAMAGE=Deathlink Damage Mode (Kirby)
+MAGGYHELPER_DEATHLINK_DAMAGE_DESC=When enabled, Kirby takes damage instead of dying from deathlink. Disable if Madeline deaths are annoying you.
 
 # ================================
 # Bird NPC Tutorial Strings

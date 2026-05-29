@@ -12,18 +12,28 @@ namespace Celeste.Mod.MaggyHelper.HotReload
             Tag = Tags.Global | Tags.FrozenUpdate | Tags.PauseUpdate;
         }
 
+        private bool _wasEnabled;
+
         public override void Update()
         {
             base.Update();
 
             var settings = MaggyHelperModule.Settings;
-            if (settings == null || !settings.HotReloadEnabled) return;
+            bool isEnabled = settings != null && settings.HotReloadEnabled;
+
+            // Only process input when hot reload is enabled or was just toggled
+            if (!isEnabled && !_wasEnabled)
+                return;
+
+            _wasEnabled = isEnabled;
+
+            if (!isEnabled)
+                return;
 
             if (settings.HotReloadToggle?.Pressed == true)
             {
-                settings.HotReloadEnabled = !settings.HotReloadEnabled;
-                HotReloadUI.Show(settings.HotReloadEnabled ? "Hot Reload Enabled" : "Hot Reload Disabled", 
-                    settings.HotReloadEnabled ? Microsoft.Xna.Framework.Color.LimeGreen : Microsoft.Xna.Framework.Color.Red);
+                settings.HotReloadEnabled = false;
+                HotReloadUI.Show("Hot Reload Disabled", Microsoft.Xna.Framework.Color.Red);
             }
 
             if (settings.HotReloadManual?.Pressed == true)
@@ -31,9 +41,9 @@ namespace Celeste.Mod.MaggyHelper.HotReload
                 // In a real scenario, this might trigger a file system watcher or signal dotnet watch.
                 // Here we just trigger the test classes to show it's working.
                 HotReloadUI.Show("Manual Reload Triggered", Microsoft.Xna.Framework.Color.Yellow);
-                HotReloadHandler.UpdateApplication(new Type[] { 
-                    typeof(ModHotReloadTest), 
-                    typeof(global::Celeste.HotReload.GameHotReloadTest) 
+                HotReloadHandler.UpdateApplication(new Type[] {
+                    typeof(ModHotReloadTest),
+                    typeof(global::Celeste.HotReload.GameHotReloadTest)
                 });
             }
 

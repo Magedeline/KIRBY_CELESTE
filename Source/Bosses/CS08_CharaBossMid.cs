@@ -23,7 +23,7 @@ namespace Celeste.Cutscenes
                 player = Scene.Tracker.GetEntity<global::Celeste.Player>();
                 yield return null;
             }
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.StateMachine.Locked = true;
             while (!player.OnGround())
             {
@@ -50,7 +50,7 @@ namespace Celeste.Cutscenes
             if (player != null)
             {
                 player.StateMachine.Locked = false;
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
             }
             level.Entities.FindFirst<CharaBoss>()?.OnPlayer(null);
             level.Session.SetFlag("chara_boss_mid");

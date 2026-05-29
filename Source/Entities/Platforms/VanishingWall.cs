@@ -131,7 +131,7 @@ namespace Celeste.Entities
     public void RemoveBlock()
     {
       global::Celeste.Player entity = Scene.Tracker.GetEntity<global::Celeste.Player>();
-      if (entity == null || entity.StateMachine.State == 9)
+      if (entity == null || entity.StateMachine.State == Player.StDreamDash)
         return;
       SceneAs<Level>().Session.DoNotLoad.Add(eid);
       fade = true;

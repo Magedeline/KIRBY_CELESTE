@@ -45,7 +45,7 @@ public class CS20_Saved : CutsceneEntity
     private IEnumerator Cutscene(Level level)
     {
         // Setup
-        player.StateMachine.State = 11; // StDummy
+        player.StateMachine.State = Player.StDummy; // StDummy
         player.Sprite.Play("idle");
         
         yield return Textbox.Say("CH20_SAVED");
@@ -56,7 +56,7 @@ public class CS20_Saved : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void OnEnd(Level level)
     {
-        player.StateMachine.State = 0; // StNormal
+        player.StateMachine.State = Player.StNormal; // StNormal
         level.TimerStopped = false;
         level.TimerHidden = false;
         level.SaveQuitDisabled = false;
@@ -175,11 +175,11 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
     private IEnumerator Cutscene(Level level)
     {
         // Setup
-        player.StateMachine.State = 11; // StDummy
+        player.StateMachine.State = Player.StDummy; // StDummy
         player.Sprite.Play("idle");
         
         // Set the music for this emotional finale
-        Audio.SetMusic("event:/desolozantas/final_content/music/lvl21/saved");
+        Audio.SetMusic("event:/desolo_zantas/final_content/music/lvl21/saved");
         
         // Fade in from white (after defeating Els)
         FadeWipe fadeWipe = new FadeWipe(Level, wipeIn: true);
@@ -240,7 +240,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
         Vector2 spawn = level.GetSpawnPoint(player.Position);
             
         // Set up player state for cutscene
-        player.StateMachine.State = 11; // Dummy state
+        player.StateMachine.State = Player.StDummy; // Dummy state
         player.DummyGravity = false;
             
         // Play entry sound and perform moon landing (from CS20_saved)
@@ -386,7 +386,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
         
         // Emotional moment - screen shake
         Level.Shake(0.2f);
-        Audio.Play("event:/desolozantas/final_content/char/asriel/emotional_reunion");
+        Audio.Play("event:/desolo_zantas/final_content/char/asriel/emotional_reunion");
         
         yield return 0.5f;
     }
@@ -434,7 +434,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
         
         // Emotional hug moment
         Level.Shake(0.1f);
-        Audio.Play("event:/desolozantas/final_content/char/kirby/emotional_reunion");
+        Audio.Play("event:/desolo_zantas/final_content/char/kirby/emotional_reunion");
         
         // Particle effects for the reunion
         for (int i = 0; i < 20; i++)
@@ -502,7 +502,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
     private IEnumerator ReleaseSouls()
     {
         // Dramatic buildup
-        Audio.SetMusic("event:/desolozantas/final_content/music/lvl20/back");
+        Audio.SetMusic("event:/desolo_zantas/final_content/music/lvl20/back");
 
         yield return 0.5f;
 
@@ -538,9 +538,6 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
 
         yield return 0.5f;
 
-        // Display the destruction message
-        yield return Textbox.Say("CH20_GIYGAS_IS_DESTROYED");
-
         // Clean up
         barrierBreakController?.RemoveSelf();
         barrierBreakController = null;
@@ -568,7 +565,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
     // {trigger 1 asriel slowly fades away into the flower form}
     private IEnumerator AsrielFadesAway()
     {
-        Audio.Play("event:/desolozantas/final_content/char/asriel/fade_to_flower");
+        Audio.Play("event:/desolo_zantas/final_content/char/asriel/fade_to_flower");
         
         // Slowly fade Asriel
         for (float p = 1f; p > 0f; p -= Engine.DeltaTime / 3f)
@@ -609,7 +606,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
     // {trigger 4 asriel granny titan king and kirby parent begin to fade away}
     private IEnumerator SpiritsFadeAway()
     {
-        Audio.Play("event:/desolozantas/final_content/char/spirits/fade_away");
+        Audio.Play("event:/desolo_zantas/final_content/char/spirits/fade_away");
         
         // Fade out all spirit characters
         for (float p = 1f; p > 0f; p -= Engine.DeltaTime / 4f)

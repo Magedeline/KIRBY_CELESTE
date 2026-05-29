@@ -1,7 +1,24 @@
+using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace Celeste.Mod.MaggyHelper
 {
+    /// <summary>
+    /// Per-chapter mountain camera data saved for 3D overworld persistence.
+    /// </summary>
+    public class MountainCameraSaveData
+    {
+        public Vector3 IdlePos { get; set; }
+        public Vector3 IdleTarget { get; set; }
+        public Vector3 SelectPos { get; set; }
+        public Vector3 SelectTarget { get; set; }
+        public Vector3 ZoomPos { get; set; }
+        public Vector3 ZoomTarget { get; set; }
+        public Vector3 Cursor { get; set; }
+        public int MountainState { get; set; }
+        public string CustomModelDir { get; set; }
+    }
     /// <summary>
     /// Per-chapter mastery record. Every flag must be true for the Asriel cosmic
     /// background to appear on the chapter panel icon.
@@ -21,6 +38,11 @@ namespace Celeste.Mod.MaggyHelper
             SpeedrunGoalBeaten  && FirstTryNoDamageDeath;
     }
 
+    /// <summary>
+    /// Persistent save data for MaggyHelper mod.
+    /// Tracks: Progression flags, unlocks, achievements, boss defeats,
+    /// overworld 3D state, chapter completion, mastery records.
+    /// </summary>
     public class MaggyHelperModuleSaveData : EverestModuleSaveData
     {
         // Progression flags
@@ -38,6 +60,52 @@ namespace Celeste.Mod.MaggyHelper
         public bool FinalDlcContentUnlocked { get; set; }
         public bool TrueFinaleUnlocked { get; set; }
         public bool Chapter19Complete { get; set; }
+
+        // ── Overworld 3D Save Data ──────────────────────────────────────────
+        /// <summary>Whether custom mountain models have been registered.</summary>
+        public bool MountainModelsRegistered { get; set; }
+
+        /// <summary>Saved camera positions per chapter.</summary>
+        public Dictionary<int, MountainCameraSaveData> SavedMountainCameras { get; set; } = new();
+
+        /// <summary>Last viewed chapter in overworld (for camera persistence).</summary>
+        public int LastOverworldChapter { get; set; } = -1;
+
+        /// <summary>Last mountain state viewed.</summary>
+        public int LastMountainState { get; set; }
+
+        /// <summary>Whether the player has seen the DZ mountain intro.</summary>
+        public bool HasSeenDZMountainIntro { get; set; }
+
+        /// <summary>Preferred camera distance preference.</summary>
+        public float PreferredCameraZoom { get; set; } = 1.0f;
+
+        /// <summary>Whether fog effects are enabled (persisted).</summary>
+        public bool FogEffectsEnabled { get; set; } = true;
+        // ──────────────────────────────────────────────────────────────────────
+
+        // ── Area Data Save State ──────────────────────────────────────────────
+        /// <summary>Dictionary of chapter SIDs to their registered side availability.</summary>
+        public Dictionary<string, ChapterSideAvailability> ChapterSideAvailability { get; set; } = new();
+
+        /// <summary>Saved completion times per chapter per side (in ticks).</summary>
+        public Dictionary<string, long> ChapterCompletionTimes { get; set; } = new();
+
+        /// <summary>Saved death counts per chapter per side.</summary>
+        public Dictionary<string, int> ChapterDeathCounts { get; set; } = new();
+
+        /// <summary>Custom music overrides per chapter SID.</summary>
+        public Dictionary<string, string> ChapterMusicOverrides { get; set; } = new();
+
+        /// <summary>Whether hardcoded runtime data has been applied.</summary>
+        public bool RuntimeDataApplied { get; set; }
+
+        /// <summary>Last time the area registry was updated.</summary>
+        public long LastAreaRegistryUpdate { get; set; }
+        // ──────────────────────────────────────────────────────────────────────
+
+        // Popstar berry collection (persisted across restarts)
+        public HashSet<string> CollectedPopstarBerries { get; set; } = new HashSet<string>();
 
         // Unlock tracking
         public HashSet<string> UnlockedBSideIDs { get; set; } = new HashSet<string>();
@@ -152,5 +220,76 @@ namespace Celeste.Mod.MaggyHelper
 
         public bool HasFullMastery(string chapterSid)
             => MasteryRecords.TryGetValue(chapterSid, out var rec) && rec.IsFullMastery;
+
+        // ── Overworld 3D Helpers ────────────────────────────────────────────
+        public void SaveMountainCamera(int chapterNumber, MountainCameraSaveData data)
+        {
+            SavedMountainCameras[chapterNumber] = data;
+        }
+
+        public MountainCameraSaveData GetMountainCamera(int chapterNumber)
+        {
+            return SavedMountainCameras.TryGetValue(chapterNumber, out var data) ? data : null;
+        }
+
+        public void ClearMountainCameraOverrides()
+        {
+            SavedMountainCameras.Clear();
+        }
+        // ──────────────────────────────────────────────────────────────────────
+
+        // ── Area Data Helpers ───────────────────────────────────────────────
+        public void RecordChapterCompletion(string chapterSid, int sideIndex, long completionTime)
+        {
+            string key = $"{chapterSid}:{sideIndex}";
+            ChapterCompletionTimes[key] = completionTime;
+        }
+
+        public long? GetChapterCompletionTime(string chapterSid, int sideIndex)
+        {
+            string key = $"{chapterSid}:{sideIndex}";
+            return ChapterCompletionTimes.TryGetValue(key, out var time) ? time : null;
+        }
+
+        public void RecordChapterDeath(string chapterSid, int sideIndex)
+        {
+            string key = $"{chapterSid}:{sideIndex}";
+            ChapterDeathCounts.TryGetValue(key, out int count);
+            ChapterDeathCounts[key] = count + 1;
+        }
+
+        public int GetChapterDeathCount(string chapterSid, int sideIndex)
+        {
+            string key = $"{chapterSid}:{sideIndex}";
+            return ChapterDeathCounts.TryGetValue(key, out int count) ? count : 0;
+        }
+
+        public void SetChapterMusicOverride(string chapterSid, string musicEvent)
+        {
+            if (string.IsNullOrEmpty(musicEvent))
+                ChapterMusicOverrides.Remove(chapterSid);
+            else
+                ChapterMusicOverrides[chapterSid] = musicEvent;
+        }
+
+        public string GetChapterMusicOverride(string chapterSid)
+        {
+            return ChapterMusicOverrides.TryGetValue(chapterSid, out var music) ? music : null;
+        }
+        // ──────────────────────────────────────────────────────────────────────
+    }
+
+    /// <summary>
+    /// Tracks which sides are available/unlocked for a chapter.
+    /// </summary>
+    public class ChapterSideAvailability
+    {
+        public string ChapterSID { get; set; }
+        public bool HasASide { get; set; } = true;
+        public bool HasBSide { get; set; }
+        public bool HasCSide { get; set; }
+        public bool HasDSide { get; set; }
+        public bool HasDXSide { get; set; }
+        public DateTime LastUpdated { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 using System.Runtime.CompilerServices;
 using Celeste.Entities;
 using FMOD.Studio;
-using AscendManager = Celeste.AscendManager;
 using Strawberry = global::Celeste.Strawberry;
 using BirdNPC = Celeste.Entities.BirdNPC;
 
@@ -14,7 +13,8 @@ public class CS19_FinalLaunch : CutsceneEntity
     private BirdNPC bird;
     private float fadeToWhite;
     private Vector2 birdScreenPosition;
-    private AscendManagerBeyond.Streaks streaks;
+    private AscendManagerBeyond.GiygasStreaks streaks;
+    private AscendManagerBeyond.VoidBackground voidBg;
     private Vector2 cameraWaveOffset;
     private Vector2 cameraOffset;
     private float timer;
@@ -103,12 +103,14 @@ public class CS19_FinalLaunch : CutsceneEntity
 
         Add(wave = new Coroutine(WaveCamera()));
         Add(new Coroutine(BirdRoutine(0.8f)));
-        Level.Add(streaks = new AscendManagerBeyond.Streaks(null));
+        Level.Add(streaks = new AscendManagerBeyond.GiygasStreaks(null));
+        Level.Add(voidBg = new AscendManagerBeyond.VoidBackground(null));
         float p;
         for (p = 0f; p < 1f; p += Engine.DeltaTime / 12f)
         {
             fadeToWhite = p;
             streaks.Alpha = p;
+            voidBg.Alpha = p;
             foreach (Parallax item in Level.Foreground.GetEach<Parallax>("rainbowblackhole"))
             {
                 item.FadeAlphaMultiplier = 1f - p;
@@ -169,7 +171,7 @@ public class CS19_FinalLaunch : CutsceneEntity
         player.Active = true;
         player.Speed = Vector2.Zero;
         player.EnforceLevelBounds = true;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         player.DummyFriction = true;
         player.DummyGravity = true;
         player.DummyAutoAnimate = true;

@@ -21,7 +21,7 @@ namespace Celeste.Cutscenes
     public override void OnBegin(Level level)
     {
       this.bird = this.Scene.Entities.FindFirst<BirdNPC>();
-      this.player.StateMachine.State = 11;
+      this.player.StateMachine.State = Player.StDummy;
       if (level.Wipe != null)
         level.Wipe.Cancel();
       level.Wipe = (ScreenWipe) new FadeWipe((Scene) level, true);
@@ -31,7 +31,7 @@ namespace Celeste.Cutscenes
     private IEnumerator cutscene(Level level)
     {
       Cs20BirdGuidanceIntro cs20BirdIntro = this;
-      cs20BirdIntro.player.StateMachine.State = 11;
+      cs20BirdIntro.player.StateMachine.State = Player.StDummy;
       cs20BirdIntro.player.Dashes = 2;
       
       // Brief fade in
@@ -74,7 +74,7 @@ namespace Celeste.Cutscenes
       this.player.Speed = Vector2.Zero;
       this.player.Active = true;
       this.player.Visible = true;
-      this.player.StateMachine.State = 0;
+      this.player.StateMachine.State = Player.StNormal;
       
       if (this.bird != null)
       {

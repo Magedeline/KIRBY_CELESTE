@@ -49,7 +49,7 @@ public class CS_BossOver : CutsceneEntity
 
   private IEnumerator Cutscene(Level level)
   {
-    this.player.StateMachine.State = 11;
+    this.player.StateMachine.State = Player.StDummy;
     this.player.StateMachine.Locked = true;
     while (!((Actor) this.player).OnGround(1) || (double) this.player.Speed.Y < 0.0)
       yield return (object) null;
@@ -163,7 +163,7 @@ public class CS_BossOver : CutsceneEntity
   {
     this.TeleportToEnd();
     this.player.StateMachine.Locked = false;
-    this.player.StateMachine.State = 0;
+    this.player.StateMachine.State = Player.StNormal;
     this.player.Speed.Y = 0.0f;
     while (((Entity) this.player).CollideCheck<Solid>())
     {

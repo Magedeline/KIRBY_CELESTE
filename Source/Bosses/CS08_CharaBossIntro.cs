@@ -34,7 +34,7 @@ namespace Celeste.Cutscenes {
 
         private IEnumerator Cutscene(Level level) {
             Cs08CharaBossIntro cs08CharaBossIntro = this;
-            cs08CharaBossIntro.Player.StateMachine.State = 11;
+            cs08CharaBossIntro.Player.StateMachine.State = Player.StDummy;
             cs08CharaBossIntro.Player.StateMachine.Locked = true;
             while (!cs08CharaBossIntro.Player.Dead && !cs08CharaBossIntro.Player.OnGround())
                 yield return null;
@@ -79,7 +79,7 @@ namespace Celeste.Cutscenes {
 
         private IEnumerator PlayerStepForward() {
             yield return this.Player.DummyWalkToExact((int)this.Player.X + 8);
-            this.Player.StateMachine.State = 12;
+            this.Player.StateMachine.State = Player.StIntroWalk;
         }
 
         public override void OnEnd(Level level) {
@@ -94,7 +94,7 @@ namespace Celeste.Cutscenes {
             global::Celeste.Player player = this.Player;
             if (player != null) {
                 player.StateMachine.Locked = false;
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
             }
 
             if (this.CharaBoss != null) {

@@ -78,7 +78,7 @@ namespace Celeste.Cutscenes
         {
             player.Depth = 0;
             player.Speed = Vector2.Zero;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             level.Session.SetFlag("els_breaks_free");
         }
     }

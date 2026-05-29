@@ -205,14 +205,13 @@ namespace Celeste.Entities
                 return;
 
             // Golden berry behavior - kill the player when berry is lost
-            foreach (global::Celeste.Player player in this.Scene.Entities.FindAll<global::Celeste.Player>())
+            // Use Tracker.GetEntity instead of FindAll to avoid iterating all entities
+            var player = this.Scene?.Tracker.GetEntity<global::Celeste.Player>();
+            if (player != null && !player.Dead)
             {
-                if (!player.Dead)
-                {
-                    player.Die(Vector2.Zero);
-                }
+                player.Die(Vector2.Zero);
             }
-            
+
             Audio.Play("event:/new_content/char/madeline/death_golden");
             this.Dead = true;
         }

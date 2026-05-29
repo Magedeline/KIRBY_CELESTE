@@ -38,7 +38,7 @@ public class CS10BossOutro : CutsceneEntity
         obj.SaveQuitDisabled = true;
         
         // Change music to victory theme
-        Audio.SetMusic("event:/desolozantas/ch10/music/boss_wispy_victory");
+        Audio.SetMusic("event:/desolo_zantas/ch10/music/boss_wispy_victory");
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -52,7 +52,7 @@ public class CS10BossOutro : CutsceneEntity
     {
         // Setup player state
         player.Dashes = 1;
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.Sprite.Play("idle");
 
         // Find or spawn Wispy Woods (should exist from battle)

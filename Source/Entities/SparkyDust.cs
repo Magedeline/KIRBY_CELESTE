@@ -86,9 +86,10 @@ internal class SparkyDust
     public void Deactivate()
     {
         IsActive = false;
-        // Disconnect from all nodes
-        foreach (var node in ConnectedNodes.ToList())
+        // Disconnect from all nodes - avoid ToList() allocation
+        for (int i = ConnectedNodes.Count - 1; i >= 0; i--)
         {
+            var node = ConnectedNodes[i];
             node.ConnectedNodes.Remove(this);
         }
         ConnectedNodes.Clear();

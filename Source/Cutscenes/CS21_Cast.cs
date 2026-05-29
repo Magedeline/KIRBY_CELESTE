@@ -114,10 +114,10 @@ namespace Celeste.Cutscenes
             level.AllowHudHide     = false;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
 
             Audio.SetAmbience(null, true);
-            Audio.SetMusic("event:/desolozantas/music/menu/true_cast");
+            Audio.SetMusic("event:/desolo_zantas/music/menu/true_cast");
 
             Add(new Coroutine(RunCastMember(level)));
         }
@@ -367,7 +367,7 @@ namespace Celeste.Cutscenes
             level.TimerStopped     = false;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
 
             Audio.SetMusic(null, true, true);
         }

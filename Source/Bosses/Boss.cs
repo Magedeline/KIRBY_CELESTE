@@ -614,7 +614,7 @@ namespace Celeste.Entities
             // Mark boss as defeated in the manager
             if (Scene is Level level)
             {
-                var bossData = new EnemyBossManager.BossData
+                var bossData = new BossData
                 {
                     BossType = BossType,
                     Position = Position,

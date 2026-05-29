@@ -21,14 +21,6 @@ namespace Celeste
 
         public virtual void Render()
         {
-            // Note: SpriteBatch.Begin/End is handled by WaveFazePresentation.BeforeRender()
-            // Derived classes should override this method and render directly
-            if (Presentation != null)
-            {
-                // Default rendering: show page title if text exists
-                ActiveFont.DrawOutline(Dialog.Clean("WAVEFAZE_PAGE_TITLE"), new Vector2(Width / 2f, Height / 4f),
-                    new Vector2(0.5f, 0.5f), Vector2.One, Color.White, 2f, Color.Black);
-            }
         }
 
         protected IEnumerator PressButton()

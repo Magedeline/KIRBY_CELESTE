@@ -39,10 +39,20 @@ Modes:
     Inventory: Default
     HeartIsEnd: true
     SeekerSlowdown: false
-
-Mountain:
-    MountainModelDirectory: Mountain/Maggy/Desolo_Zantas
-    MountainTextureDirectory: Mountain/Maggy/Desolo_Zantas
+  - AudioState:
+      Music: event:/desolo_zantas/music/DSide/08_truth
+      Ambience: event:/desolo_zantas/env/08_main
+    Inventory: Default
+    HeartIsEnd: true
+    SeekerSlowdown: false
+  - AudioState:
+      Music: event:/desolo_zantas/music/DXSide/08_truth
+      Ambience: event:/desolo_zantas/env/08_main
+    Inventory: Default
+    HeartIsEnd: true
+    SeekerSlowdown: false
+    MountainModelDirectory: Mountain/Maggy/ASide
+    MountainTextureDirectory: Maggy/ASide
     Idle:
         Position: [7.500, 10.500, 18.000]
         Target: [6.800, 9.800, 16.500]

@@ -427,8 +427,8 @@ namespace Celeste.Entities
                     -100f
                 );
                 
-                // Create apple projectile (placeholder)
-                // Scene.Add(new WhispyApple(applePos));
+                // TODO: Implement WhispyApple projectile entity with gravity and collision
+                // Future: Scene.Add(new WhispyApple(applePos));
                 Audio.Play("event:/game/general/thing_booped", Position);
                 
                 yield return 0.3f;
@@ -485,8 +485,8 @@ namespace Celeste.Entities
                     60f
                 );
                 
-                // Create spike entity (placeholder)
-                // Scene.Add(new WhispyRootSpike(spikePos));
+                // TODO: Implement WhispyRootSpike entity with ground emergence animation
+                // Future: Scene.Add(new WhispyRootSpike(spikePos));
                 Audio.Play("event:/game/05_mirror_temple/crystaltheo_pop", Position);
                 
                 yield return 0.4f;
@@ -516,8 +516,9 @@ namespace Celeste.Entities
                     float angle = (float)(i * Math.PI * 2 / 5) + wave * 0.5f;
                     Vector2 direction = Calc.AngleToVector(angle, 1f);
                     
-                    // Spawn leaf projectile (placeholder)
-                    // Scene.Add(new WhispyLeaf(Position, direction));
+                    // TODO: Implement WhispyLeaf projectile entity with rotation
+                    // For now, skip projectile spawning
+                    // Future: Scene.Add(new WhispyLeaf(Position, direction));
                 }
                 
                 Audio.Play("event:/game/general/thing_booped", Position);
@@ -581,8 +582,8 @@ namespace Celeste.Entities
                         -120f - wave * 40f
                     );
                     
-                    // Create poison apple (placeholder)
-                    // Scene.Add(new WhispyPoisonApple(applePos));
+                    // TODO: Implement WhispyPoisonApple entity with poison/damage over time effect
+                    // Future: Scene.Add(new WhispyPoisonApple(applePos));
                     Audio.Play("event:/game/general/thing_booped", Position);
                 }
                 

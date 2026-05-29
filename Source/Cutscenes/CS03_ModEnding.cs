@@ -45,7 +45,7 @@ namespace Celeste.Cutscenes
 
         private IEnumerator cutscene(Level level)
         {
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.Dashes = 1;
             level.Session.Audio.Music.Layer(3, false);
             level.Session.Audio.Apply();
@@ -108,7 +108,7 @@ namespace Celeste.Cutscenes
 
             player.DummyAutoAnimate = false;
             player.Sprite.Play("sleep");
-            Audio.Play("event:/desolozantas/char/kirby/campfire_sit", player.Position);
+            Audio.Play("event:/desolo_zantas/char/kirby/campfire_sit", player.Position);
             yield return 2f;
 
             Vector2 birdOrigin = (badeline?.Position ?? player.Position) + new Vector2(88f, -200f);

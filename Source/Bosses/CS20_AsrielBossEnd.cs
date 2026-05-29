@@ -28,9 +28,9 @@ namespace Celeste.Cutscenes
         public const string Flag = "ch20_asriel_boss_end";
 
         private const string DIALOG_KEY = "CH20_ASRIEL_BOSS_END";
-        private const string MUSIC_HIS_THEME = "event:/desolozantas/final_content/music/lvl20/musicbox";
-        private const string SFX_GLITCH_LONG = "event:/desolozantas/final_content/game/19_the_end/glitch_long";
-        private const string SFX_POWER = "event:/desolozantas/final_content/char/asriel/Asriel_Segapower01";
+        private const string MUSIC_HIS_THEME = "event:/desolo_zantas/final_content/music/lvl20/musicbox";
+        private const string SFX_GLITCH_LONG = "event:/desolo_zantas/final_content/game/19_the_end/glitch_long";
+        private const string SFX_POWER = "event:/desolo_zantas/final_content/char/asriel/Asriel_Segapower01";
 
         private global::Celeste.Player player;
         private AsrielAngelOfDeathBoss asrielBoss;
@@ -71,7 +71,7 @@ namespace Celeste.Cutscenes
             badelineNpc = level.Entities.FindFirst<global::Celeste.Entities.BadelineDummy>() as Entity;
 
             // Lock player during cutscene
-            player.StateMachine.State = 11; // Player.StDummy
+            player.StateMachine.State = Player.StDummy; // Player.StDummy
             player.StateMachine.Locked = true;
 
             // Wait until the player is on the ground
@@ -241,7 +241,7 @@ namespace Celeste.Cutscenes
             if (player != null)
             {
                 player.StateMachine.Locked = false;
-                player.StateMachine.State = 0; // Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Player.StNormal
             }
 
             level.ResetZoom();

@@ -75,10 +75,13 @@ namespace Celeste.Cutscenes
 
             try
             {
-                player.StateMachine.State = 11; // dummy state
+                player.StateMachine.State = Player.StDummy;
                 player.StateMachine.Locked = true;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "CS18_Outro", $"Failed to set player state machine: {ex.Message}");
+            }
 
             player.ForceCameraUpdate = true;
             player.DummyAutoAnimate = true;
@@ -114,11 +117,12 @@ namespace Celeste.Cutscenes
             {
                 Audio.Play("event:/char/badeline/madeline_appear", player.Position);
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Log(LogLevel.Warn, "CS18_Outro", $"Failed to play badeline appear sound: {ex.Message}");
                 Audio.Play("event:/game/general/thing_booped", player.Position);
             }
-            
+
             level?.Shake(0.3f);
             yield return 1f;
         }
@@ -131,11 +135,11 @@ namespace Celeste.Cutscenes
             // Play phone rumble sound with "end" parameter at 1f
             try
             {
-                Audio.Play("event:/desolozantas/char/madeline/cell_phone_ringing", player.Position, "end", 1f);
+                Audio.Play("event:/desolo_zantas/char/madeline/cell_phone_ringing", player.Position, "end", 1f);
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback to a generic sound
+                Logger.Log(LogLevel.Warn, "CS18_Outro", $"Failed to play phone ringing sound: {ex.Message}");
                 Audio.Play("event:/game/general/thing_booped", player.Position);
             }
             
@@ -160,9 +164,9 @@ namespace Celeste.Cutscenes
             {
                 Audio.Play("event:/game/03_resort/door_metal_close", player.Position);
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback sound
+                Logger.Log(LogLevel.Warn, "CS18_Outro", $"Failed to play door close sound: {ex.Message}");
                 Audio.Play("event:/game/general/fallblock_impact", player.Position);
             }
             
@@ -171,14 +175,13 @@ namespace Celeste.Cutscenes
             // Play locking sound
             try
             {
-                Audio.Play("event:/desolozantas/final_content/game/19_the_end/locked_door_appear_1", player.Position);
+                Audio.Play("event:/desolo_zantas/final_content/game/19_the_end/locked_door_appear_1", player.Position);
             }
-            catch
+            catch (Exception ex)
             {
-                // Fallback sound
+                Logger.Log(LogLevel.Warn, "CS18_Outro", $"Failed to play locked door sound: {ex.Message}");
                 Audio.Play("event:/game/general/touchswitch_any", player.Position);
             }
-            
             // Create a drawable solid for the locked door
             if (level != null)
             {
@@ -265,11 +268,11 @@ namespace Celeste.Cutscenes
                 // Play glitch sound with "crash_pitch" parameter
                 try
                 {
-                    Audio.Play("event:/desolozantas/game/16_myworld/destroyed_c", player.Position, "crash_pitch", 1f);
+                    Audio.Play("event:/desolo_zantas/game/16_myworld/destroyed_c", player.Position, "crash_pitch", 1f);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Fallback glitch sound
+                    Logger.Log(LogLevel.Warn, "CS18_Outro", $"Failed to play glitch sound: {ex.Message}");
                     Audio.Play("event:/game/general/thing_booped", player.Position);
                 }
                 

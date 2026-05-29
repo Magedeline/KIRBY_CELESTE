@@ -32,7 +32,7 @@ namespace Celeste.Cutscenes
     public override void OnBegin(Level level)
     {
       this.bird = this.Scene.Entities.FindFirst<BirdNPC>();
-      this.player.StateMachine.State = 11;
+      this.player.StateMachine.State = Player.StDummy;
       if (level.Wipe != null)
         level.Wipe.Cancel();
       level.Wipe = (ScreenWipe) new FadeWipe((Scene) level, true);
@@ -42,7 +42,7 @@ namespace Celeste.Cutscenes
     private IEnumerator cutscene(Level level)
     {
       Cs19AnotherDimensionIntro cs10MoonIntro = this;
-      cs10MoonIntro.player.StateMachine.State = 11;
+      cs10MoonIntro.player.StateMachine.State = Player.StDummy;
       cs10MoonIntro.player.Visible = false;
       cs10MoonIntro.player.Active = false;
       cs10MoonIntro.player.Dashes = 2;
@@ -76,7 +76,7 @@ namespace Celeste.Cutscenes
       cs10MoonIntro.player.Y = (float) (int) cs10MoonIntro.player.Y;
       while (!cs10MoonIntro.player.OnGround() && (double) cs10MoonIntro.player.Bottom < (double) level.Bounds.Bottom)
         cs10MoonIntro.player.MoveVExact(16);
-      cs10MoonIntro.player.StateMachine.State = 11;
+      cs10MoonIntro.player.StateMachine.State = Player.StDummy;
       yield return (object) 0.5f;
       yield return (object) cs10MoonIntro.charaAppears();
       yield return (object) Textbox.Say("CH19_SPACE_INTRO", new Func<IEnumerator>(cs10MoonIntro.charaTurns), new Func<IEnumerator>(cs10MoonIntro.charaVanishes));
@@ -162,7 +162,7 @@ namespace Celeste.Cutscenes
       this.player.Position = level.GetSpawnPoint(this.player.Position) + new Vector2(0.0f, -32f);
       this.player.Active = true;
       this.player.Visible = true;
-      this.player.StateMachine.State = 0;
+      this.player.StateMachine.State = Player.StNormal;
       this.player.X = (float) (int) this.player.X;
       this.player.Y = (float) (int) this.player.Y;
       while (!this.player.OnGround() && (double) this.player.Bottom < (double) level.Bounds.Bottom)

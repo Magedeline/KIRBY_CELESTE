@@ -175,11 +175,11 @@ namespace Celeste.Cutscenes
                 
             if (player != null)
             {
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
                 
                 // Play stand animation if player was sitting and cutscene wasn't skipped
                 if (!first && !WasSkipped)
-                    Audio.Play("event:/desolozantas/char/kirby/stand", player.Position);
+                    Audio.Play("event:/desolo_zantas/char/kirby/stand", player.Position);
             }
             
             // Ensure Chara is properly removed if still present

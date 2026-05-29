@@ -39,7 +39,7 @@ namespace Celeste.Cutscenes
             level.PauseLock        = true;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
 
             Add(new Coroutine(Sequence(level)));
         }
@@ -83,7 +83,7 @@ namespace Celeste.Cutscenes
             level.PauseLock        = false;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
 
             level.Session.SetFlag("asriel_joking_played");
 

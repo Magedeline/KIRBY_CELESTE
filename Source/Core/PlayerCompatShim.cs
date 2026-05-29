@@ -65,7 +65,7 @@ public static class PlayerCompatShim
         if (level == null)
             return;
 
-        var maggyPlayer = level.Tracker.GetEntity<global::Celeste.Entities.Player>();
+        var maggyPlayer = level.Tracker.GetEntity<global::Celeste.Entities.K_Player>();
         if (maggyPlayer == null)
             return;
 
@@ -92,7 +92,7 @@ public static class PlayerCompatShim
             return false;
 
         var vanillaPlayer = level.Tracker.GetEntity<CelestePlayer>();
-        var maggyPlayer = level.Tracker.GetEntity<global::Celeste.Entities.Player>();
+        var maggyPlayer = level.Tracker.GetEntity<global::Celeste.Entities.K_Player>();
 
         // Vanilla player is hidden (Visible=false, StDummy) when our player is in control
         return maggyPlayer != null
@@ -104,13 +104,13 @@ public static class PlayerCompatShim
     /// Gets our <see cref="MaggyHelper.Entities.Player"/> if it's active,
     /// or null if vanilla controls are in use.
     /// </summary>
-    public static global::Celeste.Entities.Player GetActivePlayer(Level level)
+    public static global::Celeste.Entities.K_Player GetActivePlayer(Level level)
     {
         if (level == null)
             return null;
 
         return IsMaggyPlayerActive(level)
-            ? level.Tracker.GetEntity<global::Celeste.Entities.Player>()
+            ? level.Tracker.GetEntity<global::Celeste.Entities.K_Player>()
             : null;
     }
 }

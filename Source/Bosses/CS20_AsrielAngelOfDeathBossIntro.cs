@@ -41,7 +41,7 @@ namespace Celeste.Cutscenes
             asrielAngel = level.Entities.FindFirst<AsrielAngelOfDeathBoss>();
 
             // Lock player in dummy state
-            player.StateMachine.State = 11; // Player.StDummy
+            player.StateMachine.State = Player.StDummy; // Player.StDummy
             player.StateMachine.Locked = true;
 
             // Wait for player to land if in air
@@ -104,7 +104,7 @@ namespace Celeste.Cutscenes
             if (player != null)
             {
                 player.StateMachine.Locked = false;
-                player.StateMachine.State = 0; // Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Player.StNormal
             }
 
             // Set flag to prevent re-triggering (use room-specific flag if roomId provided)

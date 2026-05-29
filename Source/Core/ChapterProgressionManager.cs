@@ -100,7 +100,7 @@ public static class ChapterProgressionManager
             if (icon == null)
                 continue;
 
-            Audio.Play("event:/desolozantas/ui/postgame/unlock_cside");
+            Audio.Play("event:/desolo_zantas/ui/postgame/unlock_cside");
 
             bool ready = false;
             icon.HighlightUnlock(delegate { ready = true; });
@@ -118,20 +118,45 @@ public static class ChapterProgressionManager
         for (int i = 0; i < icons.Count; i++)
         {
             var icon = icons[i];
-            DynamicData iconData = new DynamicData(icon);
-            int area = iconData.Get<int>("area");
-            int mode = iconData.Get<int>("mode");
-
-            if (mode != 2)
+            if (icon == null)
                 continue;
+                
+            try
+            {
+                DynamicData iconData = new DynamicData(icon);
+                if (iconData == null)
+                    continue;
+                
+                // Use Get with null check instead of TryGet
+                object areaObj = iconData.Get<object>("area");
+                object modeObj = iconData.Get<object>("mode");
+                
+                if (areaObj == null || modeObj == null)
+                    continue;
+                
+                int area = Convert.ToInt32(areaObj);
+                int mode = Convert.ToInt32(modeObj);
 
-            if (area < 0 || area >= AreaData.Areas.Count)
+                if (mode != 2)
+                    continue;
+
+                if (area < 0 || area >= AreaData.Areas.Count)
+                    continue;
+
+                var areaData = AreaData.Areas[area];
+                if (areaData?.SID == null)
+                    continue;
+
+                string sid = areaData.SID;
+                if (sid.Equals(cSideId, StringComparison.OrdinalIgnoreCase) ||
+                    sid.Contains(cSideId, StringComparison.OrdinalIgnoreCase))
+                    return icon;
+            }
+            catch
+            {
+                // Skip any icon that causes an exception
                 continue;
-
-            string sid = AreaData.Areas[area].SID ?? string.Empty;
-            if (sid.Equals(cSideId, StringComparison.OrdinalIgnoreCase) ||
-                sid.Contains(cSideId, StringComparison.OrdinalIgnoreCase))
-                return icon;
+            }
         }
         return null;
     }
@@ -146,8 +171,8 @@ public static class ChapterProgressionManager
         if (save == null || MaggySaveFacade.IsChapterUnlocked(Ch18Sid))
             yield break;
 
-        Audio.Play("event:/desolozantas/ui/postgame/unlock_newchapter");
-        Audio.Play("event:/desolozantas/ui/postgame/unlock_newchapter");
+        Audio.Play("event:/desolo_zantas/ui/postgame/unlock_newchapter");
+        Audio.Play("event:/desolo_zantas/ui/postgame/unlock_newchapter");
         Audio.Play("event:/ui/world_map/icon/roll_right");
 
         DynamicData dd = new DynamicData(self);
@@ -180,8 +205,8 @@ public static class ChapterProgressionManager
         if (save == null || MaggySaveFacade.IsChapterUnlocked(Ch19Sid))
             yield break;
 
-        Audio.Play("event:/desolozantas/ui/postgame/unlock_newchapter");
-        Audio.Play("event:/desolozantas/ui/postgame/unlock_finalchapter_icon");
+        Audio.Play("event:/desolo_zantas/ui/postgame/unlock_newchapter");
+        Audio.Play("event:/desolo_zantas/ui/postgame/unlock_finalchapter_icon");
         Audio.Play("event:/ui/world_map/icon/roll_right");
 
         DynamicData dd = new DynamicData(self);
@@ -225,8 +250,8 @@ public static class ChapterProgressionManager
 
     private static IEnumerator PerformCh10Unlock(OuiChapterSelect self)
     {
-        Audio.Play("event:/desolozantas/ui/postgame/unlock_newchapter");
-        Audio.Play("event:/desolozantas/ui/postgame/unlock_newchapter");
+        Audio.Play("event:/desolo_zantas/ui/postgame/unlock_newchapter");
+        Audio.Play("event:/desolo_zantas/ui/postgame/unlock_newchapter");
         Audio.Play("event:/ui/world_map/icon/roll_left");
 
         DynamicData dd = new DynamicData(self);

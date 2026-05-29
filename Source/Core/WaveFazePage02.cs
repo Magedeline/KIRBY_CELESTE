@@ -69,7 +69,7 @@ namespace Celeste
                 titleText.Render();
             if (list != null)
                 list.Draw(new Vector2(160f, 260f), new Vector2(0.0f, 0.0f), Vector2.One, 1f, end: listIndex);
-            if (impossibleEase <= 0.0)
+            if (impossibleEase <= 0.0 || Presentation?.Gfx == null)
                 return;
             MTexture mtexture = Presentation.Gfx["Guy Clip Art"];
             float scale = 0.75f;

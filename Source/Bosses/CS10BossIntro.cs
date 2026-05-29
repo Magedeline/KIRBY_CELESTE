@@ -47,11 +47,11 @@ public class CS10BossIntro : CutsceneEntity
     {
         // Setup player state
         player.Dashes = 1;
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.Sprite.Play("idle");
 
         // Set boss battle music
-        Audio.SetMusic("event:/desolozantas/ch10/music/boss_wispy_woods");
+        Audio.SetMusic("event:/desolo_zantas/ch10/music/boss_wispy_woods");
 
         // Fade in
         FadeWipe fadeWipe = new FadeWipe(level, wipeIn: true);

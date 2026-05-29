@@ -24,3 +24,7 @@ loenn-mcp/
 MaggyHelper.zip
 DesoloZantas_Code.zip
 .env
+
+# Build logs
+build*.txt
+*.log

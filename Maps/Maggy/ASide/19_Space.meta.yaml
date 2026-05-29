@@ -5,7 +5,7 @@ TitleBaseColor: 240d7c
 TitleAccentColor: ff6aa9
 TitleTextColor: ffffff
 IntroType: Jump
-Dreaming: false
+Dreaming: true
 ColorGrade: none
 Wipe: Celeste.StarfieldWipe
 DarknessAlpha: 0.05
@@ -14,41 +14,30 @@ BloomStrength: 1.0
 
 Modes:
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl18/main
-      Ambience: event:/desolo_zantas/env/18_main
+      Music: event:/
+      Ambience: event:/
     Inventory: Default
     HeartIsEnd: false
     SeekerSlowdown: false
-  - AudioState:
-      Music: event:/desolo_zantas/music/lvl18/main
-      Ambience: event:/desolo_zantas/env/18_main
-    Inventory: Default
-    HeartIsEnd: true
-    SeekerSlowdown: false
-  - AudioState:
-      Music: event:/desolo_zantas/music/lvl18/main
-      Ambience: event:/desolo_zantas/env/18_main
-    Inventory: Default
-    HeartIsEnd: true
-    SeekerSlowdown: false
-  - AudioState:
-      Music: event:/desolo_zantas/music/lvl18/main
-      Ambience: event:/desolo_zantas/env/18_main
-    Inventory: Default
-    HeartIsEnd: true
-    SeekerSlowdown: false
 
 Mountain:
-    MountainModelDirectory: Mountain/Maggy/Desolo_Zantas
-    MountainTextureDirectory: Mountain/Maggy/Desolo_Zantas
+    BackgroundMusic: event:/desolo_zantas/music/menu/level_select
+    BackgroundAmbience: event:/desolo_zantas/final_content/env/gen_last_push
+    BackgroundMusicParams:
+        moon_and_blackhole: 1
+    MarkerTexture: marker/runNoBackpack
+    NoBackpack: true
     Idle:
-        Position: [0.000, 15.000, 26.000]
-        Target: [0.000, 14.000, 24.000]
+        Position: [ 6.4, 33.050, 7.4 ]
+        Target: [ 0, 32.5, 0 ]
     Select:
-        Position: [0.000, 14.000, 26.000]
-        Target: [0.000, 13.500, 24.500]
+        Position: [ 5.881, 31.525, 2.871 ]
+        Target: [ 4.393, 31.481, 1.534 ]
     Zoom:
-        Position: [0.000, 14.000, 23.000]
-        Target: [0.000, 13.000, 21.000]
-    Cursor: [0.000, 14.000, 21.000]
-    State: 0
+        Position: [ 2, 31, 1 ]
+        Target: [ 0, 31, 0 ]
+    Cursor: [ 0, 33.3, 0 ]
+    # Available: 0, 1, 2
+    State: 3
+    Rotate: true
+    ShowCore: false

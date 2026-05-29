@@ -1,20 +1,17 @@
 
-
-// Add this namespace if 'Enemy' is defined here
-
 namespace Celeste.Entities
 {
+    public class BossData
+    {
+        public string BossType { get; set; }
+        public Vector2 Position { get; set; }
+        public bool Defeated { get; set; }
+    }
+
     public static class EnemyBossManager
     {
         private static Dictionary<string, List<EntityData>> roomEnemies = new();
         private static Dictionary<string, BossData> roomBosses = new();
-
-        public class BossData
-        {
-            public string BossType { get; set; }
-            public Vector2 Position { get; set; }
-            public bool Defeated { get; set; }
-        }
 
         public static void RegisterRoomEnemies(string room, List<EntityData> enemies)
         {

@@ -57,7 +57,7 @@ namespace Celeste
         public override void Render()
         {
             ActiveFont.DrawOutline(titleDisplayed, new Vector2(128f, 100f), Vector2.Zero, Vector2.One * 1.5f, Color.White, 2f, Color.Black);
-            if (clipArtEase > 0.0)
+            if (clipArtEase > 0.0 && clipArt != null)
                 clipArt.DrawCentered(new Vector2(Width / 2f, (float) (Height / 2.0 - 90.0)), Color.White * clipArtEase, Vector2.One * (float) (1.0 + (1.0 - clipArtEase) * 3.0) * 0.8f, (float) ((1.0 - clipArtEase) * 8.0));
             if (infoText != null)
                 infoText.Draw(new Vector2(Width / 2f, Height - 350), new Vector2(0.5f, 0.0f), Vector2.One, 1f);

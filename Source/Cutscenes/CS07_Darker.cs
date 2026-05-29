@@ -18,7 +18,7 @@ public class CS07_Darker(global::Celeste.Player player) : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IEnumerator Cutscene(Level level)
     {
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.StateMachine.Locked = true;
         player.ForceCameraUpdate = true;
         TempleMirror templeMirror = Scene.Entities.FindFirst<TempleMirror>();
@@ -67,7 +67,7 @@ public class CS07_Darker(global::Celeste.Player player) : CutsceneEntity
     {
         CutsceneManager.ResetPlayerState(player);
         player.StateMachine.Locked = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         player.ForceCameraUpdate = false;
         player.FlipInReflection = false;
         level.Session.SetFlag("reflection");

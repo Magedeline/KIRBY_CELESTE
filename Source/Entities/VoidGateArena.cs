@@ -170,9 +170,10 @@ namespace Celeste.Entities
                 level.Session.SetFlag(completionFlag, true);
             }
             
-            // Clear remaining enemies
-            foreach (var enemy in activeEnemies.ToList())
+            // Clear remaining enemies - avoid ToList() allocation
+            for (int i = activeEnemies.Count - 1; i >= 0; i--)
             {
+                var enemy = activeEnemies[i];
                 if (enemy != null && enemy.Scene != null)
                 {
                     enemy.RemoveSelf();
@@ -189,8 +190,14 @@ namespace Celeste.Entities
         
         private void UpdateArena()
         {
-            // Clean up dead enemies from list
-            activeEnemies.RemoveAll(e => e == null || e.Scene == null);
+            // Clean up dead enemies from list - avoid lambda allocation
+            for (int i = activeEnemies.Count - 1; i >= 0; i--)
+            {
+                if (activeEnemies[i] == null || activeEnemies[i].Scene == null)
+                {
+                    activeEnemies.RemoveAt(i);
+                }
+            }
             
             // Check if wave is complete
             if (activeEnemies.Count == 0 && currentWave < waveCount)

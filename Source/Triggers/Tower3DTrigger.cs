@@ -63,7 +63,7 @@ namespace Celeste.Triggers
             level.CameraLockMode = Level.CameraLockModes.None;
             
             // Set player to climbing state
-            player.StateMachine.State = 1; // Climb state
+            player.StateMachine.State = Player.StClimb; // Climb state
         }
         
         public override void OnLeave(global::Celeste.Player player)
@@ -80,9 +80,9 @@ namespace Celeste.Triggers
                 }
                 
                 // Restore normal player state
-                if (player.StateMachine.State == 1) // Climb state
+                if (player.StateMachine.State == Player.StClimb) // Climb state
                 {
-                    player.StateMachine.State = 0; // Normal state
+                    player.StateMachine.State = Player.StNormal; // Normal state
                 }
             }
         }
@@ -100,15 +100,15 @@ namespace Celeste.Triggers
                     float distanceToTower = Vector2.Distance(player.Position, tower.Position);
                     
                     // If player is close to tower, ensure they can climb
-                    if (distanceToTower < 200f && player.StateMachine.State == 0) // Normal state
+                    if (distanceToTower < 200f && player.StateMachine.State == Player.StNormal) // Normal state
                     {
                         // Allow climbing when near the tower
-                        player.StateMachine.State = 1; // Climb state
+                        player.StateMachine.State = Player.StClimb; // Climb state
                     }
-                    else if (distanceToTower > 300f && player.StateMachine.State == 1) // Climb state
+                    else if (distanceToTower > 300f && player.StateMachine.State == Player.StClimb) // Climb state
                     {
                         // Return to normal state when away from tower
-                        player.StateMachine.State = 0; // Normal state
+                        player.StateMachine.State = Player.StNormal; // Normal state
                     }
                 }
             }

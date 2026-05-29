@@ -357,6 +357,8 @@ internal static class CutsceneEventDispatcher
         AddCutscene(handlers, "ch20_boss_mid", "ch20_boss_mid_trigger", ctx => new CS20_BossMid());
         AddCutscene(handlers, "ch20_boss_end", "ch20_boss_end_trigger", ctx => new CS20_BossEnd());
         AddCutscene(handlers, "ch20_asriel_boss_end", CS20_AsrielBossEnd.Flag, ctx => new CS20_AsrielBossEnd(ctx.Player));
+        AddCutscene(handlers, "CH21_ELS_TERMINA_BOSS_INTRO", "ch21_els_termina_boss_intro", ctx => new Cs21ELSTerminaBossIntro(ctx.Player));
+        AddCutscene(handlers, "CH20_PENUMBRA_PHASTASM_INTRO", "ch20_penumbra_phantasm_intro", ctx => new Cs20PenumbraPhantasmIntro(ctx.Player));
         AddCutscene(handlers, new[] { "cs20_elsfinalboss", "cs21_elsfinalboss", "ch21_elsfinalboss" }, "ch20_asriel_angel_of_death_boss_intro_trigger", ctx => new CS20_AsrielAngelOfDeathBossIntro(ctx.Level.Session.Level));
         AddCutscene(handlers, "ch20_final_boss_defeat", "ch20_final_boss_defeat_trigger", ctx => new CS20_FinalBossDefeat(ctx.Player));
         AddCutscene(handlers, new[] { "cs20_farewell", "cs21_farewell", "ch21_farewell", "ch20_restoration_and_farewell" }, "ch20_restoration_and_farewell_trigger", ctx => new CS20_RestorationAndFarewell(ctx.Player));
@@ -532,7 +534,7 @@ internal static class CutsceneEventDispatcher
 
         private IEnumerator Cutscene(Level level)
         {
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             yield return 0.5f;
             yield return Textbox.Say(eventName.ToUpperInvariant());
             yield return 0.5f;
@@ -543,7 +545,7 @@ internal static class CutsceneEventDispatcher
         {
             if (player != null)
             {
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
             }
         }
     }

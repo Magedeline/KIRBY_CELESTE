@@ -205,7 +205,7 @@ public static class BossesExampleModule
     {
         orig(self);
 
-        if (self.StateMachine.State == 2 || !destroyDashActive)
+        if (self.StateMachine.State == Player.StDash || !destroyDashActive)
         {
             return;
         }

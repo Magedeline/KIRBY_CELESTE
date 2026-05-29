@@ -287,7 +287,7 @@ namespace Celeste.Cutscenes
                 foreach (var lightning in Scene.Entities.FindAll<Lightning>())
                     lightning.ToggleCheck();
                 Scene.Tracker.GetEntity<LightningRenderer>()?.ToggleEdges(true);
-                level.Session.Audio.Ambience.Event = "event:/desolozantas/final_content/env/19_vortex";
+                level.Session.Audio.Ambience.Event = "event:/desolo_zantas/final_content/env/19_vortex";
                 level.Session.Audio.Apply();
             }
             if (chara != null)
@@ -309,7 +309,7 @@ namespace Celeste.Cutscenes
             player.DummyFriction = true;
             player.DummyAutoAnimate = true;
             player.ForceCameraUpdate = false;
-            player.StateMachine.State = 11; // Return to normal state
+            player.StateMachine.State = Player.StDummy; // Return to normal state
             player.StateMachine.Locked = false;
             var first = Scene.Entities.FindFirst<CustomCharaBoost>();
             if (first != null)

@@ -21,7 +21,7 @@ namespace Celeste.Cutscenes {
 
         private IEnumerator routine() {
             Cs05MaddyPhone cs05TheoPhone = this;
-            cs05TheoPhone.player.StateMachine.State = 11;
+            cs05TheoPhone.player.StateMachine.State = Player.StDummy;
             if ((double)cs05TheoPhone.player.X != (double)cs05TheoPhone.targetX)
                 cs05TheoPhone.player.Facing = (Facings)Math.Sign(cs05TheoPhone.targetX - cs05TheoPhone.player.X);
             yield return 0.5f;
@@ -50,7 +50,7 @@ namespace Celeste.Cutscenes {
 
         public override void OnEnd(Level level) {
             this.removePhone();
-            this.player.StateMachine.State = 0;
+            this.player.StateMachine.State = Player.StNormal;
         }
 
         private void removePhone() => this.Scene.Entities.FindFirst<MaddyPhone>()?.RemoveSelf();

@@ -19,7 +19,7 @@ namespace Celeste.Cutscenes
       while (player.Scene == null || !player.OnGround())
         yield return null;
 
-      player.StateMachine.State = 11;
+      player.StateMachine.State = Player.StDummy;
       player.StateMachine.Locked = true;
       yield return 0.25f;
 
@@ -101,7 +101,7 @@ namespace Celeste.Cutscenes
     public override void OnEnd(Level level)
     {
       player.StateMachine.Locked = false;
-      player.StateMachine.State = 0;
+      player.StateMachine.State = Player.StNormal;
       player.ForceCameraUpdate = false;
       player.DummyAutoAnimate = true;
       level.Session.DarkRoomAlpha = new_darkness_alpha;

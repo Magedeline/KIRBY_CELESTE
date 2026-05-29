@@ -56,7 +56,7 @@ namespace Celeste.Entities
         private void OnPlayer(CelestePlayer player)
         {
             // Dashing through the shockwave avoids the push
-            if (player.StateMachine.State == 2)
+            if (player.StateMachine.State == Player.StDash)
                 return;
 
             player.Speed.X = -100f;

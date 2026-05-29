@@ -27,7 +27,7 @@ namespace Celeste.Cutscenes
 
         private IEnumerator Cutscene(Level level)
         {
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.StateMachine.Locked = true;
             yield return player.DummyWalkTo(magolor.X - 64f);
             player.Facing = Facings.Right;
@@ -59,7 +59,7 @@ namespace Celeste.Cutscenes
             // Talker component not used in this NPC
             level.Session.SetFlag("resort_maggy_escaped");
             player.StateMachine.Locked = false;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             magolor.CrawlUntilOut();
             yield return level.ZoomBack(0.5f);
             EndCutscene(level);
@@ -113,7 +113,7 @@ namespace Celeste.Cutscenes
         public override void OnEnd(Level level)
         {
             player.StateMachine.Locked = false;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             level.Session.SetFlag("resort_maggy_escaped");
             SaveData.Instance.SetFlag("MetMaggy");
             SaveData.Instance.SetFlag("MaggyKnowsName");

@@ -118,8 +118,8 @@ namespace Celeste.Entities
         private void Respawn()
         {
             string respawnEvent = red 
-                ? "event:/desolozantas/game/07_hell/redbooster_reappear"
-                : "event:/desolozantas/game/06_stronghold/greenbooster_reappear";
+                ? "event:/desolo_zantas/game/07_hell/redbooster_reappear"
+                : "event:/desolo_zantas/game/06_stronghold/greenbooster_reappear";
             Audio.Play(respawnEvent, Position);
             
             sprite.Position = Vector2.Zero;
@@ -158,8 +158,8 @@ namespace Celeste.Entities
                 
                 // Play enter sound
                 string enterEvent = red 
-                    ? "event:/desolozantas/game/07_hell/redbooster_enter"
-                    : "event:/desolozantas/game/06_stronghold/greenbooster_enter";
+                    ? "event:/desolo_zantas/game/07_hell/redbooster_enter"
+                    : "event:/desolo_zantas/game/06_stronghold/greenbooster_enter";
                 Audio.Play(enterEvent, Position);
                 
                 wiggler.Start();
@@ -224,7 +224,7 @@ namespace Celeste.Entities
             float duration = red ? 0.3f : 0.25f;
             float timer = 0f;
 
-            while (timer < duration && player.StateMachine.State == 2)
+            while (timer < duration && player.StateMachine.State == Player.StDash)
             {
                 player.Speed = dir;
                 sprite.RenderPosition = player.Center + new Vector2(0f, -2f);
@@ -267,7 +267,7 @@ namespace Celeste.Entities
             
             if (red)
             {
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
             }
         }
 
@@ -311,9 +311,9 @@ namespace Celeste.Entities
         private void RedBoost(global::Celeste.Player player)
         {
             // Play dash sound
-            Audio.Play("event:/desolozantas/game/07_hell/redbooster_dash", Position);
+            Audio.Play("event:/desolo_zantas/game/07_hell/redbooster_dash", Position);
             
-            player.StateMachine.State = 2; // RedDash state
+            player.StateMachine.State = Player.StDash; // RedDash state
             player.Speed = Vector2.Zero;
             player.DashDir = Vector2.UnitX * (float)player.Facing;
             BoostingPlayer = true;
@@ -323,7 +323,7 @@ namespace Celeste.Entities
             outline.Visible = true;
             
             // Start looping movement sound
-            loopingSfx.Play(" event:/desolozantas/game/07_hell/redbooster_move");
+            loopingSfx.Play(" event:/desolo_zantas/game/07_hell/redbooster_move");
             
             dashRoutine.Replace(BoostRoutine(player, Vector2.UnitX * (float)player.Facing * BoostSpeed));
         }
@@ -331,9 +331,9 @@ namespace Celeste.Entities
         private void GreenBoost(global::Celeste.Player player)
         {
             // Play dash sound
-            Audio.Play("event:/desolozantas/game/06_stronghold/greenbooster_dash", Position);
+            Audio.Play("event:/desolo_zantas/game/06_stronghold/greenbooster_dash", Position);
             
-            player.StateMachine.State = 2; // RedDash state  
+            player.StateMachine.State = Player.StDash; // RedDash state  
             player.Speed = Vector2.Zero;
             Vector2 direction = (player.Center - Center).SafeNormalize();
             player.DashDir = direction;
@@ -344,7 +344,7 @@ namespace Celeste.Entities
             outline.Visible = true;
             
             // Start looping movement sound
-            loopingSfx.Play(" event:/desolozantas/game/07_hell/redbooster_move");
+            loopingSfx.Play(" event:/desolo_zantas/game/07_hell/redbooster_move");
             
             dashRoutine.Replace(BoostRoutine(player, direction * BoostSpeed));
         }
@@ -356,8 +356,8 @@ namespace Celeste.Entities
             
             // Play end sound
             string endEvent = red 
-                ? "event:/desolozantas/game/07_hell/redbooster_end"
-                : "event:/desolozantas/game/06_stronghold/greenbooster_end";
+                ? "event:/desolo_zantas/game/07_hell/redbooster_end"
+                : "event:/desolo_zantas/game/06_stronghold/greenbooster_end";
             Audio.Play(endEvent, sprite.RenderPosition);
             
             sprite.Play("pop");

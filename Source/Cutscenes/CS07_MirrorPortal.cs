@@ -28,7 +28,7 @@ namespace Celeste.Cutscenes
     private IEnumerator Cutscene(Level level)
     {
       CS07_MirrorPortal cs04MirrorPortal = this;
-      cs04MirrorPortal.player.StateMachine.State = 11;
+      cs04MirrorPortal.player.StateMachine.State = Player.StDummy;
       cs04MirrorPortal.player.StateMachine.Locked = true;
       cs04MirrorPortal.player.Dashes = 1;
       if (level.Session.Area.Mode == AreaMode.Normal)
@@ -38,7 +38,7 @@ namespace Celeste.Cutscenes
       cs04MirrorPortal.Add((Component)new Coroutine(MusicFadeOutCSide()));
       cs04MirrorPortal.Add((Component) (cs04MirrorPortal.sfx = new SoundSource()));
       cs04MirrorPortal.sfx.Position = cs04MirrorPortal.portal.Center;
-      cs04MirrorPortal.sfx.Play("event:/desolozantas/music/lvl7/mirror_cutscene");
+      cs04MirrorPortal.sfx.Play("event:/desolo_zantas/music/lvl7/mirror_cutscene");
       cs04MirrorPortal.Add((Component) new Coroutine(cs04MirrorPortal.CenterCamera()));
       yield return (object) cs04MirrorPortal.player.DummyWalkToExact((int) cs04MirrorPortal.portal.X);
       yield return (object) 0.25f;

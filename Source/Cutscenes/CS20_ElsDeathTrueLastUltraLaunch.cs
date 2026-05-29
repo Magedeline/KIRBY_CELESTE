@@ -223,7 +223,7 @@ namespace Celeste.Cutscenes
 
             if (!hasGolden)
             {
-                Audio.SetMusic("event:/desolozantas/final_content/music/lvl20/saved", startPlaying: true, allowFadeOut: true);
+                Audio.SetMusic("event:/desolo_zantas/final_content/music/lvl20/saved", startPlaying: true, allowFadeOut: true);
             }
 
             p = cameraOffset.Y;
@@ -288,7 +288,7 @@ namespace Celeste.Cutscenes
                 player.Active = true;
                 player.Speed = Vector2.Zero;
                 player.EnforceLevelBounds = true;
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
                 player.DummyFriction = true;
                 player.DummyGravity = true;
                 player.DummyAutoAnimate = true;

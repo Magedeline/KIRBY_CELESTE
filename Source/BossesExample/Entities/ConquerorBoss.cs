@@ -808,7 +808,7 @@ public class ConquerorBoss : Actor
     if (!((Entity) this).Visible || this.Phase != 4 || !player.DashAttacking || (double) player.Speed.Y >= 0.0)
       return;
     player.Speed.Y *= -1f;
-    player.StateMachine.State = 0;
+    player.StateMachine.State = Player.StNormal;
     this.BossTakeDamage(player, true);
   }
 

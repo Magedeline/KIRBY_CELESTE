@@ -616,7 +616,10 @@ namespace Celeste.Entities
                     return true;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "GlitchGlider", $"Failed to parse color hex '{hex}': {ex.Message}");
+            }
             return false;
         }
     }

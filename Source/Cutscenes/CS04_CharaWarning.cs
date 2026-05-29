@@ -29,7 +29,7 @@ namespace Celeste.Cutscenes
         private const float ZOOM_LEVEL = 1.8f;
         private const float ZOOM_DURATION = 0.4f;
         private const float CAMERA_TRANSITION_TIME = 0.4f;
-        private const string MUSIC_EVENT = "event:/desolozantas/music/lvl4/chara_warning";
+        private const string MUSIC_EVENT = "event:/desolo_zantas/music/lvl4/chara_warning";
         private const string AUDIO_EVENT = "event:/game/02_old_site/sequence_badeline_intro";
         private const string CHARA_APPEAR_SOUND = "event:/char/chara/appear";
         private const string CHARA_DISAPPEAR_SOUND = "event:/char/chara/disappear";
@@ -98,7 +98,7 @@ namespace Celeste.Cutscenes
             }
 
             // Lock player state
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.StateMachine.Locked = true;
             
             yield return 0.5f;
@@ -248,7 +248,7 @@ namespace Celeste.Cutscenes
                 if (player != null)
                 {
                     player.StateMachine.Locked = false;
-                    player.StateMachine.State = 0;
+                    player.StateMachine.State = Player.StNormal;
                     player.JustRespawned = true;
                 }
 

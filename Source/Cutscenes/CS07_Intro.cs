@@ -19,7 +19,7 @@ namespace Celeste.Cutscenes
             Cs07Intro cs07Intro = this;
             
             // Lock player movement
-            cs07Intro.player.StateMachine.State = 11;
+            cs07Intro.player.StateMachine.State = Player.StDummy;
             cs07Intro.player.StateMachine.Locked = true;
             cs07Intro.player.ForceCameraUpdate = true;
 

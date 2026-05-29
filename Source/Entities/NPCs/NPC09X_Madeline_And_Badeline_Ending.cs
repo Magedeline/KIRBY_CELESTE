@@ -81,7 +81,7 @@ public class NPC09X_Madeline_and_Badeline_Ending : NPC
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IEnumerator TalkRoutine(CelestePlayer player)
     {
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.ForceCameraUpdate = true;
         while (!player.OnGround())
         {
@@ -120,7 +120,7 @@ public class NPC09X_Madeline_and_Badeline_Ending : NPC
     {
         if (player != null)
         {
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             player.ForceCameraUpdate = false;
         }
         conversation++;

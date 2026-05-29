@@ -183,6 +183,23 @@ return {
                 caw = "Caw Before Showing Tutorial",
                 onlyOnce = "Disappear Permanently After Closing"
             }
+        },
+        ["MaggyHelper/AscendManagerBeyond"] = {
+            placements = {
+                AscendManagerBeyond = "Ascend Manager (Normal)",
+                AscendManagerBeyond_dark = "Ascend Manager (Dark)",
+                AscendManagerBeyond_ch19_ending = "Ascend Manager (CH19 Ending)"
+            },
+            attributes = {
+                width = "Width",
+                height = "Height",
+                index = "Index",
+                cutscene = "Cutscene ID",
+                intro_launch = "Intro Launch",
+                dark = "Dark Mode",
+                arrivial = "Arrival Mode",
+                ambience = "Ambience Event"
+            }
         }
     },
     

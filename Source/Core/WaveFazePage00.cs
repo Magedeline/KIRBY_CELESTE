@@ -56,6 +56,8 @@ namespace Celeste
 
         public override void Render()
         {
+            if (Presentation?.Gfx == null)
+                return;
             DrawIcon(new Vector2(320f, 120f), "desktop/kirbyemulator_icon", Dialog.Clean("WAVEFAZE_DESKTOP_KIRBY"));
             DrawIcon(new Vector2(160f, 720f), "desktop/gamemaker_icon", Dialog.Clean("WAVEFAZE_DESKTOP_GAMEMAKER"));
             DrawIcon(new Vector2(160f, 520f), "desktop/undernet_icon", Dialog.Clean("WAVEFAZE_DESKTOP_UNDERNET"));

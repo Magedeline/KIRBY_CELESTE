@@ -132,7 +132,7 @@ namespace Celeste.Triggers
             }
 
             // Stop player movement
-            player.StateMachine.State = 11; // Dummy state
+            player.StateMachine.State = Player.StDummy; // Dummy state
             player.Speed = Vector2.Zero;
             
             // Pull player gradually

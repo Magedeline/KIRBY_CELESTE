@@ -215,7 +215,7 @@ namespace Celeste.Cutscenes
             if (player?.StateMachine != null)
             {
                 previousPlayerState = player.StateMachine.State;
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
             }
 
             if (MaggyHelperModule.Session != null)
@@ -226,7 +226,7 @@ namespace Celeste.Cutscenes
             }
 
             Audio.SetAmbience(null);
-            Audio.SetMusic("event:/desolozantas/music/menu/cast");
+            Audio.SetMusic("event:/desolo_zantas/music/menu/cast");
             
             Add(new Coroutine(creditsSequence(level)));
         }

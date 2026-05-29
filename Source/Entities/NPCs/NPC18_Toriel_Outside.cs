@@ -91,7 +91,7 @@ namespace Celeste.NPCs
         {
             if (player != null)
             {
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
             }
             Level.Session.SetFlag(Flag);
             RemoveSelf();

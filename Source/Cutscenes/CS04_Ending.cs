@@ -30,7 +30,7 @@ namespace Celeste.Cutscenes
     private IEnumerator cutscene(Level level)
     {
       Cs04Ending cs04Ending = this;
-      cs04Ending.player.StateMachine.State = 11;
+      cs04Ending.player.StateMachine.State = Player.StDummy;
       cs04Ending.player.Dashes = 1;
       while ((double) cs04Ending.player.Light.Alpha > 0.0)
       {

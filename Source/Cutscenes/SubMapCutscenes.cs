@@ -22,7 +22,7 @@ namespace Celeste.Cutscenes
         {
             if (player != null)
             {
-                player.StateMachine.State = 0; // Use 0 for normal state instead of Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Use 0 for normal state instead of Player.StNormal
             }
         }
     }
@@ -49,7 +49,7 @@ namespace Celeste.Cutscenes
         {
             if (player != null)
             {
-                player.StateMachine.State = 0; // Use 0 for normal state instead of Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Use 0 for normal state instead of Player.StNormal
             }
         }
     }
@@ -76,7 +76,7 @@ namespace Celeste.Cutscenes
         {
             if (player != null)
             {
-                player.StateMachine.State = 0; // Use 0 for normal state instead of Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Use 0 for normal state instead of Player.StNormal
             }
         }
     }
@@ -103,7 +103,7 @@ namespace Celeste.Cutscenes
         {
             if (player != null)
             {
-                player.StateMachine.State = 0; // Use 0 for normal state instead of Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Use 0 for normal state instead of Player.StNormal
             }
         }
     }
@@ -130,7 +130,7 @@ namespace Celeste.Cutscenes
         {
             if (player != null)
             {
-                player.StateMachine.State = 0; // Use 0 for normal state instead of Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Use 0 for normal state instead of Player.StNormal
             }
         }
     }

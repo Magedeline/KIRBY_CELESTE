@@ -111,7 +111,7 @@ namespace Celeste.Cutscenes
                 yield return null;
             }
 
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             yield return 1f;
             yield return player.DummyWalkToExact((int)player.X + 16, false, 1f, false);
             yield return 0.25f;

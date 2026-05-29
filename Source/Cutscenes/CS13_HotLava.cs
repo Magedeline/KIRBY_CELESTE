@@ -20,7 +20,7 @@ public class Cs13HotLava : CutsceneEntity
     {
         if (player?.StateMachine == null) yield break;
 
-        player.StateMachine.State = 11; // Dummy state
+        player.StateMachine.State = Player.StDummy; // Dummy state
         yield return 0.5f;
 
         yield return Textbox.Say("CH13_HOT_LAVA");
@@ -32,6 +32,6 @@ public class Cs13HotLava : CutsceneEntity
     public override void OnEnd(Level level)
     {
         if (player != null)
-            player.StateMachine.State = 0; // Normal state
+            player.StateMachine.State = Player.StNormal; // Normal state
     }
 }

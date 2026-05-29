@@ -49,7 +49,7 @@ namespace Celeste.Cutscenes
         private IEnumerator KirbyDropsToKnees()
         {
             player.DummyAutoAnimate = false;
-            Audio.Play("event:/desolozantas/final_content/char/kirby/heartbreak", player.Position);
+            Audio.Play("event:/desolo_zantas/final_content/char/kirby/heartbreak", player.Position);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             yield return 0.6f;
         }
@@ -79,7 +79,7 @@ namespace Celeste.Cutscenes
             player.Depth = 0;
             player.Speed = Vector2.Zero;
             player.DummyAutoAnimate = true;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             if (chara != null)
                 chara.RemoveSelf();
             level.ResetZoom();

@@ -40,7 +40,7 @@ namespace Celeste.Cutscenes
             
             if (player != null)
             {
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
                 player.DummyAutoAnimate = false;
                 player.Sprite.Rate = 0f;
             }
@@ -96,7 +96,7 @@ namespace Celeste.Cutscenes
             showingCredits = true;
             
             // Play credits music
-            Audio.SetMusic("event:/desolozantas/music/lvl9/credit", true, true);
+            Audio.SetMusic("event:/desolo_zantas/music/lvl9/credit", true, true);
             
             // Fade in from black
             Add(new Coroutine(Fade(1f, 0f, 1f)));
@@ -282,7 +282,7 @@ namespace Celeste.Cutscenes
         {
             if (player != null)
             {
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
                 player.DummyGravity = true;
             }
             

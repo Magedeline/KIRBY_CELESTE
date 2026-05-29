@@ -180,7 +180,7 @@
     <Anim id="rollGetUp" path="roll" frames="12-15" delay=".1" goto="downed"/>
     <Loop id="downed" path="sitDown" delay="0.8" frames="15"/>
   </player_badeline>
-  <player_playback copy="player" path="characters/player_playback/"/>
+  <player_playback copy="player" path="characters/maggy_player_playback/"/>
   
   <!-- NPCs -->
 
@@ -1194,6 +1194,11 @@
         <Anim id="deadside" path="death_h" delay="0.02" frames="0-12" />
         <Anim id="deadup"   path="death_h" delay="0.02" frames="0-12" />
         <Anim id="deaddown" path="death_h" delay="0.02" frames="0-12" />
+        <Anim id="sleep" path="wakeup/12" delay="0.5" frames="14-0" />
+
+        <Anim id="roll" path="roll" frames="0-12" delay="0.05"/>
+        <Anim id="rollGetUp" path="roll" frames="12-16" delay=".1" goto="downed"/>
+        <Loop id="downed" path="sitDown" delay="0.8" frames="17"/>
       </Metadata>
     </kirby_player>
   
@@ -1494,8 +1499,11 @@
       <Loop id="kirby_fall" path="fall" delay="0.1" />
       
       <!-- Kirby Abilities -->
-      <Loop id="kirby_inhale" path="inhale" delay="0.05" />
-      <Loop id="kirby_hover" path="hover" delay="0.1" />
+      <Anim id="kirby_inhale_start" path="inhalebegin" delay="0.06" goto="kirby_inhale_loop" />
+      <Loop id="kirby_inhale_loop" path="inhaleloop" delay="0.08" />
+      <Anim id="kirby_inhale_end" path="inhaleend" delay="0.06" goto="kirby_idle" />
+      <Loop id="kirby_hover" path="hover" delay="0.12" frames="0-1" />
+      <Loop id="kirby_float" path="float" delay="0.12" frames="0-1" />
       <Anim id="kirby_spit" path="spit" delay="0.05" />
       <Anim id="kirby_damage" path="hurt" delay="0.08" goto="kirby_idle" />
       
@@ -1548,17 +1556,7 @@
       <Anim id="kirby_sword_sliceup" path="sword/sliceup" delay="0.05" goto="kirby_sword_finalslice" />
       <Anim id="kirby_sword_finalslice" path="sword/finalslice" delay="0.04" goto="kirby_sword_idle" />
       
-      <!-- Combat Animations -->
-      <Anim id="kirby_melee" path="combat/punchA_" delay="0.05" goto="kirby_idle" />
-      <Anim id="kirby_melee_up" path="combat/punchB_" delay="0.04" goto="kirby_idle" />
-      <Anim id="kirby_melee_down" path="combat/groundpound_" delay="0.04" goto="kirby_idle" />
-      <Anim id="kirby_punchA" path="combat/punchA_" delay="0.05" goto="kirby_idle" />
-      <Anim id="kirby_punchB" path="combat/punchB_" delay="0.04" goto="kirby_idle" />
-      <Anim id="kirby_backflip" path="combat/backflip_" delay="0.06" goto="kirby_idle" />
-      <Anim id="kirby_spin" path="combat/spin_" delay="0.05" />
-      <Anim id="kirby_groundpound" path="combat/groundpound_" delay="0.04" goto="kirby_idle" />
-      <Anim id="kirby_grab_enemy" path="combat/grab_enemy_" delay="0.06" goto="kirby_idle" />
-      <Anim id="kirby_slide" path="combat/slide_" delay="0.04" goto="kirby_idle" />
+      <!-- Combat Animations - Not Added (as requested) -->
       <!-- Range / Mouthful / Swallow / Copy — use placeholder frames until dedicated art is added -->
       <Anim id="kirby_range" path="spit" delay="0.05" goto="kirby_idle" />
       <Loop id="kirby_mouthful" path="idlemouthful" delay="0.08" />

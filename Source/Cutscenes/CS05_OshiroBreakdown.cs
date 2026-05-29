@@ -30,7 +30,7 @@ namespace Celeste.Cutscenes
 
         private IEnumerator Cutscene(Level level)
         {
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.StateMachine.Locked = true;
             Add(new Coroutine(player.DummyWalkTo(player.X - 64f)));
             List<DustStaticSpinner> list = level.Entities.FindAll<DustStaticSpinner>();
@@ -160,7 +160,7 @@ namespace Celeste.Cutscenes
         public override void OnEnd(Level level)
         {
             player.StateMachine.Locked = false;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             if (WasSkipped)
             {
                 player.X = level.Bounds.Left + 200;

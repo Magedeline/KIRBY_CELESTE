@@ -13,11 +13,11 @@ namespace Celeste.Entities
     [CustomEntity("MaggyHelper/Player")]
     [Tracked(true)]
     [HotReloadable]
-    public class Player : Actor
+    public class K_Player : Actor
     {
         /// <summary>
         /// Reinterprets this reference as global::Celeste.Player without a runtime type check.
-        /// Required because global::Celeste.Entities.Player extends Actor directly,
+        /// Required because global::Celeste.Entities.K_Player extends Actor directly,
         /// but many vanilla APIs expect global::Celeste.Player.
         /// </summary>
         private global::Celeste.Player SelfPlayer
@@ -25,8 +25,8 @@ namespace Celeste.Entities
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                Player self = this;
-                return Unsafe.As<Player, global::Celeste.Player>(ref self);
+                K_Player self = this;
+                return Unsafe.As<K_Player, global::Celeste.Player>(ref self);
             }
         }
 
@@ -190,6 +190,15 @@ namespace Celeste.Entities
         public const int StKirbyStarSpit = 29;
         public const int StAerialCombo = 30;
 
+        // New Skill-Based Combat States
+        public const int StAirDrift = 31;
+        public const int StCycloneSlash = 32;
+        public const int StStarShot = 33;
+        public const int StSlideTackle = 34;
+        public const int StCounterStance = 35;
+        public const int StDiveKick = 36;
+        public const int StAquaGrapple = 37;
+
         public const string TalkSfx = "player_talk";
 
         // Combat Constants
@@ -224,10 +233,11 @@ namespace Celeste.Entities
         private const float KirbyInhalePullSpeed = 200f;
         private const float KirbyInhaleTime = 1.5f;
 
-        private const float KirbyFloatSpeed = -40f;
-        private const float KirbyFloatMaxTime = 3f;
-        private const float KirbyFloatGravity = 100f;
-        private const float KirbyFloatHSpeed = 70f;
+        private const float KirbyFloatSpeed = -35f;
+        private const float KirbyFloatFallSpeed = 18f;
+        private const float KirbyFloatGravity = 45f;
+        private const float KirbyFloatHSpeed = 80f;
+        private const float KirbyFlapScaleTime = 0.12f;
         private const float KirbyAirPuffSpeed = 120f;
 
         private const float KirbyHammerSpeed = 280f;
@@ -240,6 +250,56 @@ namespace Celeste.Entities
 
         private const int MultiDashMaxCount = 10;
         private const float MultiDashRefillDelay = .3f;
+
+        // Skill-Based Combat System Constants
+        private const float SkillStaminaMax = 100f;
+        private const float SkillStaminaRegenRate = 8f;
+        private const float SkillStaminaRegenAirRate = 3f;
+        private const float ComboResetTime = 3f;
+        private const float SkillInvincibilityDuration = 1f;
+
+        // Air Drift Constants
+        private const float AirDriftDuration = 0.4f;
+        private const float AirDriftSpeed = 90f;
+        private const float AirDriftStaminaCost = 25f;
+
+        // Cyclone Slash Constants
+        private const float CycloneSlashDuration = 0.5f;
+        private const float CycloneSlashStaminaCost = 20f;
+        private const float CycloneSlashRadius = 32f;
+
+        // Star Shot Constants
+        private const float StarShotChargeMax = 1.0f;
+        private const float StarShotMinCharge = 0.15f;
+        private const float StarShotStaminaCost = 15f;
+        private const float StarShotSpeed = 280f;
+
+        // Slide Tackle Constants
+        private const float SlideTackleDuration = 0.6f;
+        private const float SlideTackleSpeed = 240f;
+        private const float SlideTackleStaminaCost = 30f;
+
+        // Counter Stance Constants
+        private const float CounterStanceDuration = 1.0f;
+        private const float CounterStanceStaminaCost = 35f;
+        private const float ParryWindowDuration = 0.25f;
+
+        // Dive Kick Constants
+        private const float DiveKickDuration = 0.5f;
+        private const float DiveKickSpeed = 350f;
+        private const float DiveKickStaminaCost = 20f;
+
+        // Aqua Grapple Constants
+        private const float AquaGrappleMaxRange = 120f;
+        private const float AquaGrappleStaminaCost = 25f;
+        private const float AquaGrappleSwingSpeed = 180f;
+        private const float AquaGrappleRetractSpeed = 300f;
+        private const float AquaGrappleMaxDuration = 3f;
+        private const float AquaGrappleSwingGravity = 400f;
+        private const float AquaGrappleBounceFactor = 0.7f;
+
+        // Boss fight boost
+        private const float BossFightDamageBoost = 1.5f;
 
         #endregion
 
@@ -393,6 +453,12 @@ namespace Celeste.Entities
         private float hairFlashTimer;
         public Color? OverrideHairColor;
 
+        // Kirby hat + scarf (replaces hair visually in Kirby mode)
+        public KirbyHatScarf HatScarf;
+
+        // Kirby player sprite (overlays vanilla Sprite when KirbyModeActive)
+        public Monocle.Sprite kirbySprite;
+
         // Combat Vars
         public bool CombatEnabled = false;
         public bool KirbyModeActive = false;
@@ -409,9 +475,41 @@ namespace Celeste.Entities
         // Kirby Vars
         private float kirbyInhaleTimer;
         private bool kirbyHasInhaledEnemy;
-        private float kirbyFloatTimer;
+        private int kirbyFlapCount;
+        private float kirbyFlapScaleTimer;
         private float kirbyHammerTimer;
         private Vector2 kirbyStarSpitDir;
+
+        // Skill-Based Combat Vars
+        private float skillStamina = 100f;
+        private float skillMaxStamina = 100f;
+        private int skillComboCount;
+        private float skillLastActionTime;
+        private bool skillIsBossFightMode;
+        private float skillInvincibilityTimer;
+
+        // Skill state flags
+        private bool skillIsAirDrifting;
+        private bool skillIsCycloneSlashing;
+        private bool skillIsStarShotCharging;
+        private bool skillIsSlideTackling;
+        private bool skillIsCounterStancing;
+        private bool skillIsDiveKicking;
+        private bool skillHasAquaGrappleUnlocked;
+        private bool skillIsAquaGrappling;
+        private Vector2 skillGrappleTarget;
+        private float skillGrappleLength;
+        private float skillGrappleSwingAngle;
+
+        // Skill timers
+        private float airDriftTimer;
+        private float cycloneSlashTimer;
+        private float starShotCharge;
+        private float slideTackleTimer;
+        private float counterStanceTimer;
+        private float diveKickTimer;
+        private float parryWindowTimer;
+        private float aquaGrappleTimer;
 
         // Enhanced Dash Vars
         public int MaxDashOverride = -1;
@@ -438,55 +536,55 @@ namespace Celeste.Entities
         private static class Sfxs
         {
             // Character - Madeline
-            public const string char_mad_footstep = "event:/desolozantas/char/kirby/footstep";
-            public const string char_mad_handhold = "event:/desolozantas/char/kirby/handhold";
-            public const string char_mad_campfire_stand = "event:/desolozantas/char/kirby/campfire_stand";
-            public const string char_mad_summit_sit = "event:/desolozantas/char/kirby/summit_sit";
-            public const string char_mad_idle_scratch = "event:/desolozantas/char/kirby/idle_scratch";
-            public const string char_mad_idle_sneeze = "event:/desolozantas/char/kirby/idle_sneeze";
-            public const string char_mad_idle_crackknuckles = "event:/desolozantas/char/kirby/idle_crackknuckles";
-            public const string char_mad_jump = "event:/desolozantas/char/kirby/jump";
-            public const string char_mad_jump_assisted = "event:/desolozantas/char/kirby/jump_assisted";
-            public const string char_mad_jump_dreamblock = "event:/desolozantas/char/kirby/jump_dreamblock";
-            public const string char_mad_jump_super = "event:/desolozantas/char/kirby/jump_super";
-            public const string char_mad_jump_superslide = "event:/desolozantas/char/kirby/jump_superslide";
-            public const string char_mad_jump_superwall = "event:/desolozantas/char/kirby/jump_superwall";
-            public const string char_mad_jump_wall_left = "event:/desolozantas/char/kirby/jump_wall_left";
-            public const string char_mad_jump_wall_right = "event:/desolozantas/char/kirby/jump_wall_right";
-            public const string char_mad_jump_climb_left = "event:/desolozantas/char/kirby/jump_climb_left";
-            public const string char_mad_jump_climb_right = "event:/desolozantas/char/kirby/jump_climb_right";
-            public const string char_mad_land = "event:/desolozantas/char/kirby/land";
-            public const string char_mad_grab = "event:/desolozantas/char/kirby/grab";
-            public const string char_mad_grab_letgo = "event:/desolozantas/char/kirby/grab_letgo";
-            public const string char_mad_climb_ledge = "event:/desolozantas/char/kirby/climb_ledge";
-            public const string char_mad_wallslide = "event:/desolozantas/char/kirby/wallslide";
-            public const string char_mad_dash_red_right = "event:/desolozantas/char/kirby/dash_red_right";
-            public const string char_mad_dash_red_left = "event:/desolozantas/char/kirby/dash_red_left";
-            public const string char_mad_dash_pink_right = "event:/desolozantas/char/kirby/dash_pink_right";
-            public const string char_mad_dash_pink_left = "event:/desolozantas/char/kirby/dash_pink_left";
-            public const string char_mad_duck = "event:/desolozantas/char/kirby/duck";
-            public const string char_mad_stand = "event:/desolozantas/char/kirby/stand";
-            public const string char_mad_water_dash_gen = "event:/desolozantas/char/kirby/water_dash_gen";
-            public const string char_mad_water_move_shallow = "event:/desolozantas/char/kirby/water_move_shallow";
-            public const string char_mad_dreamblock_enter = "event:/desolozantas/char/kirby/dreamblock_enter";
-            public const string char_mad_dreamblock_exit = "event:/desolozantas/char/kirby/dreamblock_exit";
-            public const string char_mad_dreamblock_travel = "event:/desolozantas/char/kirby/dreamblock_travel";
-            public const string char_mad_revive = "event:/desolozantas/char/kirby/revive";
-            public const string char_mad_mirrortemple_landing = "event:/desolozantas/char/kirby/mirrortemple_landing";
-            public const string char_mad_summit_areastart = "event:/desolozantas/char/kirby/summit_areastart";
-            public const string char_mad_crystaltheo_lift = "event:/desolozantas/char/kirby/crystalmaddy_lift";
-            public const string char_mad_crystaltheo_throw = "event:/desolozantas/char/kirby/crystalmaddy_throw";
+            public const string char_mad_footstep = "event:/desolo_zantas/char/kirby/footstep";
+            public const string char_mad_handhold = "event:/desolo_zantas/char/kirby/handhold";
+            public const string char_mad_campfire_stand = "event:/desolo_zantas/char/kirby/campfire_stand";
+            public const string char_mad_summit_sit = "event:/desolo_zantas/char/kirby/summit_sit";
+            public const string char_mad_idle_scratch = "event:/desolo_zantas/char/kirby/idle_scratch";
+            public const string char_mad_idle_sneeze = "event:/desolo_zantas/char/kirby/idle_sneeze";
+            public const string char_mad_idle_crackknuckles = "event:/desolo_zantas/char/kirby/idle_crackknuckles";
+            public const string char_mad_jump = "event:/desolo_zantas/char/kirby/jump";
+            public const string char_mad_jump_assisted = "event:/desolo_zantas/char/kirby/jump_assisted";
+            public const string char_mad_jump_dreamblock = "event:/desolo_zantas/char/kirby/jump_dreamblock";
+            public const string char_mad_jump_super = "event:/desolo_zantas/char/kirby/jump_super";
+            public const string char_mad_jump_superslide = "event:/desolo_zantas/char/kirby/jump_superslide";
+            public const string char_mad_jump_superwall = "event:/desolo_zantas/char/kirby/jump_superwall";
+            public const string char_mad_jump_wall_left = "event:/desolo_zantas/char/kirby/jump_wall_left";
+            public const string char_mad_jump_wall_right = "event:/desolo_zantas/char/kirby/jump_wall_right";
+            public const string char_mad_jump_climb_left = "event:/desolo_zantas/char/kirby/jump_climb_left";
+            public const string char_mad_jump_climb_right = "event:/desolo_zantas/char/kirby/jump_climb_right";
+            public const string char_mad_land = "event:/desolo_zantas/char/kirby/land";
+            public const string char_mad_grab = "event:/desolo_zantas/char/kirby/grab";
+            public const string char_mad_grab_letgo = "event:/desolo_zantas/char/kirby/grab_letgo";
+            public const string char_mad_climb_ledge = "event:/desolo_zantas/char/kirby/climb_ledge";
+            public const string char_mad_wallslide = "event:/desolo_zantas/char/kirby/wallslide";
+            public const string char_mad_dash_red_right = "event:/desolo_zantas/char/kirby/dash_red_right";
+            public const string char_mad_dash_red_left = "event:/desolo_zantas/char/kirby/dash_red_left";
+            public const string char_mad_dash_pink_right = "event:/desolo_zantas/char/kirby/dash_pink_right";
+            public const string char_mad_dash_pink_left = "event:/desolo_zantas/char/kirby/dash_pink_left";
+            public const string char_mad_duck = "event:/desolo_zantas/char/kirby/duck";
+            public const string char_mad_stand = "event:/desolo_zantas/char/kirby/stand";
+            public const string char_mad_water_dash_gen = "event:/desolo_zantas/char/kirby/water_dash_gen";
+            public const string char_mad_water_move_shallow = "event:/desolo_zantas/char/kirby/water_move_shallow";
+            public const string char_mad_dreamblock_enter = "event:/desolo_zantas/char/kirby/dreamblock_enter";
+            public const string char_mad_dreamblock_exit = "event:/desolo_zantas/char/kirby/dreamblock_exit";
+            public const string char_mad_dreamblock_travel = "event:/desolo_zantas/char/kirby/dreamblock_travel";
+            public const string char_mad_revive = "event:/desolo_zantas/char/kirby/revive";
+            public const string char_mad_mirrortemple_landing = "event:/desolo_zantas/char/kirby/mirrortemple_landing";
+            public const string char_mad_summit_areastart = "event:/desolo_zantas/char/kirby/summit_areastart";
+            public const string char_mad_crystaltheo_lift = "event:/desolo_zantas/char/kirby/crystalmaddy_lift";
+            public const string char_mad_crystaltheo_throw = "event:/desolo_zantas/char/kirby/crystalmaddy_throw";
 
             // Game
-            public const string game_06_feather_state_bump = "event:/desolozantas/game/08_truth/warpstar_state_bump";
-            public const string game_06_feather_state_end = "event:/desolozantas/game/08_truth/warpstar_state_end";
-            public const string game_06_feather_state_loop = "event:/desolozantas/game/08_truth/warpstar_state_loop";
-            public const string game_06_feather_state_warning = "event:/desolozantas/game/08_truth/warpstar_state_warning";
-            public const string game_09_conveyor_activate = "event:/desolozantas/game/09_core/conveyor_activate";
-            public const string game_assist_dreamblockbounce = "event:/desolozantas/game/general/assist_dreamblockbounce";
+            public const string game_06_feather_state_bump = "event:/desolo_zantas/game/08_truth/warpstar_state_bump";
+            public const string game_06_feather_state_end = "event:/desolo_zantas/game/08_truth/warpstar_state_end";
+            public const string game_06_feather_state_loop = "event:/desolo_zantas/game/08_truth/warpstar_state_loop";
+            public const string game_06_feather_state_warning = "event:/desolo_zantas/game/08_truth/warpstar_state_warning";
+            public const string game_09_conveyor_activate = "event:/desolo_zantas/game/09_core/conveyor_activate";
+            public const string game_assist_dreamblockbounce = "event:/desolo_zantas/game/general/assist_dreamblockbounce";
 
             // Music
-            public const string music_reflection_main = "event:/desolozantas/music/lvl8/main";
+            public const string music_reflection_main = "event:/desolo_zantas/music/lvl8/main";
 
             // Badeline sound mapping
             public static readonly Dictionary<string, string> MadelineToBadelineSound = new Dictionary<string, string>
@@ -518,12 +616,12 @@ namespace Celeste.Entities
         /// EntityData constructor - called by Celeste when loading a player entity from a map file.
         /// Required for the map editor and level loader to instantiate this entity.
         /// </summary>
-        public Player(EntityData data, Vector2 offset)
+        public K_Player(EntityData data, Vector2 offset)
             : this(data.Position + offset, (PlayerSpriteMode)data.Enum("spriteMode", PlayerSpriteMode.Madeline))
         {
         }
 
-        public Player(Vector2 position, PlayerSpriteMode spriteMode)
+        public K_Player(Vector2 position, PlayerSpriteMode spriteMode)
             : base(new Vector2((int)position.X, (int)position.Y))
         {
             Depth = Depths.Player;
@@ -531,10 +629,21 @@ namespace Celeste.Entities
 
             // sprite
             Sprite = new PlayerSprite(spriteMode);
-            Add(Hair = new PlayerHair(Sprite));
+            Hair = new PlayerHair(Sprite);   // kept for reference safety (DeathEffect, StarFly, etc.) but never rendered
+            Hair.Visible = false;
+            Hair.SimulateMotion = false;
+            Add(Hair);
             Add(Sprite);
             Hair.Color = NormalHairColor;
             startHairCount = Sprite.HairCount;
+
+            // Kirby hat + scarf — replaces hair visually at all times
+            Add(HatScarf = new KirbyHatScarf(this));
+
+            // Kirby player sprite — loaded from kirby_player_ext sprite bank entry
+            kirbySprite = GFX.SpriteBank.Create("kirby_player_ext");
+            kirbySprite.Visible = false;
+            Add(kirbySprite);
 
             // sweat sprite
             sweatSprite = GFX.SpriteBank.Create("player_sweat");
@@ -581,6 +690,16 @@ namespace Celeste.Entities
             StateMachine.SetCallbacks(StKirbyFloat, KirbyFloatUpdate, null, KirbyFloatBegin, KirbyFloatEnd);
             StateMachine.SetCallbacks(StKirbyHammer, KirbyHammerUpdate, KirbyHammerCoroutine, KirbyHammerBegin, KirbyHammerEnd);
             StateMachine.SetCallbacks(StKirbyStarSpit, KirbyStarSpitUpdate, KirbyStarSpitCoroutine, KirbyStarSpitBegin, KirbyStarSpitEnd);
+
+            // New Skill-Based Combat States
+            StateMachine.SetCallbacks(StAirDrift, AirDriftUpdate, null, AirDriftBegin, AirDriftEnd);
+            StateMachine.SetCallbacks(StCycloneSlash, CycloneSlashUpdate, null, CycloneSlashBegin, CycloneSlashEnd);
+            StateMachine.SetCallbacks(StStarShot, StarShotUpdate, null, StarShotBegin, StarShotEnd);
+            StateMachine.SetCallbacks(StSlideTackle, SlideTackleUpdate, null, SlideTackleBegin, SlideTackleEnd);
+            StateMachine.SetCallbacks(StCounterStance, CounterStanceUpdate, null, CounterStanceBegin, CounterStanceEnd);
+            StateMachine.SetCallbacks(StDiveKick, DiveKickUpdate, null, DiveKickBegin, DiveKickEnd);
+            StateMachine.SetCallbacks(StAquaGrapple, AquaGrappleUpdate, null, AquaGrappleBegin, AquaGrappleEnd);
+
             Add(StateMachine);
 
             // other stuff
@@ -835,8 +954,22 @@ namespace Celeste.Entities
                     sweatSprite.Scale.X = Math.Abs(Sprite.Scale.X) * Math.Sign(sweatSprite.Scale.X);
                 }
 
-                // draw
-                base.Render();
+                // draw (hat/scarf renders before base so it sits under sprite)
+                HatScarf?.Render();
+
+                if (KirbyModeActive && kirbySprite != null)
+                {
+                    // Render Kirby sprite in place of the vanilla sprite
+                    kirbySprite.RenderPosition = Sprite.RenderPosition;
+                    kirbySprite.Scale = Sprite.Scale;
+                    kirbySprite.Rotation = Sprite.Rotation;
+                    kirbySprite.Color = Sprite.Color;
+                    kirbySprite.Render();
+                }
+                else
+                {
+                    base.Render();
+                }
 
                 // star fly transform
                 if (Sprite.CurrentAnimationID == PlayerSprite.StartStarFly)
@@ -949,7 +1082,7 @@ namespace Celeste.Entities
                 if (onGround)
                 {
                     highestAirY = Y;
-                    kirbyFloatTimer = KirbyFloatMaxTime;
+                    kirbyFlapCount = MaggyHelperModule.Settings?.KirbyMaxFloatJumps ?? 5;
                 }
                 else
                     highestAirY = Math.Min(Y, highestAirY);
@@ -1190,6 +1323,34 @@ namespace Celeste.Entities
                 else
                     dashChainCount = 0;
 
+                // Skill-Based Combat System Updates
+                if (IsKirbyMode())
+                {
+                    // Update combo timer
+                    if (Scene.RawTimeActive - skillLastActionTime > ComboResetTime)
+                        skillComboCount = 0;
+
+                    // Update invincibility timer
+                    if (skillInvincibilityTimer > 0f)
+                        skillInvincibilityTimer -= Engine.DeltaTime;
+
+                    // Regenerate stamina when not using skills
+                    bool usingSkill = skillIsAirDrifting || skillIsCycloneSlashing || skillIsStarShotCharging ||
+                                      skillIsSlideTackling || skillIsCounterStancing || skillIsDiveKicking || skillIsAquaGrappling;
+                    if (!usingSkill)
+                    {
+                        float regenRate = onGround ? SkillStaminaRegenRate : SkillStaminaRegenAirRate;
+                        skillStamina = Math.Min(skillMaxStamina, skillStamina + regenRate * Engine.DeltaTime);
+                    }
+
+                    // Update boss fight mode detection
+                    UpdateSkillBossFightMode();
+
+                    // Reset combo on ground
+                    if (onGround && skillComboCount > 0 && Scene.RawTimeActive - skillLastActionTime > 0.5f)
+                        skillComboCount = 0;
+                }
+
                 //Min Hold Time
                 if (minHoldTimer > 0)
                     minHoldTimer -= Engine.DeltaTime;
@@ -1429,7 +1590,7 @@ namespace Celeste.Entities
         {
             while (chaserStates.Count > 0 && Scene.TimeActive - chaserStates[0].TimeStamp > ChaserStateMaxTime)
                 chaserStates.RemoveAt(0);
-            chaserStates.Add(new ChaserState(this));
+            chaserStates.Add(new ChaserState(SelfPlayer));
             activeSounds.Clear();
         }
 
@@ -1447,17 +1608,20 @@ namespace Celeste.Entities
         public void UpdateHair(bool applyGravity)
         {
             // color
+            Color resolvedColor;
             if (StateMachine.State == StStarFly)
             {
-                Hair.Color = Sprite.Color;
+                resolvedColor = Sprite.Color;
                 applyGravity = false;
             }
             else if (KirbyModeActive)
             {
-                Hair.Color = Color.Lerp(Hair.Color, KirbyPinkHairColor, 6f * Engine.DeltaTime);
+                resolvedColor = Color.Lerp(Hair.Color, KirbyPinkHairColor, 6f * Engine.DeltaTime);
             }
             else if (Dashes == 0 && Dashes < MaxDashes)
-                Hair.Color = Color.Lerp(Hair.Color, UsedHairColor, 6f * Engine.DeltaTime);
+            {
+                resolvedColor = Color.Lerp(Hair.Color, UsedHairColor, 6f * Engine.DeltaTime);
+            }
             else
             {
                 Color color;
@@ -1474,14 +1638,27 @@ namespace Celeste.Entities
                 else
                     color = GetDashTierColor(Dashes);
 
-                Hair.Color = color;
+                resolvedColor = color;
             }
 
             if (OverrideHairColor != null)
-                Hair.Color = OverrideHairColor.Value;
+                resolvedColor = OverrideHairColor.Value;
+
+            Hair.Color = resolvedColor;
+
+            // Hat + scarf always visible (drives color even in non-Kirby mode for future use)
+            if (HatScarf != null)
+            {
+                HatScarf.Visible     = true;
+                HatScarf.Color       = resolvedColor;
+                HatScarf.AccentColor = Color.Lerp(resolvedColor, Microsoft.Xna.Framework.Color.White, 0.45f);
+            }
+
+            // Hair is always invisible — hat+scarf handles all visuals
+            Hair.Visible = false;
+            Hair.SimulateMotion = false;
 
             Hair.Facing = Facing;
-            Hair.SimulateMotion = applyGravity;
             lastDashes = Dashes;
         }
 
@@ -1502,11 +1679,58 @@ namespace Celeste.Entities
             };
         }
 
+        private void UpdateKirbySprite()
+        {
+            if (kirbySprite == null) return;
+
+            kirbySprite.Scale.X = Calc.Approach(kirbySprite.Scale.X, Math.Abs(Sprite.Scale.X), 1.75f * Engine.DeltaTime);
+            kirbySprite.Scale.Y = Calc.Approach(kirbySprite.Scale.Y, Sprite.Scale.Y, 1.75f * Engine.DeltaTime);
+            kirbySprite.Scale.X *= (int)Facing;
+            kirbySprite.Rate = Sprite.Rate;
+
+            string anim;
+            int st = StateMachine.State;
+
+            if (st == StKirbyInhale)
+                anim = kirbySprite.CurrentAnimationID?.StartsWith("kirby_inhale") == true
+                    ? kirbySprite.CurrentAnimationID : "kirby_inhale_start";
+            else if (st == StKirbyFloat)
+                anim = "kirby_float";
+            else if (DashAttacking)
+                anim = "kirby_run";
+            else if (st == StClimb)
+                anim = Speed.Y < 0 ? "kirby_jump" : "kirby_idle";
+            else if (Ducking)
+                anim = "kirby_idle";
+            else if (onGround)
+            {
+                if (Math.Abs(Speed.X) <= RunAccel / 40f && moveX == 0)
+                    anim = "kirby_idle";
+                else if (Math.Abs(Speed.X) < MaxRun * .5f)
+                    anim = "kirby_walk";
+                else
+                    anim = "kirby_run";
+            }
+            else if (wallSlideDir != 0)
+                anim = "kirby_idle";
+            else if (Speed.Y < 0)
+                anim = "kirby_jump";
+            else
+                anim = "kirby_fall";
+
+            if (kirbySprite.CurrentAnimationID != anim)
+                kirbySprite.Play(anim);
+        }
+
         private void UpdateSprite()
         {
             //Tween
             Sprite.Scale.X = Calc.Approach(Sprite.Scale.X, 1f, 1.75f * Engine.DeltaTime);
             Sprite.Scale.Y = Calc.Approach(Sprite.Scale.Y, 1f, 1.75f * Engine.DeltaTime);
+
+            // Drive Kirby sprite in parallel
+            if (KirbyModeActive)
+                UpdateKirbySprite();
 
             //Animation
             if (InControl && Sprite.CurrentAnimationID != PlayerSprite.Throw && StateMachine.State != StTempleFall && 
@@ -3391,8 +3615,8 @@ namespace Celeste.Entities
                 }
 
                 // Kirby Float: press Jump while in the air in Kirby mode (after normal jump fails)
-                if (KirbyModeActive && !onGround && Input.Jump.Pressed && jumpGraceTimer <= 0
-                    && !WallJumpCheck(1) && !WallJumpCheck(-1))
+                if (KirbyModeActive && !onGround && kirbyFlapCount > 0 && Input.Jump.Pressed
+                    && jumpGraceTimer <= 0 && !WallJumpCheck(1) && !WallJumpCheck(-1))
                 {
                     Input.Jump.ConsumeBuffer();
                     return StKirbyFloat;
@@ -3410,6 +3634,59 @@ namespace Celeste.Entities
                 if (KirbyModeActive && kirbyHasInhaledEnemy && Input.Grab.Pressed)
                 {
                     return StKirbyStarSpit;
+                }
+
+                // Skill-Based Combat System - New abilities
+                if (IsKirbyMode() && skillStamina > 0)
+                {
+                    // Air Drift: Jump while in air (brief air control)
+                    if (!onGround && Input.Jump.Pressed && skillStamina >= AirDriftStaminaCost)
+                    {
+                        Input.Jump.ConsumeBuffer();
+                        return StAirDrift;
+                    }
+
+                    // Counter Stance: Grab on ground to parry
+                    if (onGround && Input.Grab.Pressed && skillStamina >= CounterStanceStaminaCost)
+                    {
+                        Input.Grab.ConsumeBuffer();
+                        return StCounterStance;
+                    }
+
+                    // Dive Kick: Down + Jump in air for fast attack
+                    if (!onGround && Input.Jump.Pressed && Input.MoveY.Value > 0 && skillStamina >= DiveKickStaminaCost)
+                    {
+                        Input.Jump.ConsumeBuffer();
+                        return StDiveKick;
+                    }
+
+                    // Cyclone Slash: Dash while in air for spin attack
+                    if (!onGround && Input.Dash.Pressed && skillStamina >= CycloneSlashStaminaCost)
+                    {
+                        Input.Dash.ConsumeBuffer();
+                        return StCycloneSlash;
+                    }
+
+                    // Star Shot: Grab while in air to charge and shoot
+                    if (!onGround && Input.Grab.Pressed && skillStamina >= StarShotStaminaCost)
+                    {
+                        Input.Grab.ConsumeBuffer();
+                        return StStarShot;
+                    }
+
+                    // Slide Tackle: Down + Dash on ground for low dash attack
+                    if (onGround && Input.Dash.Pressed && Input.MoveY.Value > 0 && skillStamina >= SlideTackleStaminaCost)
+                    {
+                        Input.Dash.ConsumeBuffer();
+                        return StSlideTackle;
+                    }
+
+                    // Aqua Grapple: Grab + Up in air (if unlocked)
+                    if (!onGround && Input.Grab.Pressed && skillHasAquaGrappleUnlocked && skillStamina >= AquaGrappleStaminaCost)
+                    {
+                        Input.Grab.ConsumeBuffer();
+                        return StAquaGrapple;
+                    }
                 }
             }
 
@@ -5881,7 +6158,7 @@ namespace Celeste.Entities
             private ChaserStateSound sound4;
             public int Sounds;
 
-            public ChaserState(Player player)
+            public ChaserState(global::Celeste.Player player)
             {
                 Position = player.Position;
 #pragma warning disable CL013
@@ -5896,11 +6173,11 @@ namespace Celeste.Entities
                 var sounds = player.activeSounds;
                 Sounds = Math.Min(5, sounds.Count);
 
-                sound0 = Sounds > 0 ? sounds[0] : default(ChaserStateSound);
-                sound1 = Sounds > 1 ? sounds[1] : default(ChaserStateSound);
-                sound2 = Sounds > 2 ? sounds[2] : default(ChaserStateSound);
-                sound3 = Sounds > 3 ? sounds[3] : default(ChaserStateSound);
-                sound4 = Sounds > 4 ? sounds[4] : default(ChaserStateSound);
+                sound0 = Sounds > 0 ? new ChaserStateSound { Event = sounds[0].Event, Parameter = sounds[0].Parameter, ParameterValue = sounds[0].ParameterValue, Action = (ChaserStateSound.Actions)(int)sounds[0].Action } : default;
+                sound1 = Sounds > 1 ? new ChaserStateSound { Event = sounds[1].Event, Parameter = sounds[1].Parameter, ParameterValue = sounds[1].ParameterValue, Action = (ChaserStateSound.Actions)(int)sounds[1].Action } : default;
+                sound2 = Sounds > 2 ? new ChaserStateSound { Event = sounds[2].Event, Parameter = sounds[2].Parameter, ParameterValue = sounds[2].ParameterValue, Action = (ChaserStateSound.Actions)(int)sounds[2].Action } : default;
+                sound3 = Sounds > 3 ? new ChaserStateSound { Event = sounds[3].Event, Parameter = sounds[3].Parameter, ParameterValue = sounds[3].ParameterValue, Action = (ChaserStateSound.Actions)(int)sounds[3].Action } : default;
+                sound4 = Sounds > 4 ? new ChaserStateSound { Event = sounds[4].Event, Parameter = sounds[4].Parameter, ParameterValue = sounds[4].ParameterValue, Action = (ChaserStateSound.Actions)(int)sounds[4].Action } : default;
             }
 
             public ChaserStateSound this[int index]
@@ -6324,75 +6601,96 @@ namespace Celeste.Entities
 
         private void KirbyFloatBegin()
         {
-            if (kirbyFloatTimer <= 0f)
-                kirbyFloatTimer = KirbyFloatMaxTime;
+            // Consume one flap on entry
+            kirbyFlapCount = Math.Max(0, kirbyFlapCount - 1);
+            kirbyFlapScaleTimer = KirbyFlapScaleTime;
 
-            if (Speed.Y > KirbyFloatSpeed)
-                Speed.Y = KirbyFloatSpeed;
+            // Initial upward kick
+            Speed.Y = KirbyFloatSpeed;
 
-            Sprite.Play(PlayerSprite.FallSlow);
-            Sprite.Scale = new Vector2(1.2f, .8f);
+            // Puffed-up squash on entry
+            Sprite.Scale = new Vector2(1.3f, 0.75f);
+            kirbySprite?.Play("kirby_float");
+
+            // Puff sound — reuse jump sound pitched differently via FMOD
+            Play(Sfxs.char_mad_jump);
+
+            // Entry puff particles downward
+            level.Particles.Emit(P_DashA, 3, BottomCenter, Vector2.UnitX * 4, Calc.Down);
         }
 
         private void KirbyFloatEnd()
         {
-            // air puff on exit
+            // Restore normal sprite scale
+            Sprite.Scale = Vector2.One;
+            kirbyFlapScaleTimer = 0f;
+
+            // Exit puff particles
             if (!onGround)
-            {
                 level.Particles.Emit(P_DashA, 4, Center, Vector2.One * 4, Calc.Down);
-            }
         }
 
         private int KirbyFloatUpdate()
         {
-            kirbyFloatTimer -= Engine.DeltaTime;
+            // Animate scale back to puffed-up (wide/short) while floating
+            kirbyFlapScaleTimer -= Engine.DeltaTime;
+            if (kirbyFlapScaleTimer > 0)
+            {
+                float t = kirbyFlapScaleTimer / KirbyFlapScaleTime;
+                Sprite.Scale = Vector2.Lerp(new Vector2(1.2f, 0.85f), new Vector2(1.3f, 0.75f), t);
+            }
+            else
+            {
+                Sprite.Scale = new Vector2(1.2f, 0.85f);
+            }
 
-            // horizontal movement
-            float maxH = KirbyFloatHSpeed;
-            Speed.X = Calc.Approach(Speed.X, maxH * moveX, RunAccel * .6f * Engine.DeltaTime);
+            // Horizontal movement — slightly floatier than normal
+            Speed.X = Calc.Approach(Speed.X, KirbyFloatHSpeed * moveX, RunAccel * .55f * Engine.DeltaTime);
 
-            // gentle float gravity
-            Speed.Y = Calc.Approach(Speed.Y, 20f, KirbyFloatGravity * Engine.DeltaTime);
+            // Gentle float gravity — drifts slowly downward
+            Speed.Y = Calc.Approach(Speed.Y, KirbyFloatFallSpeed, KirbyFloatGravity * Engine.DeltaTime);
 
-            // fast-fall: down input exits float immediately
+            // Fast-fall: hold down to drop out of float
             if (Input.MoveY.Value > 0)
             {
                 Speed.Y = 200f;
                 return StNormal;
             }
 
-            // flap on jump press
-            if (Input.Jump.Pressed)
+            // Additional flap: press jump again to bounce upward (costs a flap)
+            if (Input.Jump.Pressed && kirbyFlapCount > 0)
             {
                 Input.Jump.ConsumeBuffer();
-                Speed.Y = KirbyFloatSpeed;
-                Sprite.Scale = new Vector2(1.3f, .7f);
-                kirbyFloatTimer -= .15f;
+                kirbyFlapCount--;
+                kirbyFlapScaleTimer = KirbyFlapScaleTime;
 
-                // air puff particles
+                Speed.Y = KirbyFloatSpeed;
+                Sprite.Scale = new Vector2(1.35f, 0.7f);
+
+                Play(Sfxs.char_mad_jump);
                 level.Particles.Emit(P_DashA, 2, BottomCenter, Vector2.UnitX * 4, Calc.Down);
             }
 
-            // land — reset float timer so next airtime starts fresh
+            // Out of flaps — gravity takes over, return to normal when going fast enough downward
+            if (kirbyFlapCount <= 0 && Speed.Y > KirbyFloatFallSpeed)
+                return StNormal;
+
+            // Land — restore flap count and exit float
             if (onGround && Speed.Y >= 0)
             {
-                kirbyFloatTimer = KirbyFloatMaxTime;
+                kirbyFlapCount = MaggyHelperModule.Settings?.KirbyMaxFloatJumps ?? 5;
                 return StNormal;
             }
 
-            // time out
-            if (kirbyFloatTimer <= 0)
-                return StNormal;
-
-            // cancel with dash (only on press)
+            // Cancel with dash
             if (Input.Dash.Pressed && CanDash)
                 return StartDash();
 
-            // cancel with grab to grab walls
+            // Cancel with grab to cling to walls
             if (Input.Grab.Check && ClimbCheck((int)Facing))
                 return StClimb;
 
-            // facing
+            // Facing
             if (moveX != 0)
                 Facing = (Facings)moveX;
 
@@ -6539,6 +6837,718 @@ namespace Celeste.Entities
 
         #endregion
 
+        #region Skill-Based Combat States
+
+        // Air Drift State
+        private void AirDriftBegin()
+        {
+            skillIsAirDrifting = true;
+            airDriftTimer = AirDriftDuration;
+            skillStamina -= AirDriftStaminaCost;
+
+            Speed.Y = -60f;
+
+            if (Sprite != null)
+            {
+                if (Sprite.Has("float"))
+                    Sprite.Play("float");
+                else if (Sprite.Has("hover"))
+                    Sprite.Play("hover");
+                Sprite.Scale = new Vector2(1.1f, 0.9f);
+            }
+
+            if (level != null)
+            {
+                level.Particles.Emit(ParticleTypes.SparkyDust, 6, Center, Vector2.One * 12f);
+                Audio.Play("event:/desolo_zantas/char/kirby/dash_charge", Position);
+            }
+        }
+
+        private void AirDriftEnd()
+        {
+            skillIsAirDrifting = false;
+            airDriftTimer = 0f;
+            skillComboCount++;
+            skillLastActionTime = Scene.RawTimeActive;
+
+            if (Sprite != null)
+            {
+                Sprite.Scale = Vector2.One;
+                Sprite.Color = Color.White;
+            }
+        }
+
+        private int AirDriftUpdate()
+        {
+            if (!IsKirbyMode())
+                return StNormal;
+
+            airDriftTimer -= Engine.DeltaTime;
+
+            if (airDriftTimer <= 0f || onGround)
+            {
+                AirDriftEnd();
+                return StNormal;
+            }
+
+            int moveX = Input.MoveX.Value;
+            Speed.X = Calc.Approach(Speed.X, AirDriftSpeed * moveX, 400f * Engine.DeltaTime);
+            Speed.Y = Calc.Approach(Speed.Y, 20f, 200f * Engine.DeltaTime);
+
+            if (moveX != 0)
+                Facing = (Facings)moveX;
+
+            return StAirDrift;
+        }
+
+        // Cyclone Slash State
+        private void CycloneSlashBegin()
+        {
+            skillIsCycloneSlashing = true;
+            cycloneSlashTimer = CycloneSlashDuration;
+            skillStamina -= CycloneSlashStaminaCost;
+
+            Speed.X = 0f;
+            Speed.Y = -30f;
+
+            if (Sprite != null)
+            {
+                if (Sprite.Has("spin"))
+                    Sprite.Play("spin");
+                else if (Sprite.Has("dash"))
+                    Sprite.Play("dash");
+                Sprite.Scale = new Vector2(1.3f, 0.7f);
+                Sprite.Color = Color.Orange * 0.8f;
+            }
+
+            if (level != null)
+            {
+                level.Particles.Emit(ParticleTypes.SparkyDust, 12, Center, Vector2.One * 20f);
+                level.Shake(0.15f);
+                Audio.Play("event:/desolo_zantas/char/kirby/kirby_knight/spin", Position);
+            }
+
+            DealCombatDamageInRadius(Center, CycloneSlashRadius, 1);
+        }
+
+        private void CycloneSlashEnd()
+        {
+            skillIsCycloneSlashing = false;
+            cycloneSlashTimer = 0f;
+            skillComboCount++;
+            skillLastActionTime = Scene.RawTimeActive;
+
+            if (Sprite != null)
+            {
+                Sprite.Scale = Vector2.One;
+                Sprite.Color = Color.White;
+            }
+
+            if (level != null)
+                level.Particles.Emit(ParticleTypes.SparkyDust, 6, Center, Vector2.One * 12f);
+        }
+
+        private int CycloneSlashUpdate()
+        {
+            if (!IsKirbyMode())
+                return StNormal;
+
+            cycloneSlashTimer -= Engine.DeltaTime;
+
+            if (cycloneSlashTimer <= 0f || onGround)
+            {
+                CycloneSlashEnd();
+                return StNormal;
+            }
+
+            if (Sprite != null)
+            {
+                Sprite.Rotation = 0f;
+                if (!Sprite.CurrentAnimationID.Equals("spin"))
+                    Sprite.Play("spin");
+            }
+
+            if (Scene.OnInterval(0.1f))
+                DealCombatDamageInRadius(Center, CycloneSlashRadius, 1);
+
+            Speed.Y = Calc.Approach(Speed.Y, -20f, 300f * Engine.DeltaTime);
+
+            return StCycloneSlash;
+        }
+
+        // Star Shot State
+        private void StarShotBegin()
+        {
+            skillIsStarShotCharging = true;
+            starShotCharge = 0f;
+            skillStamina -= StarShotStaminaCost;
+
+            Speed.Y = -20f;
+            Speed.X *= 0.5f;
+
+            if (Sprite != null)
+            {
+                if (Sprite.Has("attack"))
+                    Sprite.Play("attack");
+                else if (Sprite.Has("spit"))
+                    Sprite.Play("spit");
+                Sprite.Scale = new Vector2(1.1f, 0.9f);
+                Sprite.Color = Color.Yellow * 0.8f;
+            }
+
+            if (level != null)
+                Audio.Play("event:/desolo_zantas/char/kirby/inhale_start", Position);
+        }
+
+        private void StarShotEnd()
+        {
+            skillIsStarShotCharging = false;
+
+            if (starShotCharge >= StarShotMinCharge)
+                FireStarShot(starShotCharge);
+
+            starShotCharge = 0f;
+            skillComboCount++;
+            skillLastActionTime = Scene.RawTimeActive;
+
+            if (Sprite != null)
+            {
+                Sprite.Scale = Vector2.One;
+                Sprite.Color = Color.White;
+            }
+        }
+
+        private int StarShotUpdate()
+        {
+            if (!IsKirbyMode())
+                return StNormal;
+
+            starShotCharge = Math.Min(StarShotChargeMax, starShotCharge + Engine.DeltaTime);
+            Speed.Y = Calc.Approach(Speed.Y, -15f, 150f * Engine.DeltaTime);
+            Speed.X *= 0.9f;
+
+            if (!Input.Grab.Check)
+            {
+                StarShotEnd();
+                return StNormal;
+            }
+
+            if (Sprite != null && Scene.OnInterval(0.1f))
+            {
+                float pulse = 1f + (starShotCharge * 0.3f);
+                Sprite.Scale = new Vector2(1.1f, 0.9f) * pulse;
+            }
+
+            if (level != null && Scene.OnInterval(0.15f))
+                level.Particles.Emit(ParticleTypes.SparkyDust, 2, Center, Vector2.One * 8f);
+
+            return StStarShot;
+        }
+
+        private void FireStarShot(float charge)
+        {
+            if (level == null) return;
+
+            Vector2 direction = new Vector2(Input.MoveX.Value, Input.MoveY.Value).SafeNormalize();
+            if (direction == Vector2.Zero)
+                direction = Vector2.UnitX * (int)Facing;
+
+            int particleCount = (int)(8 * charge);
+            level.Particles.Emit(ParticleTypes.SparkyDust, particleCount, Center, Vector2.One * 15f);
+            level.Flash(Color.Yellow * 0.3f * charge, true);
+
+            Vector2 shotPos = Center + direction * 20f;
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 trailPos = shotPos + direction * (i * 10f);
+                level.Particles.Emit(ParticleTypes.SparkyDust, 2, trailPos, Vector2.One * 8f);
+            }
+
+            Audio.Play("event:/desolo_zantas/char/kirby/spit", Position);
+            Speed = -direction * 80f * charge;
+
+            // Deal damage along path
+            for (float d = 0; d < 120f * charge; d += 8f)
+            {
+                Vector2 checkPos = Center + direction * d;
+                if (Scene.CollideCheck<Solid>(checkPos))
+                    break;
+                DealCombatDamageAtPoint(checkPos, 16f, 2);
+            }
+        }
+
+        // Slide Tackle State
+        private void SlideTackleBegin()
+        {
+            skillIsSlideTackling = true;
+            slideTackleTimer = SlideTackleDuration;
+            skillStamina -= SlideTackleStaminaCost;
+
+            Speed.X = SlideTackleSpeed * (int)Facing;
+            Speed.Y = 0f;
+
+            if (Sprite != null)
+            {
+                if (Sprite.Has("dash"))
+                    Sprite.Play("dash");
+                else if (Sprite.Has("runFast"))
+                    Sprite.Play("runFast");
+                Sprite.Scale = new Vector2(1.4f, 0.5f);
+                Sprite.Color = Color.Cyan * 0.8f;
+            }
+
+            if (level != null)
+            {
+                level.Particles.Emit(ParticleTypes.SparkyDust, 8, Center, Vector2.One * 16f);
+                level.Shake(0.1f);
+                Audio.Play("event:/desolo_zantas/char/kirby/kirby_knight/punch_A", Position);
+            }
+        }
+
+        private void SlideTackleEnd()
+        {
+            skillIsSlideTackling = false;
+            slideTackleTimer = 0f;
+            skillComboCount++;
+            skillLastActionTime = Scene.RawTimeActive;
+
+            if (Sprite != null)
+            {
+                Sprite.Scale = Vector2.One;
+                Sprite.Color = Color.White;
+            }
+
+            Speed.X *= 0.3f;
+        }
+
+        private int SlideTackleUpdate()
+        {
+            if (!IsKirbyMode())
+                return StNormal;
+
+            slideTackleTimer -= Engine.DeltaTime;
+
+            if (slideTackleTimer <= 0f || !onGround)
+            {
+                SlideTackleEnd();
+                return StNormal;
+            }
+
+            Speed.X = Calc.Approach(Speed.X, SlideTackleSpeed * (int)Facing, 100f * Engine.DeltaTime);
+
+            if (Input.Jump.Pressed)
+            {
+                Input.Jump.ConsumeBuffer();
+                SlideTackleEnd();
+                Speed.Y = -200f;
+                return StNormal;
+            }
+
+            if (Scene.OnInterval(0.05f))
+                DealCombatDamageInRadius(Center, 24f, 1);
+
+            return StSlideTackle;
+        }
+
+        // Counter Stance State
+        private void CounterStanceBegin()
+        {
+            skillIsCounterStancing = true;
+            counterStanceTimer = CounterStanceDuration;
+            parryWindowTimer = ParryWindowDuration;
+            skillStamina -= CounterStanceStaminaCost;
+
+            Speed *= 0.1f;
+
+            if (Sprite != null)
+            {
+                if (Sprite.Has("determined"))
+                    Sprite.Play("determined");
+                else if (Sprite.Has("idleA"))
+                    Sprite.Play("idleA");
+                Sprite.Scale = new Vector2(1.1f, 1.1f);
+                Sprite.Color = Color.Gold * 0.7f;
+            }
+
+            if (level != null)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    float angle = (MathHelper.TwoPi / 6f) * i;
+                    Vector2 shieldPos = Center + new Vector2(
+                        (float)Math.Cos(angle) * 30f,
+                        (float)Math.Sin(angle) * 30f
+                    );
+                    level.Particles.Emit(ParticleTypes.SparkyDust, 2, shieldPos, Vector2.One * 8f);
+                }
+                Audio.Play("event:/desolo_zantas/char/kirby/core_hair_charged", Position);
+            }
+        }
+
+        private void CounterStanceEnd()
+        {
+            skillIsCounterStancing = false;
+            counterStanceTimer = 0f;
+            parryWindowTimer = 0f;
+
+            if (Sprite != null)
+            {
+                Sprite.Scale = Vector2.One;
+                Sprite.Color = Color.White;
+            }
+        }
+
+        private int CounterStanceUpdate()
+        {
+            if (!IsKirbyMode())
+                return StNormal;
+
+            counterStanceTimer -= Engine.DeltaTime;
+            parryWindowTimer -= Engine.DeltaTime;
+
+            if (counterStanceTimer <= 0f || !onGround)
+            {
+                CounterStanceEnd();
+                return StNormal;
+            }
+
+            if (parryWindowTimer > 0f)
+            {
+                if (CheckParryContact())
+                {
+                    PerformParryCounter();
+                    return StNormal;
+                }
+
+                if (Sprite != null && Scene.OnInterval(0.05f))
+                    Sprite.Color = Color.White * 0.5f;
+            }
+            else
+            {
+                if (Sprite != null)
+                    Sprite.Color = Color.Gold * 0.7f;
+            }
+
+            if (Input.Dash.Pressed)
+            {
+                CounterStanceEnd();
+                return StNormal;
+            }
+
+            return StCounterStance;
+        }
+
+        private bool CheckParryContact()
+        {
+            if (level == null) return false;
+
+            foreach (var entity in level.Entities)
+            {
+                if (Vector2.Distance(Center, entity.Center) < 40f)
+                {
+                    if (entity.GetType().Name.Contains("Enemy") ||
+                        entity.GetType().Name.Contains("Projectile"))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private void PerformParryCounter()
+        {
+            if (level == null) return;
+
+            skillInvincibilityTimer = SkillInvincibilityDuration;
+            skillStamina = Math.Min(skillMaxStamina, skillStamina + 20f);
+            skillComboCount++;
+
+            Speed.X = 300f * (int)Facing;
+            Speed.Y = -100f;
+
+            level.Particles.Emit(ParticleTypes.SparkyDust, 16, Center, Vector2.One * 24f);
+            level.Flash(Color.Gold * 0.4f, true);
+            level.Shake(0.3f);
+            Audio.Play("event:/desolo_zantas/char/kirby/transform_in", Position);
+
+            CounterStanceEnd();
+        }
+
+        // Dive Kick State
+        private void DiveKickBegin()
+        {
+            skillIsDiveKicking = true;
+            diveKickTimer = DiveKickDuration;
+            skillStamina -= DiveKickStaminaCost;
+
+            Speed.Y = DiveKickSpeed;
+            Speed.X = Input.MoveX.Value * 100f;
+
+            if (Sprite != null)
+            {
+                if (Sprite.Has("dash"))
+                    Sprite.Play("dash");
+                else if (Sprite.Has("jumpFast"))
+                    Sprite.Play("jumpFast");
+                Sprite.Scale = new Vector2(0.7f, 1.4f);
+                Sprite.Color = Color.Red * 0.8f;
+            }
+
+            if (level != null)
+            {
+                level.Particles.Emit(ParticleTypes.SparkyDust, 10, Center, Vector2.One * 20f);
+                level.Shake(0.2f);
+                Audio.Play("event:/desolo_zantas/char/kirby/kirby_knight/punch_Final", Position);
+            }
+        }
+
+        private void DiveKickEnd()
+        {
+            skillIsDiveKicking = false;
+            diveKickTimer = 0f;
+            skillComboCount++;
+            skillLastActionTime = Scene.RawTimeActive;
+
+            if (onGround && level != null)
+            {
+                level.Particles.Emit(ParticleTypes.SparkyDust, 12, BottomCenter, Vector2.One * 24f);
+                level.Shake(0.3f);
+                Audio.Play("event:/desolo_zantas/char/kirby/kirby_knight/punch_Final", Position);
+                DealCombatDamageInRadius(BottomCenter, 40f, 2);
+            }
+
+            if (Sprite != null)
+            {
+                Sprite.Scale = Vector2.One;
+                Sprite.Color = Color.White;
+            }
+        }
+
+        private int DiveKickUpdate()
+        {
+            if (!IsKirbyMode())
+                return StNormal;
+
+            diveKickTimer -= Engine.DeltaTime;
+
+            if (diveKickTimer <= 0f || onGround)
+            {
+                DiveKickEnd();
+                return StNormal;
+            }
+
+            Speed.Y = DiveKickSpeed;
+
+            int moveX = Input.MoveX.Value;
+            if (moveX != 0)
+            {
+                Speed.X = Calc.Approach(Speed.X, moveX * 80f, 200f * Engine.DeltaTime);
+            }
+
+            DealCombatDamageInRadius(Center, 28f, 1);
+
+            if (level != null && Scene.OnInterval(0.05f))
+                level.Particles.Emit(ParticleTypes.SparkyDust, 2, Center, Vector2.One * 8f);
+
+            return StDiveKick;
+        }
+
+        // Aqua Grapple State
+        private void AquaGrappleBegin()
+        {
+            skillIsAquaGrappling = true;
+            aquaGrappleTimer = AquaGrappleMaxDuration;
+            skillStamina -= AquaGrappleStaminaCost;
+
+            Vector2 aimDirection = new Vector2(Input.MoveX.Value, Math.Min(Input.MoveY.Value, 0)).SafeNormalize();
+            if (aimDirection == Vector2.Zero)
+                aimDirection = new Vector2((int)Facing, -0.5f).SafeNormalize();
+
+            skillGrappleTarget = FindGrappleAnchor(aimDirection);
+            skillGrappleLength = Vector2.Distance(Center, skillGrappleTarget);
+
+            if (skillGrappleLength > AquaGrappleMaxRange)
+            {
+                skillGrappleLength = AquaGrappleMaxRange;
+                skillGrappleTarget = Center + aimDirection * AquaGrappleMaxRange;
+            }
+
+            Vector2 toTarget = skillGrappleTarget - Center;
+            skillGrappleSwingAngle = (float)Math.Atan2(toTarget.Y, toTarget.X);
+
+            if (Sprite != null)
+            {
+                if (Sprite.Has("dash"))
+                    Sprite.Play("dash");
+                else if (Sprite.Has("hover"))
+                    Sprite.Play("hover");
+                Sprite.Scale = new Vector2(0.9f, 1.2f);
+                Sprite.Color = Color.Cyan * 0.9f;
+            }
+
+            if (level != null)
+            {
+                CreateWaterStream(Center, skillGrappleTarget);
+                level.Particles.Emit(ParticleTypes.SparkyDust, 10, Center, Vector2.One * 16f);
+                level.Particles.Emit(ParticleTypes.SparkyDust, 8, skillGrappleTarget, Vector2.One * 12f);
+                level.Shake(0.1f);
+                Audio.Play("event:/desolo_zantas/char/kirby/kirby_knight/punch_A", Position);
+            }
+        }
+
+        private void AquaGrappleEnd()
+        {
+            skillIsAquaGrappling = false;
+            aquaGrappleTimer = 0f;
+            skillComboCount++;
+            skillLastActionTime = Scene.RawTimeActive;
+
+            Speed *= 0.8f;
+
+            if (Sprite != null)
+            {
+                Sprite.Scale = Vector2.One;
+                Sprite.Color = Color.White;
+            }
+
+            if (level != null)
+            {
+                level.Particles.Emit(ParticleTypes.SparkyDust, 12, Center, Vector2.One * 20f);
+                Audio.Play("event:/desolo_zantas/char/kirby/spit", Position);
+            }
+        }
+
+        private int AquaGrappleUpdate()
+        {
+            if (!IsKirbyMode())
+                return StNormal;
+
+            aquaGrappleTimer -= Engine.DeltaTime;
+
+            if (aquaGrappleTimer <= 0f || onGround || Input.Jump.Pressed)
+            {
+                if (Input.Jump.Pressed)
+                {
+                    Input.Jump.ConsumeBuffer();
+                    Speed.Y = -250f;
+                }
+                AquaGrappleEnd();
+                return StNormal;
+            }
+
+            Vector2 toTarget = skillGrappleTarget - Center;
+            float currentAngle = (float)Math.Atan2(toTarget.Y, toTarget.X);
+
+            int moveX = Input.MoveX.Value;
+            if (moveX != 0)
+                skillGrappleSwingAngle += moveX * 2f * Engine.DeltaTime;
+
+            float swingGravity = 300f * Engine.DeltaTime;
+            float angleVelocity = swingGravity * (float)Math.Sin(skillGrappleSwingAngle);
+            skillGrappleSwingAngle += angleVelocity * Engine.DeltaTime;
+
+            Vector2 targetPos = skillGrappleTarget - new Vector2(
+                (float)Math.Cos(skillGrappleSwingAngle) * skillGrappleLength,
+                (float)Math.Sin(skillGrappleSwingAngle) * skillGrappleLength
+            );
+
+            Vector2 moveDir = targetPos - Center;
+            Speed = moveDir * 5f;
+
+            if (Input.MoveY.Value < 0)
+                skillGrappleLength = Math.Max(30f, skillGrappleLength - AquaGrappleRetractSpeed * Engine.DeltaTime);
+            else if (Input.MoveY.Value > 0)
+                skillGrappleLength = Math.Min(AquaGrappleMaxRange, skillGrappleLength + AquaGrappleRetractSpeed * Engine.DeltaTime * 0.5f);
+
+            if (level != null && Scene.OnInterval(0.05f))
+            {
+                Vector2 ropeDir = (skillGrappleTarget - Center).SafeNormalize();
+                for (int i = 1; i < 5; i++)
+                {
+                    Vector2 dropPos = Center + ropeDir * (skillGrappleLength * i / 5f);
+                    level.Particles.Emit(ParticleTypes.SparkyDust, 1, dropPos, Vector2.One * 4f);
+                }
+            }
+
+            if (Input.Grab.Pressed)
+            {
+                AquaGrappleEnd();
+                return StNormal;
+            }
+
+            return StAquaGrapple;
+        }
+
+        private Vector2 FindGrappleAnchor(Vector2 direction)
+        {
+            if (level == null) return Center + direction * AquaGrappleMaxRange;
+
+            Vector2 start = Center;
+            Vector2 end = start + direction * AquaGrappleMaxRange;
+
+            for (float t = 0; t <= 1f; t += 0.05f)
+            {
+                Vector2 checkPos = Vector2.Lerp(start, end, t);
+                if (level.CollideCheck<Solid>(checkPos))
+                    return checkPos;
+
+                foreach (var entity in level.Entities)
+                {
+                    if (entity.GetType().Name.Contains("Grapple") ||
+                        entity.GetType().Name.Contains("Hook"))
+                    {
+                        if (Vector2.Distance(checkPos, entity.Center) < 16f)
+                            return entity.Center;
+                    }
+                }
+            }
+
+            return end;
+        }
+
+        private void CreateWaterStream(Vector2 from, Vector2 to)
+        {
+            if (level == null) return;
+
+            Vector2 dir = (to - from).SafeNormalize();
+            float distance = Vector2.Distance(from, to);
+            int segments = (int)(distance / 10f);
+
+            for (int i = 0; i < segments; i++)
+            {
+                float t = i / (float)segments;
+                Vector2 pos = Vector2.Lerp(from, to, t);
+                level.Particles.Emit(ParticleTypes.SparkyDust, 3, pos, Vector2.One * 8f, Color.Cyan);
+            }
+        }
+
+        /// <summary>
+        /// Unlock the Aqua Grapple ability for this player.
+        /// </summary>
+        public void UnlockAquaGrapple()
+        {
+            skillHasAquaGrappleUnlocked = true;
+            Logger.Log(LogLevel.Info, "MaggyHelper", "[Player] Aqua Grapple unlocked!");
+
+            if (level != null)
+            {
+                level.Particles.Emit(ParticleTypes.SparkyDust, 20, Center, Vector2.One * 24f);
+                level.Flash(Color.Cyan * 0.3f, true);
+                Audio.Play("event:/desolo_zantas/char/kirby/transform_in", Position);
+            }
+        }
+
+        /// <summary>
+        /// Check if player has unlocked Aqua Grapple.
+        /// </summary>
+        public bool HasAquaGrappleUnlocked()
+        {
+            return skillHasAquaGrappleUnlocked;
+        }
+
+        #endregion
+
         #region Combat Helpers
 
         /// <summary>
@@ -6621,6 +7631,169 @@ namespace Celeste.Entities
             }
 
             currentHealth = Math.Min(maxHealth, currentHealth + amount);
+        }
+
+        /// <summary>
+        /// Full heal the player.
+        /// </summary>
+        public void FullHeal()
+        {
+            if (level != null)
+            {
+                var healthManager = PlayerHealthManager.GetOrCreate(level, maxHealth);
+                healthManager.FullHeal();
+                maxHealth = healthManager.MaxHP;
+                currentHealth = healthManager.CurrentHP;
+                return;
+            }
+
+            currentHealth = maxHealth;
+        }
+
+        /// <summary>
+        /// Deal damage to the player from various sources.
+        /// </summary>
+        public bool Damage(int amount, Vector2 source, string damageType = "Generic")
+        {
+            if (!KirbyModeActive || currentHealth <= 0 || skillInvincibilityTimer > 0)
+                return false;
+
+            // Apply damage through health manager
+            if (level != null)
+            {
+                var healthManager = PlayerHealthManager.GetOrCreate(level, maxHealth);
+                healthManager.Damage(amount);
+                maxHealth = healthManager.MaxHP;
+                currentHealth = healthManager.CurrentHP;
+            }
+            else
+            {
+                currentHealth = Math.Max(0, currentHealth - amount);
+            }
+
+            // Apply knockback and invincibility
+            if (currentHealth > 0)
+            {
+                ApplyKnockback(source);
+                skillInvincibilityTimer = SkillInvincibilityDuration;
+
+                // Flash player sprite
+                if (Sprite != null)
+                    Sprite.Visible = false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Deal damage from spike hazard.
+        /// </summary>
+        public bool DamageFromSpike(Vector2 source)
+        {
+            return Damage(1, source, "Spike");
+        }
+
+        /// <summary>
+        /// Deal damage from spinner hazard.
+        /// </summary>
+        public bool DamageFromSpinner(Vector2 source)
+        {
+            return Damage(1, source, "Spinner");
+        }
+
+        /// <summary>
+        /// Deal damage from boss attack.
+        /// </summary>
+        public bool DamageFromBoss(Vector2 source, int damage = 1)
+        {
+            return Damage(damage, source, "Boss");
+        }
+
+        /// <summary>
+        /// Deal damage from enemy contact.
+        /// </summary>
+        public bool DamageFromEnemy(Vector2 source, int damage = 1)
+        {
+            return Damage(damage, source, "Enemy");
+        }
+
+        /// <summary>
+        /// Deal damage from being crushed (instant death).
+        /// </summary>
+        public bool DamageFromCrush()
+        {
+            if (!KirbyModeActive)
+                return false;
+
+            // Crushing is instant death
+            if (level != null)
+            {
+                var healthManager = PlayerHealthManager.GetOrCreate(level, maxHealth);
+                healthManager.Damage(maxHealth); // Kill instantly
+                maxHealth = healthManager.MaxHP;
+                currentHealth = healthManager.CurrentHP;
+            }
+            else
+            {
+                currentHealth = 0;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Deal damage from falling out of bounds (instant death).
+        /// </summary>
+        public bool DamageFromOutOfBounds()
+        {
+            if (!KirbyModeActive)
+                return false;
+
+            // Out of bounds is instant death - bypass invincibility
+            currentHealth = 0;
+
+            if (level != null)
+            {
+                var healthManager = PlayerHealthManager.GetOrCreate(level, maxHealth);
+                healthManager.Damage(maxHealth);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Apply knockback force away from damage source.
+        /// </summary>
+        private void ApplyKnockback(Vector2 source)
+        {
+            Vector2 knockbackDir = source == Vector2.Zero
+                ? new Vector2(-(int)Facing, -0.5f)
+                : (Position - source).SafeNormalize();
+
+            Speed = knockbackDir * 120f;
+
+            // Visual feedback
+            if (level != null)
+            {
+                level.Shake(0.2f);
+                Input.Rumble(RumbleStrength.Light, RumbleLength.Short);
+            }
+        }
+
+        /// <summary>
+        /// Check if player has low health for Kirby mode (different from property).
+        /// </summary>
+        public bool CheckLowHealth()
+        {
+            return currentHealth > 0 && currentHealth <= Math.Max(1, maxHealth / 3);
+        }
+
+        /// <summary>
+        /// Get health percentage (0-1).
+        /// </summary>
+        public float GetHealthPercent()
+        {
+            return maxHealth <= 0 ? 0f : (float)currentHealth / maxHealth;
         }
 
         /// <summary>
@@ -6737,6 +7910,32 @@ namespace Celeste.Entities
             }
 
             isInArena = false;
+        }
+
+        /// <summary>
+        /// Skill-Based Combat: Detects if player is near a boss and updates boss fight mode.
+        /// Called each frame in Update() when Kirby mode is active.
+        /// </summary>
+        private void UpdateSkillBossFightMode()
+        {
+            if (level == null)
+            {
+                skillIsBossFightMode = false;
+                return;
+            }
+
+            bool nearBoss = false;
+            // Use Tracker instead of iterating all entities to avoid O(N) every frame
+            foreach (BossActor boss in Scene.Tracker.GetEntities<BossActor>())
+            {
+                if (Vector2.DistanceSquared(Center, boss.Center) < 40000f)
+                {
+                    nearBoss = true;
+                    break;
+                }
+            }
+
+            skillIsBossFightMode = nearBoss;
         }
 
         /// <summary>

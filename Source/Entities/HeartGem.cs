@@ -182,7 +182,7 @@ PFakeShine = new ParticleType
                     if (this.IsAstral) {
                         Audio.Play("event:/game/general/crystalheart_pulse", this.Position);
                     } else if (this.IsFake) {
-                        Audio.Play("event:/desolozantas/final_content/game/19_the_end/fakeheart_pulse", this.Position);
+                        Audio.Play("event:/desolo_zantas/final_content/game/19_the_end/fakeheart_pulse", this.Position);
                     } else {
                         Audio.Play("event:/game/general/crystalheart_pulse", this.Position);
                     }
@@ -265,7 +265,7 @@ scene.Add(this.fakeRightWall = new InvisibleBarrier(new Vector2(X + 160f, Y - 20
            if (this.IsAstral) {
       Audio.Play("event:/game/general/crystalheart_bounce", this.Position);
           } else if (this.IsFake) {
-      Audio.Play("event:/desolozantas/final_content/game/19_the_end/fakeheart_bounce", this.Position);
+      Audio.Play("event:/desolo_zantas/final_content/game/19_the_end/fakeheart_bounce", this.Position);
           } else {
         Audio.Play("event:/game/general/crystalheart_bounce", this.Position);
          }
@@ -369,15 +369,15 @@ foreach (Follower follower in player.Leader.Followers) {
  }
      string text = "event:/game/general/crystalheart_blue_get";
           if (this.IsAstral) {
-                text = "event:/desolozantas/game/general/crystalheart_astral_void_get";
+                text = "event:/desolo_zantas/game/general/crystalheart_astral_void_get";
             } else if (this.IsFake) {
-                text = "event:/desolozantas/final_content/game/19_the_end/fakeheart_get";
+                text = "event:/desolo_zantas/final_content/game/19_the_end/fakeheart_get";
             } else if (area.Mode == AreaMode.BSide) {
                 text = "event:/game/general/crystalheart_red_get";
             } else if (area.Mode == AreaMode.CSide) {
                 text = "event:/game/general/crystalheart_gold_get";
             } else if (area.Mode == (AreaMode)3) {
-                text = "event:/desolozantas/game/general/crystalheart_rainbow_get";
+                text = "event:/desolo_zantas/game/general/crystalheart_rainbow_get";
             }
      this.sfx = SoundEmitter.Play(text, this, null);
             Add(new LevelEndingHook(delegate () {
@@ -519,7 +519,7 @@ Glitch.Value = 0.75f;
      this.timeRateModifier.SetTimeRateMultiplier(0f);
             level.Frozen = false;
             player.Active = false;
-    player.StateMachine.State = 11;
+    player.StateMachine.State = Player.StDummy;
             while (this.timeRateModifier.CurrentTimeRate() < 0.9999f) {
  this.timeRateModifier.SetTimeRateMultiplier(Calc.Approach(this.timeRateModifier.CurrentTimeRate(), 1f, 0.5f * Engine.RawDeltaTime));
       yield return null;
@@ -565,11 +565,11 @@ Glitch.Value = 0.75f;
      yield return null;
      }
             yield return 0.25f;
-            level.Session.Audio.Music.Event = "event:/desolozantas/final_content/music/lvl19/inmyway";
+            level.Session.Audio.Music.Event = "event:/desolo_zantas/final_content/music/lvl19/inmyway";
    level.Session.Audio.Apply(false);
             player.Active = true;
     player.Depth = 0;
-       player.StateMachine.State = 11;
+       player.StateMachine.State = Player.StDummy;
             while (player.OnGround(1) && player.Bottom < (float)level.Bounds.Bottom) {
      yield return null;
           }
@@ -646,14 +646,14 @@ Glitch.Value = 0.75f;
        level.Session.SetFlag("wrong_heart");
 level.Frozen = false;
          level.FormationBackdrop.Display = false;
-      level.Session.Audio.Music.Event = "event:/desolozantas/final_content/music/lvl19/inmyway";
+      level.Session.Audio.Music.Event = "event:/desolo_zantas/final_content/music/lvl19/inmyway";
             level.Session.Audio.Apply();
 
             global::Celeste.Player entity1 = this.Scene.Tracker.GetEntity<global::Celeste.Player>();
     if (entity1 != null) {
            entity1.Sprite.Play("idle", false, false);
     entity1.Active = true;
-          entity1.StateMachine.State = 0;
+          entity1.StateMachine.State = Player.StNormal;
       entity1.Dashes = 1;
                 entity1.Speed = Vector2.Zero;
             entity1.MoveV(200f, null, null);

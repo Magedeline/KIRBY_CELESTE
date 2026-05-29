@@ -15,9 +15,9 @@ namespace Celeste.Effects
         public static ParticleType P_Earthquake;
 
         // Earth audio events
-        public const string SFX_EARTH_RUMBLE = "event:/desolozantas/earth/rumble";
-        public const string SFX_EARTH_STONE_BREAK = "event:/desolozantas/earth/stone_break";
-        public const string SFX_EARTH_BOULDER = "event:/desolozantas/earth/boulder";
+        public const string SFX_EARTH_RUMBLE = "event:/desolo_zantas/earth/rumble";
+        public const string SFX_EARTH_STONE_BREAK = "event:/desolo_zantas/earth/stone_break";
+        public const string SFX_EARTH_BOULDER = "event:/desolo_zantas/earth/boulder";
 
         #endregion
 
@@ -31,9 +31,9 @@ namespace Celeste.Effects
         public static ParticleType P_Gust;
 
         // Wind audio events
-        public const string SFX_WIND_GUST = "event:/desolozantas/wind/gust";
-        public const string SFX_WIND_TORNADO = "event:/desolozantas/wind/tornado";
-        public const string SFX_WIND_WHOOSH = "event:/desolozantas/wind/whoosh";
+        public const string SFX_WIND_GUST = "event:/desolo_zantas/wind/gust";
+        public const string SFX_WIND_TORNADO = "event:/desolo_zantas/wind/tornado";
+        public const string SFX_WIND_WHOOSH = "event:/desolo_zantas/wind/whoosh";
 
         #endregion
 
@@ -47,9 +47,9 @@ namespace Celeste.Effects
         public static ParticleType P_Nightmare;
 
         // Dark audio events
-        public const string SFX_DARK_WHISPER = "event:/desolozantas/dark/whisper";
-        public const string SFX_DARK_VOID = "event:/desolozantas/dark/void";
-        public const string SFX_DARK_CORRUPTION = "event:/desolozantas/dark/corruption";
+        public const string SFX_DARK_WHISPER = "event:/desolo_zantas/dark/whisper";
+        public const string SFX_DARK_VOID = "event:/desolo_zantas/dark/void";
+        public const string SFX_DARK_CORRUPTION = "event:/desolo_zantas/dark/corruption";
 
         #endregion
 
@@ -63,9 +63,9 @@ namespace Celeste.Effects
         public static ParticleType P_Healing;
 
         // Light audio events
-        public const string SFX_LIGHT_BEAM = "event:/desolozantas/light/beam";
-        public const string SFX_LIGHT_HEAL = "event:/desolozantas/light/heal";
-        public const string SFX_LIGHT_PURIFY = "event:/desolozantas/light/purify";
+        public const string SFX_LIGHT_BEAM = "event:/desolo_zantas/light/beam";
+        public const string SFX_LIGHT_HEAL = "event:/desolo_zantas/light/heal";
+        public const string SFX_LIGHT_PURIFY = "event:/desolo_zantas/light/purify";
 
         #endregion
 

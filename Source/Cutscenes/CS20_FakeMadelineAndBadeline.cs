@@ -39,7 +39,7 @@ namespace Celeste.Cutscenes
             if (player?.StateMachine == null) yield break;
 
             // ── Setup ────────────────────────────────────────────────────────────────
-            player.StateMachine.State = 11; // Player.StDummy
+            player.StateMachine.State = Player.StDummy; // Player.StDummy
             player.DummyGravity       = true;
             player.DummyAutoAnimate   = true;
             player.Speed              = Vector2.Zero;
@@ -66,7 +66,7 @@ namespace Celeste.Cutscenes
             // ── Els' reveal: flash and screen shake before the "final act" ──────────
             yield return 0.2f;
 
-            Audio.Play("event:/desolozantas/final_content/game/19_the_end/glitch_long",
+            Audio.Play("event:/desolo_zantas/final_content/game/19_the_end/glitch_long",
                        player.Position);
 
             level.Shake(0.8f);
@@ -167,7 +167,7 @@ namespace Celeste.Cutscenes
 
             if (player != null)
             {
-                player.StateMachine.State = 0; // Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Player.StNormal
                 player.DummyAutoAnimate   = true;
                 player.DummyGravity       = true;
                 player.Speed              = Vector2.Zero;

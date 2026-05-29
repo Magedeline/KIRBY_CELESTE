@@ -27,6 +27,9 @@ namespace Celeste
         private static Hook dashBeginHook;
         private static Hook wallJumpHook;
         private static On.Celeste.Level.hook_LoadLevel levelLoadLevelHook;
+        private static Hook mapEditorCtorHook;
+        private static Hook mapEditorUpdateHook;
+        private static Hook levelTemplateCctorHook;
 
         // ── Public API ───────────────────────────────────────────────────────────
 
@@ -102,12 +105,118 @@ namespace Celeste
             // ─── 3. OuiMapList null-MapData guard ───────────────────────────
             MapListExt.Load();
 
-            // ─── 4. Entity Name Remapping (player entity ID normalization) ──────
+            // ─── 4. Dream-block Madeline ↔ Kirby player swap ────────────────────
+            DreamBlockPlayerSwapHooks.Load();
+
+            // ─── 5. Entity Name Remapping (player entity ID normalization) ──────
             // Hook Level.LoadLevel to remap player entity IDs from binary maps
             if (levelLoadLevelHook == null)
             {
                 levelLoadLevelHook = new On.Celeste.Level.hook_LoadLevel(Hook_Level_LoadLevel);
                 On.Celeste.Level.LoadLevel += levelLoadLevelHook;
+            }
+
+            // ─── 6. Enhanced Map Editor with PCG Integration ─────────────────────
+            // Hook Celeste.Editor.MapEditor constructor to replace with EnhancedMapEditor
+            try
+            {
+                Type mapEditorType = Type.GetType("Celeste.Editor.MapEditor, Celeste");
+                if (mapEditorType != null)
+                {
+                    ConstructorInfo mapEditorCtor = mapEditorType.GetConstructor(
+                        new[] { typeof(AreaKey), typeof(bool) });
+
+                    if (mapEditorCtor != null)
+                    {
+                        mapEditorCtorHook = new Hook(
+                            mapEditorCtor,
+                            typeof(MonoModHooks).GetMethod(
+                                nameof(Hook_MapEditor_Ctor),
+                                BindingFlags.Static | BindingFlags.NonPublic));
+
+                        Logger.Log(LogLevel.Info, "MaggyHelper",
+                            "[MonoModHooks] Hook on MapEditor constructor registered");
+                    }
+                    else
+                    {
+                        Logger.Log(LogLevel.Warn, "MaggyHelper",
+                            "[MonoModHooks] MapEditor constructor not found — skipping hook");
+                    }
+
+                    // Also hook the Update method to make F5 exit the vanilla editor
+                    MethodInfo mapEditorUpdate = mapEditorType.GetMethod(
+                        "Update",
+                        BindingFlags.Instance | BindingFlags.Public);
+
+                    if (mapEditorUpdate != null)
+                    {
+                        mapEditorUpdateHook = new Hook(
+                            mapEditorUpdate,
+                            typeof(MonoModHooks).GetMethod(
+                                nameof(Hook_MapEditor_Update),
+                                BindingFlags.Static | BindingFlags.NonPublic));
+
+                        Logger.Log(LogLevel.Info, "MaggyHelper",
+                            "[MonoModHooks] Hook on MapEditor.Update registered");
+                    }
+                    else
+                    {
+                        Logger.Log(LogLevel.Warn, "MaggyHelper",
+                            "[MonoModHooks] MapEditor.Update not found — skipping hook");
+                    }
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Warn, "MaggyHelper",
+                        "[MonoModHooks] MapEditor type not found — skipping hook");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "MaggyHelper",
+                    $"[MonoModHooks] Failed to hook MapEditor: {ex.Message}");
+            }
+
+            // ─── 7. LevelTemplate Color Expansion ───────────────────────────────
+            // Hook LevelTemplate static constructor to expand color array from 7 to 24
+            try
+            {
+                Type levelTemplateType = Type.GetType("Celeste.Editor.LevelTemplate, Celeste");
+                if (levelTemplateType != null)
+                {
+                    ConstructorInfo levelTemplateCctor = levelTemplateType.GetConstructor(
+                        BindingFlags.Static | BindingFlags.NonPublic,
+                        null,
+                        Type.EmptyTypes,
+                        null);
+
+                    if (levelTemplateCctor != null)
+                    {
+                        levelTemplateCctorHook = new Hook(
+                            levelTemplateCctor,
+                            typeof(MonoModHooks).GetMethod(
+                                nameof(Hook_LevelTemplate_Cctor),
+                                BindingFlags.Static | BindingFlags.NonPublic));
+
+                        Logger.Log(LogLevel.Info, "MaggyHelper",
+                            "[MonoModHooks] Hook on LevelTemplate static constructor registered");
+                    }
+                    else
+                    {
+                        Logger.Log(LogLevel.Warn, "MaggyHelper",
+                            "[MonoModHooks] LevelTemplate static constructor not found — skipping hook");
+                    }
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Warn, "MaggyHelper",
+                        "[MonoModHooks] LevelTemplate type not found — skipping hook");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "MaggyHelper",
+                    $"[MonoModHooks] Failed to hook LevelTemplate: {ex.Message}");
             }
 
             Logger.Log(LogLevel.Info, "MaggyHelper",
@@ -134,8 +243,23 @@ namespace Celeste
                 On.Celeste.Level.LoadLevel -= levelLoadLevelHook;
             levelLoadLevelHook = null;
 
+            // Remove MapEditor hook
+            mapEditorCtorHook?.Dispose();
+            mapEditorCtorHook = null;
+
+            // Remove MapEditor.Update hook
+            mapEditorUpdateHook?.Dispose();
+            mapEditorUpdateHook = null;
+
+            // Remove LevelTemplate static constructor hook
+            levelTemplateCctorHook?.Dispose();
+            levelTemplateCctorHook = null;
+
             // Remove OuiMapList guard
             MapListExt.Unload();
+
+            // Remove dream-block swap hooks
+            DreamBlockPlayerSwapHooks.Unload();
 
             Logger.Log(LogLevel.Info, "MaggyHelper",
                 "[MonoModHooks] All advanced MonoMod hooks unloaded");
@@ -390,6 +514,177 @@ namespace Celeste
                 CopyAbilityType.Sleep   => Color.LavenderBlush,
                 _                       => Color.White,
             };
+        }
+
+
+        // =====================================================================
+        //  6.  ENHANCED MAP EDITOR HOOK — Replace original MapEditor
+        // =====================================================================
+        //
+        //  HOW IT WORKS:
+        //  When the game tries to create a MapEditor (debug map view), we
+        //  intercept the constructor and create an EnhancedMapEditor instead.
+        //  This adds PCG (Procedural Content Generation) capabilities via
+        //  the loenn-mcp integration.
+        //
+        // =====================================================================
+
+        private delegate void orig_MapEditorCtor(object self, AreaKey area, bool reloadMapData);
+
+        private static void Hook_MapEditor_Ctor(orig_MapEditorCtor orig, object self, AreaKey area, bool reloadMapData)
+        {
+            try
+            {
+                Logger.Log(LogLevel.Info, "MaggyHelper",
+                    "[MapEditorHook] Intercepting MapEditor creation, redirecting to EnhancedMapEditor");
+
+                // Create the enhanced map editor instead using reflection to avoid namespace issues
+                Type enhancedEditorType = Type.GetType("Celeste.Editor.EnhancedMapEditor, MaggyHelper");
+                if (enhancedEditorType != null)
+                {
+                    var enhancedEditor = Activator.CreateInstance(enhancedEditorType, area, reloadMapData) as Scene;
+                    if (enhancedEditor != null)
+                    {
+                        Engine.Scene = enhancedEditor;
+                        Logger.Log(LogLevel.Info, "MaggyHelper",
+                            "[MapEditorHook] EnhancedMapEditor created successfully");
+                        return;
+                    }
+                }
+
+                // Fallback if type not found or creation failed
+                Logger.Log(LogLevel.Warn, "MaggyHelper",
+                    "[MapEditorHook] EnhancedMapEditor type not found, using original");
+                orig(self, area, reloadMapData);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Error, "MaggyHelper",
+                    $"[MapEditorHook] Failed to create EnhancedMapEditor: {ex.Message}\n{ex.StackTrace}");
+
+                // Fallback to original if enhanced fails
+                orig(self, area, reloadMapData);
+            }
+        }
+
+        private delegate void orig_MapEditorUpdate(object self);
+
+        private static void Hook_MapEditor_Update(orig_MapEditorUpdate orig, object self)
+        {
+            // Check for F5 press to exit the vanilla map editor
+            if (MInput.Keyboard.Pressed(Microsoft.Xna.Framework.Input.Keys.F5))
+            {
+                try
+                {
+                    // Try to get the current session from the map editor
+                    Type mapEditorType = self.GetType();
+                    var currentSessionField = mapEditorType.GetField("CurrentSession", 
+                        BindingFlags.Instance | BindingFlags.NonPublic);
+                    
+                    if (currentSessionField != null)
+                    {
+                        var session = currentSessionField.GetValue(self) as Session;
+                        if (session != null)
+                        {
+                            Logger.Log(LogLevel.Info, "MaggyHelper",
+                                "[MapEditorHook] F5 pressed, exiting vanilla map editor");
+                            Engine.Scene = new LevelLoader(session);
+                            return;
+                        }
+                    }
+                    
+                    // If no session, try to exit to overworld
+                    Logger.Log(LogLevel.Info, "MaggyHelper",
+                        "[MapEditorHook] F5 pressed, exiting to overworld");
+                    Engine.Scene = new OverworldLoader(Overworld.StartMode.MainMenu);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(LogLevel.Warn, "MaggyHelper",
+                        $"[MapEditorHook] Failed to exit on F5: {ex.Message}");
+                }
+            }
+
+            // Call original update
+            orig(self);
+        }
+
+        // =====================================================================
+        //  7.  LEVEL TEMPLATE COLOR EXPANSION — 24 colors instead of 7
+        // =====================================================================
+        //
+        //  HOW IT WORKS:
+        //  Hooks the LevelTemplate static constructor to expand the fgTilesColor
+        //  array from 7 colors to 24 colors, allowing for more room color options.
+        //
+        // =====================================================================
+
+        private delegate void orig_LevelTemplateCctor();
+
+        private static void Hook_LevelTemplate_Cctor(orig_LevelTemplateCctor orig)
+        {
+            // Call original static constructor first
+            orig();
+
+            try
+            {
+                // Get the fgTilesColor field and expand it
+                Type levelTemplateType = Type.GetType("Celeste.Editor.LevelTemplate, Celeste");
+                if (levelTemplateType != null)
+                {
+                    var fgTilesColorField = levelTemplateType.GetField("fgTilesColor", 
+                        BindingFlags.Static | BindingFlags.NonPublic);
+                    
+                    if (fgTilesColorField != null)
+                    {
+                        // Get the original 7-color array
+                        var originalColors = fgTilesColorField.GetValue(null) as Color[];
+                        if (originalColors != null && originalColors.Length == 7)
+                        {
+                            // Create expanded 24-color array
+                            Color[] expandedColors = new Color[24];
+                            Array.Copy(originalColors, expandedColors, 7);
+                            
+                            // Add additional colors (indices 7-9)
+                            expandedColors[7] = Calc.HexToColor("ff8c00");
+                            expandedColors[8] = Calc.HexToColor("ffd700");
+                            expandedColors[9] = Calc.HexToColor("00ff7f");
+                            
+                            // Shift + D1-D9 colors (indices 10-18)
+                            expandedColors[10] = Calc.HexToColor("ff6347");
+                            expandedColors[11] = Calc.HexToColor("ff4500");
+                            expandedColors[12] = Calc.HexToColor("dc143c");
+                            expandedColors[13] = Calc.HexToColor("b22222");
+                            expandedColors[14] = Calc.HexToColor("8b0000");
+                            expandedColors[15] = Calc.HexToColor("ff1493");
+                            expandedColors[16] = Calc.HexToColor("ff69b4");
+                            expandedColors[17] = Calc.HexToColor("db7093");
+                            expandedColors[18] = Calc.HexToColor("c71585");
+                            
+                            // Shift + D0 color (index 19)
+                            expandedColors[19] = Calc.HexToColor("ff00ff");
+                            
+                            // Ctrl + D1-D5 colors (indices 20-24)
+                            expandedColors[20] = Calc.HexToColor("9400d3");
+                            expandedColors[21] = Calc.HexToColor("8a2be2");
+                            expandedColors[22] = Calc.HexToColor("7b68ee");
+                            expandedColors[23] = Calc.HexToColor("6a5acd");
+                            
+                            // Set the expanded array back
+                            fgTilesColorField.SetValue(null, expandedColors);
+                            
+                            Logger.Log(LogLevel.Info, "MaggyHelper",
+                                "[LevelTemplateHook] Expanded fgTilesColor from 7 to 24 colors");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "MaggyHelper",
+                    $"[LevelTemplateHook] Failed to expand color array: {ex.Message}");
+            }
         }
     }
 }

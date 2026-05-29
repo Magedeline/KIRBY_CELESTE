@@ -32,7 +32,7 @@ public class CS20_Later : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IEnumerator Cutscene(Level level)
     {
-        player.StateMachine.State = 11; // StDummy
+        player.StateMachine.State = Player.StDummy; // StDummy
         
         yield return Textbox.Say(
             "CH20_MONTHS_LATER");

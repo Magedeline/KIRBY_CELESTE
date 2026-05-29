@@ -71,17 +71,18 @@ public class FlingSans : Entity
     public void Awake(Scene scene, object title)
     {
         base.Awake(scene);
-        var all = Scene.Entities.FindAll<FlingSans>();
+        var all = Scene.Tracker.GetEntities<FlingSans>();
         for (var index = all.Count - 1; index >= 0; --index)
-            if (all[index].entityData.Level.Name != entityData.Level.Name)
+            if (((FlingSans)all[index]).entityData.Level.Name != entityData.Level.Name)
                 all.RemoveAt(index);
         all.Sort((a, b) => Math.Sign(a.X - b.X));
         if (all[0] == this)
             for (var index = 1; index < all.Count; ++index)
             {
-                NodeSegments.Add(all[index].NodeSegments[0]);
-                SegmentsWaiting.Add(all[index].SegmentsWaiting[0]);
-                all[index].RemoveSelf();
+                var fling = (FlingSans)all[index];
+                NodeSegments.Add(fling.NodeSegments[0]);
+                SegmentsWaiting.Add(fling.SegmentsWaiting[0]);
+                fling.RemoveSelf();
             }
 
         if (SegmentsWaiting[0])

@@ -1,6 +1,7 @@
 using System;
 using Celeste.Entities;
 using Celeste.Extensions;
+using Celeste.Integrations;
 using Microsoft.Xna.Framework;
 using Monocle;
 
@@ -212,11 +213,17 @@ namespace Celeste
         /// </summary>
         public bool DamageFromOutOfBounds()
         {
-            // Out of bounds is instant death
+            // Out of bounds is instant death - bypass invincibility
+            CurrentHealth = 0;
+            OnHealthChanged?.Invoke(0, MaxHealth);
+            
             if (healthManager != null)
             {
                 healthManager.Damage(OutOfBoundsDamage);
             }
+            
+            // Force death immediately
+            HandleDeath();
             return true;
         }
 
@@ -482,7 +489,10 @@ namespace Celeste
             if (healthUI != null)
                 healthUI.ShowPlayerHealth = true;
 
-            Logger.Log(LogLevel.Info, "KirbyHealthController", "Enabled with max HP: " + MaxHealth);
+            // Hook into CelesteNet integration for multiplayer health sync
+            CelesteNetIntegration.HookIntoHealthSystem(this);
+
+            Logger.Log(LogLevel.Info, "KirbyHealthController", "Initialized with health: " + CurrentHealth + "/" + MaxHealth);
         }
 
         /// <summary>

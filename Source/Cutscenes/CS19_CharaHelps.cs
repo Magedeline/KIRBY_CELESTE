@@ -24,7 +24,7 @@ namespace Celeste.Cutscenes
         {
             Vector2 spawn = level.GetSpawnPoint(this.player.Position);
             this.player.Dashes = 2;
-            this.player.StateMachine.State = 11;
+            this.player.StateMachine.State = Player.StDummy;
             this.player.DummyGravity = false;
             this.entrySfx = Audio.Play("event:/new_content/char/madeline/screenentry_stubborn", this.player.Position);
             yield return this.player.MoonLanding(spawn);
@@ -75,7 +75,7 @@ namespace Celeste.Cutscenes
         private IEnumerator HeartBreak()
         {
             yield return 0.2f;
-            Audio.Play("event:/desolozantas/final_content/char/kirby/heartbreak", this.player.Position);
+            Audio.Play("event:/desolo_zantas/final_content/char/kirby/heartbreak", this.player.Position);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             yield return 0.2f;
             yield break;
@@ -113,7 +113,7 @@ namespace Celeste.Cutscenes
         // Token: 0x06000CFA RID: 3322 RVA: 0x0002BF28 File Offset: 0x0002A128
         private void StartMusic()
         {
-            if (this.Level.Session.Audio.Music.Event != "event:/desolozantas/final_content/music/lvl19/tape_room")
+            if (this.Level.Session.Audio.Music.Event != "event:/desolo_zantas/final_content/music/lvl19/tape_room")
             {
                 int num = 0;
                 TapeBlockManager entity = this.Level.Tracker.GetEntity<TapeBlockManager>();
@@ -121,7 +121,7 @@ namespace Celeste.Cutscenes
                 {
                     num = entity.GetSixteenthNote();
                 }
-                this.Level.Session.Audio.Music.Event = "event:/desolozantas/final_content/music/lvl19/tape_room";
+                this.Level.Session.Audio.Music.Event = "event:/desolo_zantas/final_content/music/lvl19/tape_room";
                 this.Level.Session.Audio.Music.Param("sixteenth_note", (float)num);
                 this.Level.Session.Audio.Apply(true);
                 this.Level.Session.Audio.Music.Param("sixteenth_note", 7f);
@@ -141,7 +141,7 @@ namespace Celeste.Cutscenes
             this.player.MoveVExact(100, null, null);
             this.player.Active = true;
             this.player.Visible = true;
-            this.player.StateMachine.State = 0;
+            this.player.StateMachine.State = Player.StNormal;
             if (this.chara != null)
             {
                 this.chara.RemoveSelf();

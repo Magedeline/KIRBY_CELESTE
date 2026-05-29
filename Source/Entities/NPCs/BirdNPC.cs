@@ -306,7 +306,7 @@ public class BirdNPC : Actor
                 yield return HideTutorial();
                 yield return ShowTutorial(tut2);
             }
-            while (p.Scene != null && (!p.OnGround() || p.StateMachine.State == 1))
+            while (p.Scene != null && (!p.OnGround() || p.StateMachine.State == Player.StClimb))
             {
                 yield return null;
             }

@@ -38,7 +38,7 @@ public class CS21_FinalTitanSummit : CutsceneEntity
         if (player?.StateMachine == null) yield break;
 
         // Initialize summit state
-        player.StateMachine.State = 11; // Dummy state
+        player.StateMachine.State = Player.StDummy; // Dummy state
         summitStarted = true;
 
         // Activate the Titan Summit background manager if present
@@ -58,7 +58,7 @@ public class CS21_FinalTitanSummit : CutsceneEntity
         yield return 1f;
 
         // Environmental effects intensify
-        Audio.Play("event:/desolozantas/final_content/game/20_last_push/multiple_lightning_strike");
+        Audio.Play("event:/desolo_zantas/final_content/game/21_desolo_zantas/multiple_lightning_strike");
 
         yield return 2f;
 
@@ -80,7 +80,7 @@ public class CS21_FinalTitanSummit : CutsceneEntity
     {
         if (player != null)
         {
-            player.StateMachine.State = 0; // Normal state
+            player.StateMachine.State = Player.StNormal; // Normal state
         }
 
         level.Session.SetFlag(FLAG);

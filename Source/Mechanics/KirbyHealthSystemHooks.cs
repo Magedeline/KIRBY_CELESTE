@@ -33,18 +33,39 @@ namespace Celeste
             try
             {
                 // Hook Player.Die to intercept death in Kirby mode
+                // Must specify parameter types explicitly - Player.Die has multiple overloads
                 var dieMethod = typeof(global::Celeste.Player).GetMethod("Die",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                    null,
+                    new System.Type[] { typeof(Vector2), typeof(bool), typeof(bool) },
+                    null);
                 var dieHook = typeof(KirbyHealthSystemHooks).GetMethod("PlayerDieHook",
                     System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-                hookPlayerDie = new Hook(dieMethod, dieHook);
+                if (dieMethod != null && dieHook != null)
+                {
+                    hookPlayerDie = new Hook(dieMethod, dieHook);
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Warn, "KirbyHealthSystemHooks", "Could not find Player.Die(Vector2, bool, bool) - skipping hook");
+                }
 
                 // Hook Player.OnSquish to handle crushing damage
                 var squishMethod = typeof(global::Celeste.Player).GetMethod("OnSquish",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance,
+                    null,
+                    new System.Type[] { typeof(CollisionData) },
+                    null);
                 var squishHook = typeof(KirbyHealthSystemHooks).GetMethod("PlayerOnSquishHook",
                     System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-                hookPlayerOnSquish = new Hook(squishMethod, squishHook);
+                if (squishMethod != null && squishHook != null)
+                {
+                    hookPlayerOnSquish = new Hook(squishMethod, squishHook);
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Warn, "KirbyHealthSystemHooks", "Could not find Player.OnSquish(CollisionData) - skipping hook");
+                }
 
                 // Hook CrystalStaticSpinner.OnPlayer for spinner damage
                 var spinnerType = typeof(CrystalStaticSpinner);
@@ -56,27 +77,36 @@ namespace Celeste
                     {
                         var spinnerHook = typeof(KirbyHealthSystemHooks).GetMethod("SpinnerOnPlayerHook",
                             System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-                        hookCrystalStaticSpinnerOnPlayer = new Hook(spinnerMethod, spinnerHook);
+                        if (spinnerHook != null)
+                        {
+                            hookCrystalStaticSpinnerOnPlayer = new Hook(spinnerMethod, spinnerHook);
+                        }
                     }
                 }
 
-                // Hook Spike.OnPlayer for spike damage
-            var spikeType = typeof(global::Celeste.Spikes);
-            var spikeMethod = spikeType.GetMethod("OnCollide",
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            if (spikeMethod != null)
-            {
-                var spikeHook = typeof(KirbyHealthSystemHooks).GetMethod("SpikeOnCollideHook",
-                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-                hookSpikeOnPlayer = new Hook(spikeMethod, spikeHook);
-            }
+                // Hook Spike.OnCollide for spike damage
+                var spikeType = typeof(global::Celeste.Spikes);
+                if (spikeType != null)
+                {
+                    var spikeMethod = spikeType.GetMethod("OnCollide",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    if (spikeMethod != null)
+                    {
+                        var spikeHook = typeof(KirbyHealthSystemHooks).GetMethod("SpikeOnCollideHook",
+                            System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                        if (spikeHook != null)
+                        {
+                            hookSpikeOnPlayer = new Hook(spikeMethod, spikeHook);
+                        }
+                    }
+                }
 
                 hooksLoaded = true;
                 Logger.Log(LogLevel.Info, "KirbyHealthSystemHooks", "Hooks loaded successfully");
             }
             catch (Exception ex)
             {
-                Logger.Log(LogLevel.Error, "KirbyHealthSystemHooks", "Failed to load hooks: " + ex.Message);
+                Logger.Log(LogLevel.Error, "KirbyHealthSystemHooks", "Failed to load hooks: " + ex.Message + "\n" + ex.StackTrace);
             }
         }
 
@@ -103,11 +133,19 @@ namespace Celeste
 
         /// <summary>
         /// Hook for Player.Die - intercepts death in Kirby mode and converts to health damage
+        /// Also handles deathlink by damaging Kirby instead of instant death
         /// </summary>
         private static global::Celeste.PlayerDeadBody PlayerDieHook(
             Func<global::Celeste.Player, Vector2, bool, bool, global::Celeste.PlayerDeadBody> orig,
             global::Celeste.Player self, Vector2 direction, bool evenIfInvincible, bool registerDeathInStats)
         {
+            // Check if deathlink is loaded and handle it for Kirby players
+            if (DeathlinkIntegration.IsDeathlinkLoaded() && DeathlinkIntegration.HandleDeathlinkDeath(self))
+            {
+                // Deathlink handled - Kirby took damage, return null to prevent death
+                return null;
+            }
+
             // Check if Kirby mode is active
             if (!self.IsKirbyMode())
             {

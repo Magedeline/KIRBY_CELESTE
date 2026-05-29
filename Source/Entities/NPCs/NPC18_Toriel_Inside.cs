@@ -131,7 +131,7 @@ namespace Celeste.NPCs
         {
             if (player != null)
             {
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
                 player.ForceCameraUpdate = false;
             }
             if (HasDoorConversation)

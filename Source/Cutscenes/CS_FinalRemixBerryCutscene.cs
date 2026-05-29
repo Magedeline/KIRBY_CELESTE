@@ -32,12 +32,12 @@ public class CS_FinalRemixBerryCutscene : CutsceneEntity
     private const string FLAG_PINK_PLAT_CUTSCENE_DONE = "final_remix_pink_plat_berry_cutscene";
 
     // SFX Events
-    private const string SFX_GOLDEN_GLOW = "event:/desolozantas/final_content/game/19_the_end/golden_glow";
-    private const string SFX_HAND_GRAB = "event:/desolozantas/final_content/char/asriel/emotional_reunion";
+    private const string SFX_GOLDEN_GLOW = "event:/desolo_zantas/final_content/game/19_the_end/golden_glow";
+    private const string SFX_HAND_GRAB = "event:/desolo_zantas/final_content/char/asriel/emotional_reunion";
     private const string SFX_GRANNY_STEPS = "event:/new_content/char/madeline/screenentry_gran_landing";
-    private const string SFX_TEARS = "event:/desolozantas/final_content/char/asriel/fade_to_flower";
+    private const string SFX_TEARS = "event:/desolo_zantas/final_content/char/asriel/fade_to_flower";
     private const string SFX_HEART_GEM_APPEAR = "event:/game/general/heart_gem_appear";
-    private const string SFX_HEART_GEM_PULSE = "event:/desolozantas/final_content/game/19_the_end/golden_glow";
+    private const string SFX_HEART_GEM_PULSE = "event:/desolo_zantas/final_content/game/19_the_end/golden_glow";
 
     #endregion
 
@@ -148,7 +148,7 @@ public class CS_FinalRemixBerryCutscene : CutsceneEntity
     private IEnumerator Cutscene(Level level)
     {
         // Setup player
-        player.StateMachine.State = 11; // StDummy
+        player.StateMachine.State = Player.StDummy; // StDummy
         player.DummyGravity = true;
         player.DummyAutoAnimate = true;
         player.Speed = Vector2.Zero;
@@ -658,7 +658,7 @@ public class CS_FinalRemixBerryCutscene : CutsceneEntity
         // Restore player state
         if (player != null)
         {
-            player.StateMachine.State = 0; // StNormal
+            player.StateMachine.State = Player.StNormal; // StNormal
             player.DummyAutoAnimate = true;
             player.DummyGravity = true;
             player.Speed = Vector2.Zero;

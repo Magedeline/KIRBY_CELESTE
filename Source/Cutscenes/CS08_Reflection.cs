@@ -20,7 +20,7 @@ public class Cs08Reflection : CutsceneEntity
     private IEnumerator cutscene(Level level)
     {
         var cs06Reflection = this;
-        cs06Reflection.player.StateMachine.State = 11;
+        cs06Reflection.player.StateMachine.State = Player.StDummy;
         cs06Reflection.player.StateMachine.Locked = true;
         cs06Reflection.player.ForceCameraUpdate = true;
         yield return cs06Reflection.player.DummyWalkToExact((int)cs06Reflection.targetX);
@@ -36,7 +36,7 @@ public class Cs08Reflection : CutsceneEntity
     public override void OnEnd(Level level)
     {
         player.StateMachine.Locked = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         player.ForceCameraUpdate = false;
         player.FlipInReflection = false;
         level.Session.SetFlag("reflectionmod");

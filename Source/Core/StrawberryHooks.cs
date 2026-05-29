@@ -68,8 +68,11 @@ namespace Celeste
                 var spriteField = typeof(CelesteStrawberry).GetField("Sprite", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (spriteField != null)
                 {
-                    if (SaveDataExtensions.IsDeltaBerryCollected(deltaBerry.ToString()))
-                        spriteField.SetValue(self, GFX.SpriteBank.Create("popstarberry"));
+                    string spriteName = SaveDataExtensions.IsDeltaBerryCollected(deltaBerry.ToString())
+                        ? "popstarberry_golden"
+                        : "popstarberry";
+                    if (GFX.SpriteBank.Has(spriteName))
+                        spriteField.SetValue(self, GFX.SpriteBank.Create(spriteName));
                     else
                         spriteField.SetValue(self, GFX.SpriteBank.Create("popstarberry"));
                 }
@@ -100,17 +103,25 @@ namespace Celeste
         }
     }
 
-// Stub for SaveDataExtensions
     public static class SaveDataExtensions
     {
         public static bool IsDeltaBerryCollected(string id)
         {
-            // TODO: Implement actual logic
-            return false;
+            if (string.IsNullOrEmpty(id))
+                return false;
+            return MaggyHelperModule.SaveData?.CollectedPopstarBerries?.Contains(id) == true;
         }
+
         public static void MarkDeltaBerryAsCollected(string id)
         {
-            // TODO: Implement actual logic
+            if (string.IsNullOrEmpty(id))
+                return;
+            MaggyHelperModule.SaveData?.CollectedPopstarBerries?.Add(id);
+        }
+
+        public static void ClearDeltaBerries()
+        {
+            MaggyHelperModule.SaveData?.CollectedPopstarBerries?.Clear();
         }
     }
 }

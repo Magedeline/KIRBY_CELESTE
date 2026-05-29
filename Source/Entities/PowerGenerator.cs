@@ -209,13 +209,13 @@ namespace Celeste.Entities
                 // Only add the firstHitSfx if it doesn't already exist
                 if (this.firstHitSfx == null)
                 {
-                    this.firstHitSfx = new SoundSource("event:/desolozantas/final_content/game/19_the_end/powergenerator_hit_first");
+                    this.firstHitSfx = new SoundSource("event:/desolo_zantas/final_content/game/19_the_end/powergenerator_hit_first");
                     this.Add((Component)this.firstHitSfx);
                 }
                 else
                 {
                     // Play multiple hits sound for subsequent hits
-                    Audio.Play("event:/desolozantas/final_content/game/19_the_end/powergenerator_hit", this.Position);
+                    Audio.Play("event:/desolo_zantas/final_content/game/19_the_end/powergenerator_hit", this.Position);
                 }
                 CelesteGame.Freeze(0.1f);
                 this.shakeCounter = 0.2f;
@@ -230,7 +230,7 @@ namespace Celeste.Entities
             {
                 if (this.firstHitSfx != null)
                     this.firstHitSfx.Stop();
-                Audio.Play("event:/desolozantas/final_content/game/19_the_end/powergenerator_hit", this.Position);
+                Audio.Play("event:/desolo_zantas/final_content/game/19_the_end/powergenerator_hit", this.Position);
                 CelesteGame.Freeze(0.2f);
                 player.RefillDash();
                 Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
@@ -420,7 +420,7 @@ namespace Celeste.Entities
 
             // --- PITCH PARAMETER ---
             // Example: Play destruction sound with pitch parameter
-            var sfx = Audio.Play("event:/desolozantas/final_content/game/19_the_end/powergenerator_hit_scream", this.Position);
+            var sfx = Audio.Play("event:/desolo_zantas/final_content/game/19_the_end/powergenerator_hit_scream", this.Position);
             Audio.SetParameter(sfx, "pitch", 1.2f); // Set pitch as needed
 
             if (this.flag)
@@ -451,6 +451,7 @@ namespace Celeste.Entities
 
         /// <summary>
         /// Teleports the PowerGenerator to its 'end' position with a flash effect.
+        /// Also teleports any player riding or touching the generator.
         /// Only works if teleportation is enabled and hasn't already been used.
         /// </summary>
         public bool TeleportWithFlash()
@@ -469,9 +470,27 @@ namespace Celeste.Entities
             // Store old position for effect
             Vector2 oldPos = this.Position;
 
+            // Calculate the offset for player teleportation
+            Vector2 teleportOffset = end - this.Position;
+
             // Move to the 'end' position
             this.Position = end;
             this.start = end;
+
+            // Teleport player if they're riding or touching this generator
+            Level level = this.SceneAs<Level>();
+            if (level != null)
+            {
+                Player player = level.Tracker.GetEntity<Player>();
+                if (player != null && (HasPlayerRider() || player.CollideCheck(this)))
+                {
+                    // Teleport player by the same offset
+                    player.Position += teleportOffset;
+
+                    // Add player flash effect
+                    level.Add(new Flash(player.Center, Color.Cyan, 0.2f, 24f));
+                }
+            }
 
             // Play teleport sound
             Audio.Play("event:/game/general/seed_touch", this.Position);
@@ -483,7 +502,6 @@ namespace Celeste.Entities
             // Add particle effects
             if (this.Scene != null)
             {
-                Level level = this.SceneAs<Level>();
                 if (level != null)
                 {
                     // Particle burst at old position
@@ -492,7 +510,7 @@ namespace Celeste.Entities
                         Vector2 sparkDir = Calc.AngleToVector(Calc.Random.NextFloat() * MathHelper.TwoPi, Calc.Random.Range(30f, 80f));
                         level.ParticlesFG.Emit(LightningBreakerBox.P_Sparks, oldPos + new Vector2(16f, 16f) + sparkDir * 0.1f, sparkDir.Angle());
                     }
-                    
+
                     // Particle burst at new position
                     for (int i = 0; i < 8; i++)
                     {

@@ -73,10 +73,10 @@ public class FlingPaps : Entity
             return;
         foreach (Component component in this.Components)
             component.EntityAwake();
-        var all = Scene.Entities.FindAll<FlingPaps>();
+        var all = Scene.Tracker.GetEntities<FlingPaps>();
         for (var index = all.Count - 1; index >= 0; --index)
         {
-            var flingPaps = all[index];
+            var flingPaps = (FlingPaps)all[index];
             var flingPapsEntityData = typeof(FlingPaps).GetField(nameof(entityData), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.GetValue(flingPaps) as EntityData;
             if (flingPapsEntityData?.Level.Name == entityData.Level.Name)
                 continue;
@@ -87,9 +87,10 @@ public class FlingPaps : Entity
         {
             for (var index = 1; index < all.Count; ++index)
             {
-                NodeSegments.Add(all[index].NodeSegments[0]);
-                SegmentsWaiting.Add(all[index].SegmentsWaiting[0]);
-                all[index].RemoveSelf();
+                var fling = (FlingPaps)all[index];
+                NodeSegments.Add(fling.NodeSegments[0]);
+                SegmentsWaiting.Add(fling.SegmentsWaiting[0]);
+                fling.RemoveSelf();
             }
         }
 

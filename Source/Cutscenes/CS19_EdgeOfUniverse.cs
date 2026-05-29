@@ -68,7 +68,7 @@ namespace Celeste.Cutscenes
         {
             player.Depth = 0;
             player.Speed = Vector2.Zero;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             Glitch.Value = 0f;
             level.ResetZoom();
             level.Session.SetFlag("edge_of_universe");

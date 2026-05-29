@@ -20,7 +20,7 @@ public class Cs12UndyneRefusedToDied : CutsceneEntity
     {
         if (player?.StateMachine == null) yield break;
 
-        player.StateMachine.State = 11; // Dummy state
+        player.StateMachine.State = Player.StDummy; // Dummy state
         yield return 0.5f;
 
         yield return Textbox.Say("CH12_UNDYNE_REFUSED_TO_DIED");
@@ -32,6 +32,6 @@ public class Cs12UndyneRefusedToDied : CutsceneEntity
     public override void OnEnd(Level level)
     {
         if (player != null)
-            player.StateMachine.State = 0; // Normal state
+            player.StateMachine.State = Player.StNormal; // Normal state
     }
 }

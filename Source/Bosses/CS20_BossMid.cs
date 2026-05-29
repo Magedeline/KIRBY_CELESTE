@@ -35,7 +35,7 @@ namespace Celeste.Cutscenes
             asriel = level.Entities.FindFirst<AsrielGodBoss>();
 
             // Lock player in dummy state
-            player.StateMachine.State = 11; // Player.StDummy
+            player.StateMachine.State = Player.StDummy; // Player.StDummy
             player.StateMachine.Locked = true;
 
             // Wait for player to land if in air
@@ -90,7 +90,7 @@ namespace Celeste.Cutscenes
             if (player != null)
             {
                 player.StateMachine.Locked = false;
-                player.StateMachine.State = 0; // Player.StNormal
+                player.StateMachine.State = Player.StNormal; // Player.StNormal
             }
 
             // Resume Asriel's attack patterns

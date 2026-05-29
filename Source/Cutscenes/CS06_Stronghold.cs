@@ -31,7 +31,7 @@ public class CS06_Stronghold : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IEnumerator Cutscene(Level level)
     {
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.StateMachine.Locked = true;
         player.ForceCameraUpdate = true;
         yield return player.DummyWalkTo(theo.X - 30f);
@@ -94,7 +94,7 @@ public class CS06_Stronghold : CutsceneEntity
     {
         player.X = theo.X + 30f;
         player.StateMachine.Locked = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         player.ForceCameraUpdate = false;
         if (WasSkipped)
         {

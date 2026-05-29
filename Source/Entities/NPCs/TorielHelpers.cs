@@ -32,7 +32,7 @@ public static class TorielHelpers
         {
             if (anim == "walk" && (npc.Sprite.CurrentAnimationFrame == 0 || npc.Sprite.CurrentAnimationFrame == 4))
             {
-                Audio.Play("event:/desolozantas/char/kirby/footstep", npc.Position);
+                Audio.Play("event:/desolo_zantas/char/kirby/footstep", npc.Position);
             }
         };
     }
@@ -157,7 +157,7 @@ public class NPC : global::Celeste.NPC
         if (player == null) yield break;
         
         player.StateMachine.Locked = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         
         yield return 0.1f;
     }

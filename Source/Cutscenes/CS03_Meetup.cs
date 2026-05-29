@@ -35,7 +35,7 @@ public class Cs03Meetup(
         }
 
         // Player enters a controlled state
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
 
         // If we have a recognized conversation (1..4), run that path
         if (conv >= 1 && conv <= 4)
@@ -137,7 +137,7 @@ public class Cs03Meetup(
         // Simplified: Remove problematic MaggySprite reference
         player.Position.X = endPlayerPosition.X;
         player.Facing = Facings.Left;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
 
         // Mark conversations complete if we reached the final one
         if (currentConversation == 4)

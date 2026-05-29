@@ -53,11 +53,11 @@ public class CS10IntroductionStage : CutsceneEntity
     {
         // Setup player state
         player.Dashes = 1;
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.Sprite.Play("idle");
 
         // Set music for exploration/ruins
-        Audio.SetMusic("event:/desolozantas/music/lvl10/main");
+        Audio.SetMusic("event:/desolo_zantas/music/lvl10/main");
 
         // Fade in
         FadeWipe fadeWipe = new FadeWipe(level, wipeIn: true);

@@ -373,21 +373,21 @@ namespace Celeste.Entities.SoulBoosts
             Stopwatch sw = Stopwatch.StartNew();
             if (finalCh21Boost)
             {
-                Audio.Play("event:/desolozantas/final_content/char/madeline/finalfinalfinalultra_part1", Position);
+                Audio.Play("event:/desolo_zantas/final_content/char/madeline/finalfinalfinalultra_part1", Position);
             }
             else if (!finalBoost)
             {
-                Audio.Play("event:/desolozantas/final_content/char/madeline/ready", Position);
+                Audio.Play("event:/desolo_zantas/final_content/char/madeline/ready", Position);
             }
             else
             {
-                Audio.Play("event:/desolozantas/final_content/char/madeline/launch", Position);
+                Audio.Play("event:/desolo_zantas/final_content/char/madeline/launch", Position);
             }
             if (player.Holding != null)
             {
                 player.Holding = null;
             }
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.DummyAutoAnimate = false;
             player.DummyGravity = false;
             if (player.Inventory.Dashes > 10)
@@ -516,7 +516,7 @@ namespace Celeste.Entities.SoulBoosts
 
                         Collidable = true;
                         state = States.Wait;
-                        Audio.Play("event:/desolozantas/final_content/char/madeline/ready", Position);
+                        Audio.Play("event:/desolo_zantas/final_content/char/madeline/ready", Position);
                     }
                 };
                 Add(tween);
@@ -529,7 +529,7 @@ namespace Celeste.Entities.SoulBoosts
             {
                 if (finalCh21Boost)
                 {
-                    Ch21FinalBoostSfx = Audio.Play("event:/desolozantas/final_content/char/madeline/finalfinalfinalultra_part2", Position);
+                    Ch21FinalBoostSfx = Audio.Play("event:/desolo_zantas/final_content/char/madeline/finalfinalfinalultra_part2", Position);
                 }
                 Engine.FreezeTimer = 0.1f;
                 yield return true;
@@ -653,7 +653,7 @@ namespace Celeste.Entities.SoulBoosts
                     
                     Collidable = true;
                     state = States.Wait;
-                    Audio.Play("event:/desolozantas/final_content/char/madeline/ready", Position);
+                    Audio.Play("event:/desolo_zantas/final_content/char/madeline/ready", Position);
                 }
             };
 

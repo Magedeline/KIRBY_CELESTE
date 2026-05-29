@@ -39,7 +39,7 @@ namespace Celeste.Cutscenes
             level.PauseLock = true;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
 
             Add(new Coroutine(Sequence(level)));
         }
@@ -65,7 +65,7 @@ namespace Celeste.Cutscenes
             yield return 1f;
 
             // Something stirs in the dark — the light flickers
-            Audio.Play("event:/desolozantas/final_content/game/21_desolo_zantas/transcendences");
+            Audio.Play("event:/desolo_zantas/final_content/game/21_desolo_zantas/transcendences");
 
             for (float t = 0f; t < 1f; t += Engine.DeltaTime)
             {
@@ -76,7 +76,7 @@ namespace Celeste.Cutscenes
 
             yield return 0.5f;
 
-            Audio.SetMusic("event:/desolozantas/music/menu/els_win");
+            Audio.SetMusic("event:/desolo_zantas/music/menu/els_win");
 
             // Fade back in — it's not over
             for (float t = 0f; t < 0.8f; t += Engine.DeltaTime)
@@ -99,7 +99,7 @@ namespace Celeste.Cutscenes
             level.PauseLock = false;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
 
             level.Session.SetFlag("fake_end_played");
 

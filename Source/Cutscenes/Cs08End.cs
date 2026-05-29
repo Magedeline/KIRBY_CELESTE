@@ -34,7 +34,7 @@ namespace Celeste.Cutscenes
 
         private IEnumerator Cutscene(Level level)
         {
-            this.player.StateMachine.State = 11;
+            this.player.StateMachine.State = Player.StDummy;
             this.player.StateMachine.Locked = true;
             yield return 1f;
             this.player.Dashes = 5;
@@ -63,7 +63,7 @@ namespace Celeste.Cutscenes
                 this.TurnToLeft,
                 this.MaggyStopTired
             });
-            Audio.Play("event:/desolozantas/char/kirby/backpack_drop", this.player.Position);
+            Audio.Play("event:/desolo_zantas/char/kirby/backpack_drop", this.player.Position);
             this.player.DummyAutoAnimate = false;
             this.player.Sprite.Play("bagdown");
             base.EndCutscene(level, true);
@@ -158,7 +158,7 @@ namespace Celeste.Cutscenes
         public override void OnEnd(Level level)
         {
             this.player.StateMachine.Locked = false;
-            this.player.StateMachine.State = 0;
+            this.player.StateMachine.State = Player.StNormal;
             level.CompleteArea(true, true, true);
         }
     }

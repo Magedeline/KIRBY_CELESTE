@@ -174,7 +174,7 @@ public class CustomRalseiBoost : Entity
 			player.Drop();
 		}
 
-		player.StateMachine.State = 11;
+		player.StateMachine.State = Player.StDummy;
 		player.DummyAutoAnimate = false;
 		player.DummyGravity = false;
 		if (player.Inventory.Dashes > 1)

@@ -209,7 +209,7 @@ namespace Celeste.Cutscenes
 
             try
             {
-                player.StateMachine.State = 11; // dummy state used across cutscenes
+                player.StateMachine.State = Player.StDummy; // dummy state used across cutscenes
                 player.StateMachine.Locked = true;
             }
             catch
@@ -226,7 +226,7 @@ namespace Celeste.Cutscenes
             if (player == null) return;
 
             player.StateMachine.Locked = false;
-            player.StateMachine.State = 0; // StNormal
+            player.StateMachine.State = Player.StNormal; // StNormal
             player.ForceCameraUpdate = false;
             player.DummyAutoAnimate = true;
             player.DummyGravity = true;

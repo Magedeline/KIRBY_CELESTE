@@ -18,7 +18,7 @@ namespace Celeste.Entities
 
     private Vector2[] nodes;
 
-    private LevelGlitchTrigger Glitch;
+    private LevelGlitchTrigger glitchTrigger;
 
     private bool startedRoutine;
 
@@ -101,7 +101,7 @@ namespace Celeste.Entities
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IEnumerator FlyTo(Vector2 to)
     {
-        Add(new SoundSource().Play("event:/new_content/game/10_farewell/bird_flappyscene_entry"));
+        Add(new SoundSource().Play("event:/desolo_zantas/final_content/game/19_the_end/flappybird"));
         Sprite.Play("fly");
         Vector2 from = Position;
         for (float p = 0f; p < 1f; p += Engine.DeltaTime * 0.3f)
@@ -202,15 +202,13 @@ namespace Celeste.Entities
         inCutscene = true;
         if (!crashes)
         {
-            CrashSfxEmitter = SoundEmitter.Play("event:/desolozantas/final_content/game/19_the_end/flappybird", this);
-            Glitch = new LevelGlitchTrigger(new EntityData(), Vector2.Zero, new EntityID("MaggyHelper/FlingBirdIntroMod", 2523));
+            CrashSfxEmitter = SoundEmitter.Play("event:/desolo_zantas/final_content/game/19_the_end/flappybird", this);
         }
         else
         {
-            CrashSfxEmitter = SoundEmitter.Play("event:/desolozantas/final_content/game/19_the_end/killscene_start", this);
-            Glitch = new LevelGlitchTrigger(new EntityData(), Vector2.Zero, new EntityID("MaggyHelper/FlingBirdIntroMod", 7338));
+            CrashSfxEmitter = SoundEmitter.Play("event:/desolo_zantas/final_content/game/19_the_end/killscene_start", this);
         }
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.DummyGravity = false;
         player.DummyAutoAnimate = false;
         player.ForceCameraUpdate = true;
@@ -289,8 +287,16 @@ namespace Celeste.Entities
         level.Shake();
         Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
         level.Flash(Color.White);
+        Glitch.Value = 0.7f;
         emitParticles = false;
         inCutscene = false;
+        yield return null;
+        for (float t = 0f; t < 1f; t += Engine.DeltaTime / 0.4f)
+        {
+            Glitch.Value = 0.7f * (1f - Ease.CubeIn(t));
+            yield return null;
+        }
+        Glitch.Value = 0f;
     }
     }
 }

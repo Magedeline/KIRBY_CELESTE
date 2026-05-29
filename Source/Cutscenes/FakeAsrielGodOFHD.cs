@@ -40,7 +40,7 @@ namespace Celeste.Cutscenes
             level.PauseLock        = true;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
 
             Add(new Coroutine(Sequence(level)));
         }
@@ -82,7 +82,7 @@ namespace Celeste.Cutscenes
             yield return 1f;
 
             // "Ascension" flash — screen goes pure white again, then blacks out
-            Audio.Play("event:/desolozantas/final_content/char/asriel/Asriel_Segapower02");
+            Audio.Play("event:/desolo_zantas/final_content/char/asriel/Asriel_Segapower02");
 
             for (float t = 0f; t < 1f; t += Engine.DeltaTime)
             {
@@ -116,7 +116,7 @@ namespace Celeste.Cutscenes
             level.PauseLock        = false;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
 
             level.Session.SetFlag("fake_asriel_god_ofhd_played");
 

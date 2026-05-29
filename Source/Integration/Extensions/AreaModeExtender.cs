@@ -41,8 +41,8 @@ public static class AreaModeExtender
         "event:/game/general/crystalheart_blue_get",
         "event:/game/general/crystalheart_red_get",
         "event:/game/general/crystalheart_gold_get",
-        "event:/desolozantas/game/general/crystalheart_rainbow_get",
-        "event:/desolozantas/game/general/crystalheart_void_get"
+        "event:/desolo_zantas/game/general/crystalheart_rainbow_get",
+        "event:/desolo_zantas/game/general/crystalheart_void_get"
     };
 
     private static bool _loaded;
@@ -87,8 +87,8 @@ public static class AreaModeExtender
         if (string.IsNullOrWhiteSpace(mapName))
             return MAP_PREFIX;
 
-        // Map files are now organized by side: Maggy/ASide/01_City, Maggy/BSide/01_City, etc.
-        return $"{MAP_PREFIX}/{sideFolder}/{mapName}";
+        // Map files are now organized by side: Maps/Maggy/ASide/01_City, Maps/Maggy/BSide/01_City, etc.
+        return $"Maps/{MAP_PREFIX}/{sideFolder}/{mapName}";
     }
 
     public static string BuildASideSID(string mapName)
@@ -410,8 +410,9 @@ public static class AreaModeExtender
             {
                 AreaMapData.ApplyHardcodedRuntimeData(area);
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Log(LogLevel.Warn, "MaggyHelper", $"OnChapterPanelReset: ApplyHardcodedRuntimeData failed: {ex.Message}");
             }
         }
 
@@ -448,8 +449,9 @@ public static class AreaModeExtender
             {
                 AreaMapData.ApplyHardcodedRuntimeData(area);
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Log(LogLevel.Warn, "MaggyHelper", $"OnChapterPanelUpdateStats: ApplyHardcodedRuntimeData failed: {ex.Message}");
             }
         }
 
@@ -636,8 +638,9 @@ public static class AreaModeExtender
         {
             areaModeCount = AreaData.Get(area)?.Mode?.Length ?? 0;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to get area mode count: {ex.Message}");
         }
 
         int requiredModes = Math.Max((int) area.Mode + 1, Math.Max(areaModeCount, 3));
@@ -660,8 +663,9 @@ public static class AreaModeExtender
         {
             areaModeCount = AreaData.Get(area)?.Mode?.Length ?? 0;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to get area mode count: {ex.Message}");
         }
 
         int requiredModes = Math.Max((int) area.Mode + 1, Math.Max(areaModeCount, 3));
@@ -693,8 +697,9 @@ public static class AreaModeExtender
                 if (created != null)
                     return created;
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to create AreaStats instance: {ex.Message}");
             }
         }
 
@@ -822,8 +827,9 @@ public static class AreaModeExtender
             instance = Activator.CreateInstance(memberType);
             return instance != null;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to create member instance: {ex.Message}");
             return false;
         }
     }
@@ -887,7 +893,7 @@ public static class AreaModeExtender
         int changes = 0;
 
         AreaData lastAreaData = null;
-        try { lastAreaData = AreaData.Get(save.LastArea); } catch { }
+        try { lastAreaData = AreaData.Get(save.LastArea); } catch (Exception ex) { Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to get last area data: {ex.Message}"); }
 
         if (IsOurMap(lastAreaData) && TrySanitizeAreaKey(save.LastArea, out AreaKey sanitizedLastArea))
         {
@@ -902,7 +908,7 @@ public static class AreaModeExtender
         AreaData currentSessionAreaData = null;
         if (currentSession != null)
         {
-            try { currentSessionAreaData = AreaData.Get(currentSession.Area); } catch { }
+            try { currentSessionAreaData = AreaData.Get(currentSession.Area); } catch (Exception ex) { Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to get current session area data: {ex.Message}"); }
         }
 
         if (currentSession != null && IsOurMap(currentSessionAreaData)
@@ -933,8 +939,9 @@ public static class AreaModeExtender
         {
             return save.CurrentSession_Safe ?? save.CurrentSession;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to get current session: {ex.Message}");
             return null;
         }
     }
@@ -1230,8 +1237,9 @@ public static class AreaModeExtender
             {
                 modes.SetValue(Activator.CreateInstance(modeType, nonPublic: true), i);
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to create mode instance at index {i}: {ex.Message}");
             }
         }
     }
@@ -1292,8 +1300,9 @@ public static class AreaModeExtender
             dyn.Set(resolvedName, value);
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            Logger.Log(LogLevel.Warn, "AreaModeExtender", $"Failed to set member {resolvedName}: {ex.Message}");
             return false;
         }
     }

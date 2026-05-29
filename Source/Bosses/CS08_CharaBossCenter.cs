@@ -19,7 +19,7 @@ public class Cs08CharaBossCenter(global::Celeste.Player player) : CutsceneEntity
         }
 
         // Lock the player's state and force a specific movement sequence.
-        bossCenter.player.StateMachine.State = 11;
+        bossCenter.player.StateMachine.State = Player.StDummy;
         bossCenter.player.StateMachine.Locked = true;
 
         // Simulate walking action and camera behavior for the cutscene.
@@ -46,7 +46,7 @@ public class Cs08CharaBossCenter(global::Celeste.Player player) : CutsceneEntity
 
             if (WasSkipped)
             {
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
             }
         }
         level.Session.SetFlag("charaboss_center");

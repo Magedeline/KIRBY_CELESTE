@@ -55,7 +55,7 @@ namespace Celeste.Cutscenes {
         }
 
         private IEnumerator SetupCutscene(Level level) {
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.StateMachine.Locked = true;
             player.ForceCameraUpdate = true;
             
@@ -135,7 +135,7 @@ namespace Celeste.Cutscenes {
             Input.MoveX.Value = 0;
             Input.MoveY.Value = 0;
             player.Speed = Vector2.Zero;
-            player.StateMachine.State = 11;
+            player.StateMachine.State = Player.StDummy;
             player.StateMachine.Locked = true;
             MInput.Disabled = false;
             player.DummyAutoAnimate = true;

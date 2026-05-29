@@ -28,7 +28,7 @@ public class CS17_WelcomeHome : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IEnumerator Cutscene(Level level)
     {
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         Add(new Coroutine(player.DummyWalkToExact((int)targetX, walkBackwards: false, 0.7f)));
         Add(new Coroutine(level.ZoomTo(new Vector2(targetX - level.Camera.X, 90f), 2f, 2f)));
         FadeWipe fadeWipe = new FadeWipe(level, wipeIn: false);

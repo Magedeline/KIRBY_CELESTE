@@ -160,8 +160,8 @@ public class DesoloZantasTape : Entity
 
     // ─────────────────────────── Audio/Visual Defaults ───────────────────────────
 
-    private const string DefaultCollectSfx      = "event:/desolozantas/game/general/tape_unlocked";
-    private const string DefaultPreviewEvent     = "event:/desolozantas/game/general/tape_preview";
+    private const string DefaultCollectSfx      = "event:/desolo_zantas/game/general/tape_unlocked";
+    private const string DefaultPreviewEvent     = "event:/desolo_zantas/game/general/tape_preview";
     private const string DefaultPreviewParamName = "remix";
 
     // ──────────────────────────── Particle Types ─────────────────────────────────

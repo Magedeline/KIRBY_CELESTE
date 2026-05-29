@@ -86,7 +86,7 @@ namespace Celeste.Cutscenes
             player.Depth = 0;
             player.Speed = Vector2.Zero;
             player.DummyAutoAnimate = true;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
             level.ResetZoom();
             level.Session.SetFlag("memories_of_the_past");
         }

@@ -26,7 +26,7 @@ namespace Celeste.Cutscenes
 
             try
             {
-                player.StateMachine.State = 11; // dummy state used across cutscenes
+                player.StateMachine.State = Player.StDummy; // dummy state used across cutscenes
                 player.StateMachine.Locked = true;
             }
             catch
@@ -88,7 +88,7 @@ namespace Celeste.Cutscenes
             player.DummyAutoAnimate = false;
             player.Facing = Facings.Right;
             player.Sprite.Play("sleep");
-            Audio.Play("event:/desolozantas/char/kirby/campfire_sit", player.Position);
+            Audio.Play("event:/desolo_zantas/char/kirby/campfire_sit", player.Position);
             yield return 4f;
 
             // Add bird scene

@@ -48,11 +48,11 @@ public class CS10ArrivalDreemurrHouse : CutsceneEntity
     {
         // Setup player state
         player.Dashes = 1;
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.Sprite.Play("idle");
 
         // Set music
-        Audio.SetMusic("event:/desolozantas/ch10/music/fallendown", true, true);
+        Audio.SetMusic("event:/desolo_zantas/ch10/music/fallendown", true, true);
 
         // Fade in
         FadeWipe fadeWipe = new FadeWipe(level, wipeIn: true);

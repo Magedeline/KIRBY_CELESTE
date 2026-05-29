@@ -137,7 +137,7 @@ internal class VanishingWall : Solid
   public void RemoveBlock()
   {
     Player entity = ((Entity) this).Scene.Tracker.GetEntity<Player>();
-    if (entity == null || entity.StateMachine.State == 9)
+    if (entity == null || entity.StateMachine.State == Player.StDreamDash)
       return;
     ((Entity) this).SceneAs<Level>().Session.DoNotLoad.Add(this.eid);
     this.fade = true;

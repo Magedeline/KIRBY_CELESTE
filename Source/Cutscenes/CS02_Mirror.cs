@@ -30,9 +30,9 @@ namespace Celeste.Cutscenes
             CS02_CharaMirror cs02CharaMirror = this;
             cs02CharaMirror.Add(cs02CharaMirror.sfx = new SoundSource());
             cs02CharaMirror.sfx.Position = cs02CharaMirror.charaMirror.Center;
-            cs02CharaMirror.sfx.Play("event:/desolozantas/music/lvl2/dreamblock_sting_pt1");
+            cs02CharaMirror.sfx.Play("event:/desolo_zantas/music/lvl2/dreamblock_sting_pt1");
             cs02CharaMirror.direction = Math.Sign(cs02CharaMirror.player.X - cs02CharaMirror.charaMirror.X);
-            cs02CharaMirror.player.StateMachine.State = 11;
+            cs02CharaMirror.player.StateMachine.State = Player.StDummy;
             cs02CharaMirror.playerEndX = 8 * cs02CharaMirror.direction;
             yield return 1f;
             cs02CharaMirror.player.Facing = (Facings) (-cs02CharaMirror.direction);
@@ -84,7 +84,7 @@ namespace Celeste.Cutscenes
             player.Facing = (Facings) dashDirection;
             player.DummyAutoAnimate = false;
             player.Sprite.Play("dash");
-            Audio.Play("event:/desolozantas/char/kirby/dash_pink_right", player.Position);
+            Audio.Play("event:/desolo_zantas/char/kirby/dash_pink_right", player.Position);
             
             player.Hair.Color = Player.UsedHairColor;
             
@@ -109,7 +109,7 @@ namespace Celeste.Cutscenes
             Player entity1 = Scene.Tracker.GetEntity<Player>();
             if (entity1 != null)
             {
-                entity1.StateMachine.State = 0;
+                entity1.StateMachine.State = Player.StNormal;
                 entity1.DummyAutoAnimate = true;
                 entity1.Speed = Vector2.Zero;
                 entity1.X = charaMirror.X + playerEndX;
@@ -119,7 +119,7 @@ namespace Celeste.Cutscenes
                 entity2.ActivateNoRoutine();
             level.ResetZoom();
             level.Session.Inventory.DreamDash = true;
-            level.Session.Audio.Music.Event = "event:/desolozantas/music/lvl2/mirror";
+            level.Session.Audio.Music.Event = "event:/desolo_zantas/music/lvl2/mirror";
             level.Session.Audio.Apply();
         }
     }

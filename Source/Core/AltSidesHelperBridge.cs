@@ -1,5 +1,6 @@
 #pragma warning disable CS0436
 
+using System;
 using System.Reflection;
 using MonoMod.Utils;
 
@@ -307,7 +308,10 @@ public static class AltSidesHelperBridge
             if (dyn.TryGet(key, out object val))
                 return val;
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Verbose, "MaggyHelper/AltSidesHelperBridge", $"TryDynGet('{key}') failed: {ex.Message}");
+        }
         return null;
     }
 
@@ -333,7 +337,10 @@ public static class AltSidesHelperBridge
                     return true;
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Warn, "MaggyHelper/AltSidesHelperBridge", $"IsModLoaded('{modName}') failed: {ex.Message}");
+        }
         return false;
     }
 }

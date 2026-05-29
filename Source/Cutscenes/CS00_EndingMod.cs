@@ -79,7 +79,7 @@ public class CS00_EndingMod : CutsceneEntity
             timeRateModifier.SetTimeRateMultiplier(Calc.Approach(timeRateModifier.CurrentTimeRate(), 0f, Engine.RawDeltaTime * 2f));
         }
         timeRateModifier.SetTimeRateMultiplier(0f);
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.Facing = Facings.Right;
         yield return WaitFor(1f);
         EventInstance instance = Audio.Play("event:/game/general/bird_in", bird.Position);
@@ -116,7 +116,7 @@ public class CS00_EndingMod : CutsceneEntity
             }
             yield return null;
         }
-        player.StateMachine.State = 16;
+        player.StateMachine.State = Player.StBirdDashTutorial;
         player.Dashes = 0;
         level.Session.Inventory.Dashes = 1;
         timeRateModifier.ResetTimeRateMultiplier();
@@ -130,7 +130,7 @@ public class CS00_EndingMod : CutsceneEntity
             yield return null;
         }
         yield return 2f;
-        Audio.SetMusic("event:/desolozantas/music/lvl0/title_ping", true, true);
+        Audio.SetMusic("event:/desolo_zantas/music/lvl0/title_ping", true, true);
         yield return 2f;
         endingText = new PrologueEndingVignetteText(instant: false);
         Scene.Add(endingText);
@@ -179,7 +179,7 @@ public class CS00_EndingMod : CutsceneEntity
             if (player != null)
             {
                 player.Position = new Vector2(2120f, 40f);
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
                 player.DummyAutoAnimate = false;
                 player.Sprite.Play("tired");
                 player.Speed = Vector2.Zero;

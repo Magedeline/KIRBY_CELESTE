@@ -50,7 +50,7 @@ namespace Celeste.Cutscenes
             
             if (player != null)
             {
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
                 player.Speed = Vector2.Zero;
             }
             
@@ -138,7 +138,7 @@ namespace Celeste.Cutscenes
         {
             if (player != null)
             {
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
             }
             
             ScreenWipe.WipeColor = Color.White;

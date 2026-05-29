@@ -454,7 +454,7 @@ namespace Celeste.Cutscenes
             this.badelineWalkApproach = 0f;
             this.Level.Session.Inventory.Dashes = 5;
             this.player.Dashes = 5;
-            this.player.StateMachine.State = 11;
+            this.player.StateMachine.State = Player.StDummy;
             this.player.DummyFriction = false;
             this.player.DummyMaxspeed = false;
             this.player.Facing = Facings.Left;
@@ -1002,7 +1002,7 @@ namespace Celeste.Cutscenes
             this.player.StateMachine.State = this.player.StartDash();
             yield return 0.6f;
             this.player.OverrideDashDirection = null;
-            this.player.StateMachine.State = 11;
+            this.player.StateMachine.State = Player.StDummy;
             this.autoWalk = true;
         }
 
@@ -1084,7 +1084,7 @@ namespace Celeste.Cutscenes
             this.player.StateMachine.State = this.player.StartDash();
             yield return 0.6f;
             this.player.OverrideDashDirection = null;
-            this.player.StateMachine.State = 11;
+            this.player.StateMachine.State = Player.StDummy;
             this.autoWalk = true;
             while (!this.player.OnGround())
                 yield return null;
@@ -1213,7 +1213,7 @@ namespace Celeste.Cutscenes
             }
 
             this.player.OverrideDashDirection = null;
-            this.player.StateMachine.State = 11;
+            this.player.StateMachine.State = Player.StDummy;
             this.autoWalk = true;
             while (!this.player.OnGround())
                 yield return null;

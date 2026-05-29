@@ -16,7 +16,7 @@ namespace Celeste.Cutscenes
 		public CS21_Ending(Player player) : base(false, true)
 		{
 			base.Tag = Tags.HUD;
-			player.StateMachine.State = 11;
+			player.StateMachine.State = Player.StDummy;
 			player.DummyAutoAnimate = false;
 			player.Sprite.Rate = 0f;
 			this.RemoveOnSkipped = false;
@@ -82,7 +82,7 @@ namespace Celeste.Cutscenes
 			this.cursor.Visible = false;
 			level.PauseLock = false;
 			yield return 2f;
-			this.cinIntro = Audio.Play("event:/desolozantas/final_content/music/lvl21/cinematic/end_intro");
+			this.cinIntro = Audio.Play("event:/desolo_zantas/final_content/music/lvl21/cinematic/end_intro");
 			Audio.SetAmbience(null, true);
 			this.counting = true;
 			base.Add(new Coroutine(this.Fade(1f, 0f, 4f, 0f), true));
@@ -91,7 +91,7 @@ namespace Celeste.Cutscenes
 			Input.Rumble(RumbleStrength.Climb, RumbleLength.TwoSeconds);
 			yield return this.Loop("0,1,1,0,0,1,1,0*8", 2f);
 			Input.Rumble(RumbleStrength.Strong, RumbleLength.Short);
-			Audio.SetMusic("event:/desolozantas/final_content/music/lvl20/cinematic/end", true, false);
+			Audio.SetMusic("event:/desolo_zantas/final_content/music/lvl20/cinematic/end", true, false);
 			this.endAmbience = Audio.Play("event:/new_content/env/10_endscene");
 			base.Add(new Coroutine(this.Zoom(1.2f, 1.05f, 0.06f, Ease.CubeOut), true));
 			yield return this.Play("2-7");
@@ -223,7 +223,7 @@ namespace Celeste.Cutscenes
 			ScreenWipe.WipeColor = Color.Black;
 			if (Audio.CurrentMusicEventInstance == null)
 			{
-				Audio.SetMusic("event:/desolozantas/final_content/music/lvl20/cinematic/end", true, true);
+				Audio.SetMusic("event:/desolo_zantas/final_content/music/lvl20/cinematic/end", true, true);
 			}
 			Audio.SetMusicParam("end", 1f);
 			this.frame = 21;

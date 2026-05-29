@@ -1,7 +1,7 @@
 using Celeste.Cutscenes;
 
 namespace Celeste.Entities;
-[CustomEntity(ids: "MaggyHelper/BeyondSummitCloud")]
+[CustomEntity(ids: "MaggyHelper/AscendManagerBeyond")]
 [Tracked(true)]
 [HotReloadable]
 public class AscendManagerBeyond : Entity
@@ -77,7 +77,7 @@ public class AscendManagerBeyond : Entity
         manager.level.Session.SetFlag("beginswap_" + manager.index);
         player.Sprite.Play("launch");
         player.Speed = Vector2.Zero;
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.DummyGravity = false;
         player.DummyAutoAnimate = false;
         if (!string.IsNullOrWhiteSpace(manager.ambience))
@@ -117,7 +117,7 @@ public class AscendManagerBeyond : Entity
         }
         manager.level.CanRetry = false;
         player.Sprite.Play("launch");
-        Audio.Play("event:/desolozantas/char/kirby/summit_flytonext", player.Position);
+        Audio.Play("event:/desolo_zantas/char/kirby/summit_flytonext", player.Position);
         yield return 0.25f;
         Vector2 from = player.Position;
         float p;
@@ -129,6 +129,8 @@ public class AscendManagerBeyond : Entity
         }
         Fader fader = new(manager);
         manager.Scene.Add(fader);
+        if (manager.ShouldRestorePlayerX())
+            player.X = from.X;
         from = player.Position;
         Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
         for (p = 0.0f; p < 1.0; p += Engine.DeltaTime / 0.5f)
@@ -233,6 +235,11 @@ public class AscendManagerBeyond : Entity
     }
 
     private static float Mod(float x, float m) => (x % m + m) % m;
+
+    private bool ShouldRestorePlayerX()
+    {
+        return (Engine.Scene as Level).Session.Area.GetLevelSet() != "Celeste";
+    }
 
     public class GiygasStreaks : Entity
     {

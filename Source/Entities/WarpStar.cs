@@ -156,7 +156,7 @@ public class WarpStar : Entity
             Collidable = true;
             sprite.Visible = true;
             wiggler.Start();
-            Audio.Play("event:/desolozantas/game/08_outrun/warpstar_reappear", Position);
+            Audio.Play("event:/desolo_zantas/game/08_outrun/warpstar_reappear", Position);
             level.ParticlesFG.Emit(P_Respawn, 16, Position, Vector2.One * 2f);
         }
     }
@@ -178,20 +178,20 @@ public class WarpStar : Entity
             moveWiggle.Start();
             shieldRadiusWiggle.Start();
             moveWiggleDir = (base.Center - player.Center).SafeNormalize(Vector2.UnitY);
-            Audio.Play("event:/desolozantas/game/08_outrun/warpstar_bubble_bounce", Position);
+            Audio.Play("event:/desolo_zantas/game/08_outrun/warpstar_bubble_bounce", Position);
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             return;
         }
-        bool flag = player.StateMachine.State == 19;
+        bool flag = player.StateMachine.State == Player.StStarFly;
         if (player.StartStarFly())
         {
             if (!flag)
             {
-                Audio.Play(shielded ? "event:/desolozantas/game/08_outrun/warpstar_get" : "event:/desolozantas/game/08_outrun/warpstar_bubble_get", Position);
+                Audio.Play(shielded ? "event:/desolo_zantas/game/08_outrun/warpstar_get" : "event:/desolo_zantas/game/08_outrun/warpstar_bubble_get", Position);
             }
             else
             {
-                Audio.Play(shielded ? "event:/desolozantas/game/08_outrun/warpstar_bubble_renew" : "event:/desolozantas/game/08_outrun/warpstar_renew", Position);
+                Audio.Play(shielded ? "event:/desolo_zantas/game/08_outrun/warpstar_bubble_renew" : "event:/desolo_zantas/game/08_outrun/warpstar_renew", Position);
             }
             Collidable = false;
             Add(new Coroutine(CollectRoutine(player, speed)));

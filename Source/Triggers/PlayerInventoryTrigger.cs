@@ -86,12 +86,12 @@ namespace Celeste.Triggers
             switch (playerState)
             {
                 case PlayerState.Enable:
-                    player.StateMachine.State = 0; // StNormal
+                    player.StateMachine.State = Player.StNormal; // StNormal
                     player.DummyAutoAnimate = true;
                     player.Speed = Vector2.Zero;
                     break;
                 case PlayerState.Disable:
-                    player.StateMachine.State = 11; // StDummy
+                    player.StateMachine.State = Player.StDummy; // StDummy
                     player.Speed = Vector2.Zero;
                     break;
             }

@@ -186,7 +186,7 @@ internal class CustomRalseiBoostCutscene : CutsceneEntity
 	        player.DummyGravity = true;
 	        player.DummyAutoAnimate = true;
 	        player.ForceCameraUpdate = false;
-	        player.StateMachine.State = 0;
+	        player.StateMachine.State = Player.StNormal;
 	        player.StateMachine.Locked = false;
         };
     }

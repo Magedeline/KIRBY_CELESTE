@@ -51,11 +51,11 @@ public class CS10IndoorIntro : CutsceneEntity
     {
         // Setup player state
         player.Dashes = 1;
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.Sprite.Play("idle");
 
         // Set music for indoor scene
-        Audio.SetMusic("event:/desolozantas/music/lvl10/home");
+        Audio.SetMusic("event:/desolo_zantas/music/lvl10/home");
 
         // Fade in from previous cutscene
         FadeWipe fadeWipe = new FadeWipe(level, wipeIn: true);
@@ -197,7 +197,7 @@ public class CS10IndoorIntro : CutsceneEntity
         if (player != null)
         {
             player.Sprite.Play("laugh", false);
-            Audio.Play("event:/desolozantas/char/kirby/laugh");
+            Audio.Play("event:/desolo_zantas/char/kirby/laugh");
         }
         yield return 1.2f;
         if (player != null)

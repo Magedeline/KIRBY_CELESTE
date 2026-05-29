@@ -52,7 +52,7 @@ public class CS05_OshiroClutter : CutsceneEntity
     private IEnumerator Cutscene(Level level)
     {
         var idx = EffectiveIndex;
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.StateMachine.Locked = true;
         int num = ((idx != 1 && idx != 2) ? 1 : (-1));
         if (num == -1)
@@ -117,7 +117,7 @@ public class CS05_OshiroClutter : CutsceneEntity
     private void SetMusic()
     {
         Level obj = base.Scene as Level;
-        obj.Session.Audio.Music.Event = "event:/desolozantas/music/lvl5/clean";
+        obj.Session.Audio.Music.Event = "event:/desolo_zantas/music/lvl5/clean";
         obj.Session.Audio.Music.Progress = 1;
         obj.Session.Audio.Apply(forceSixteenthNoteHack: false);
     }
@@ -127,7 +127,7 @@ public class CS05_OshiroClutter : CutsceneEntity
     {
         var idx = EffectiveIndex;
         player.StateMachine.Locked = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         if (OshiroSprite.CurrentAnimationID == "side")
         {
             (OshiroSprite as OshiroSprite).Pop("idle", flip: true);

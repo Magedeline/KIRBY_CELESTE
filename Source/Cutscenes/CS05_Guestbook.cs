@@ -24,7 +24,7 @@ namespace Celeste.Cutscenes;
         private IEnumerator routine()
         {
             Cs05Guestbook cs03Guestbook = this;
-            cs03Guestbook.player.StateMachine.State = 11;
+            cs03Guestbook.player.StateMachine.State = Player.StDummy;
             cs03Guestbook.player.StateMachine.Locked = true;
             yield return Textbox.Say("ch5_guestbook");
             yield return 0.1f;
@@ -39,7 +39,7 @@ namespace Celeste.Cutscenes;
     public override void OnEnd(Level level)
         {
             player.StateMachine.Locked = false;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
         }
     }
 

@@ -26,7 +26,7 @@ public class Cs05Memo : CutsceneEntity
     private IEnumerator Routine()
     {
         Cs05Memo cs03Memo = this;
-        cs03Memo.player.StateMachine.State = 11;
+        cs03Memo.player.StateMachine.State = Player.StDummy;
         cs03Memo.player.StateMachine.Locked = true;
         if (!cs03Memo.Level.Session.GetFlag("memo_read_mod"))
         {
@@ -51,7 +51,7 @@ public class Cs05Memo : CutsceneEntity
     public override void OnEnd(Level level)
     {
         player.StateMachine.Locked = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         level.Session.SetFlag("memo_read");
         if (memo == null)
             return;

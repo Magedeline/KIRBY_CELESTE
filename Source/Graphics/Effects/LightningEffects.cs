@@ -17,11 +17,11 @@ namespace Celeste.Effects
         public static ParticleType P_Electromagnetic;
 
         // Audio events
-        public const string SFX_LIGHTNING_ZAP = "event:/desolozantas/lightning/zap";
-        public const string SFX_LIGHTNING_THUNDER = "event:/desolozantas/lightning/thunder";
-        public const string SFX_LIGHTNING_CRACKLE = "event:/desolozantas/lightning/crackle";
-        public const string SFX_LIGHTNING_DISCHARGE = "event:/desolozantas/lightning/discharge";
-        public const string SFX_LIGHTNING_STATIC = "event:/desolozantas/lightning/static";
+        public const string SFX_LIGHTNING_ZAP = "event:/desolo_zantas/lightning/zap";
+        public const string SFX_LIGHTNING_THUNDER = "event:/desolo_zantas/lightning/thunder";
+        public const string SFX_LIGHTNING_CRACKLE = "event:/desolo_zantas/lightning/crackle";
+        public const string SFX_LIGHTNING_DISCHARGE = "event:/desolo_zantas/lightning/discharge";
+        public const string SFX_LIGHTNING_STATIC = "event:/desolo_zantas/lightning/static";
 
         private static readonly Dictionary<Entity, ElectricalEffect> chargedEntities = new Dictionary<Entity, ElectricalEffect>();
 
@@ -261,7 +261,7 @@ namespace Celeste.Effects
         {
             Audio.Play(SFX_LIGHTNING_CRACKLE, origin);
             
-            List<Entity> targets = new List<Entity>();
+            HashSet<Entity> targets = new HashSet<Entity>();
             Vector2 currentPos = origin;
             
             // Find nearby entities to chain to
@@ -410,20 +410,20 @@ namespace Celeste.Effects
         /// <summary>
         /// Find the nearest entity to chain lightning to
         /// </summary>
-        private static Entity FindNearestTarget(Level level, Vector2 position, float maxRange, List<Entity> excludeList)
+        private static Entity FindNearestTarget(Level level, Vector2 position, float maxRange, HashSet<Entity> excludeSet)
         {
             Entity nearest = null;
-            float nearestDistance = maxRange;
+            float nearestDistanceSq = maxRange * maxRange;
             
             foreach (Entity entity in level.Entities)
             {
-                if (excludeList.Contains(entity)) continue;
+                if (excludeSet.Contains(entity)) continue;
                 
-                float distance = Vector2.Distance(entity.Position, position);
-                if (distance < nearestDistance)
+                float distanceSq = Vector2.DistanceSquared(entity.Position, position);
+                if (distanceSq < nearestDistanceSq)
                 {
                     nearest = entity;
-                    nearestDistance = distance;
+                    nearestDistanceSq = distanceSq;
                 }
             }
             
@@ -451,9 +451,10 @@ namespace Celeste.Effects
         /// </summary>
         private static void DamageAtPosition(Level level, Vector2 position, float radius)
         {
+            float radiusSq = radius * radius;
             foreach (Entity entity in level.Entities)
             {
-                if (Vector2.Distance(entity.Position, position) <= radius)
+                if (Vector2.DistanceSquared(entity.Position, position) <= radiusSq)
                 {
                     ApplyLightningDamage(entity, position);
                 }
@@ -473,7 +474,7 @@ namespace Celeste.Effects
                 Vector2 knockback = (player.Position - lightningCenter).SafeNormalize() * 150f;
                 player.Die(knockback);
             }
-            else if (entity.GetType().Name.Contains("Enemy"))
+            else if (entity is global::Celeste.Entities.Enemy)
             {
                 // Charge enemy and potentially chain to others
                 ChargeEntity(entity, 1f, 2f);
@@ -489,9 +490,10 @@ namespace Celeste.Effects
         /// </summary>
         private static void DisableElectronicsInRange(Level level, Vector2 center, float radius)
         {
+            float radiusSq = radius * radius;
             foreach (Entity entity in level.Entities)
             {
-                if (Vector2.Distance(entity.Position, center) <= radius)
+                if (Vector2.DistanceSquared(entity.Position, center) <= radiusSq)
                 {
                     // This would disable specific electronic entities
                     // For now, just add visual effect
@@ -503,24 +505,23 @@ namespace Celeste.Effects
         /// <summary>
         /// Update all charged entities
         /// </summary>
+        private static readonly List<Entity> toRemoveCharged = new List<Entity>();
+
         public static void UpdateChargedEntities()
         {
-            var toRemove = new List<Entity>();
+            toRemoveCharged.Clear();
             
             foreach (var kvp in chargedEntities)
             {
                 if (kvp.Key.Scene == null || kvp.Value.Update())
                 {
-                    toRemove.Add(kvp.Key);
+                    toRemoveCharged.Add(kvp.Key);
                 }
             }
             
-            foreach (var entity in toRemove)
+            foreach (var entity in toRemoveCharged)
             {
-                if (chargedEntities.ContainsKey(entity))
-                {
-                    chargedEntities.Remove(entity);
-                }
+                chargedEntities.Remove(entity);
             }
         }
 
@@ -620,20 +621,14 @@ namespace Celeste.Effects
 
         private void DamageEntitiesInField()
         {
-            foreach (Actor actor in Scene.Tracker.GetEntities<Actor>())
+            foreach (Actor actor in CollideAll<Actor>())
             {
-                if (Vector2.Distance(actor.Position, Position) <= radius)
-                {
-                    LightningEffects.ChargeEntity(actor, 0.5f, 1f);
-                }
+                LightningEffects.ChargeEntity(actor, 0.5f, 1f);
             }
 
-            foreach (Solid solid in Scene.Tracker.GetEntities<Solid>())
+            foreach (Solid solid in CollideAll<Solid>())
             {
-                if (Vector2.Distance(solid.Position, Position) <= radius)
-                {
-                    LightningEffects.ChargeEntity(solid, 0.5f, 1f);
-                }
+                LightningEffects.ChargeEntity(solid, 0.5f, 1f);
             }
         }
     }

@@ -107,7 +107,7 @@ public class CustomCharaBoost : Entity
             data.Bool("finalCh19Boost", defaultValue: false),
             data.Bool("finalCh19GoldenBoost", defaultValue: false),
             data.Bool("finalCh19PPBoost", defaultValue: false),
-            data.Bool("finalCh19Dialog", defaultValue: false) ? "finalCh19Dialog" : null
+            data.Attr("finalCh19Dialog", "") is string d && d.Length > 0 ? d : null
         )
     {
     }
@@ -173,7 +173,7 @@ public class CustomCharaBoost : Entity
             {
                 level.Session.SetFlag(finalCh19Dialog, true);
             }
-            Audio.Play("event:/desolozantas/final_content/char/chara/booster_finalfinal_part1", Position);
+            Audio.Play("event:/desolo_zantas/final_content/char/chara/booster_finalfinal_part1", Position);
         }
         else if (!finalBoost)
         {
@@ -187,7 +187,7 @@ public class CustomCharaBoost : Entity
         {
             player.Drop();
         }
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.DummyAutoAnimate = false;
         player.DummyGravity = false;
         if (player.Inventory.Dashes > 1)
@@ -322,7 +322,7 @@ public class CustomCharaBoost : Entity
         {
             if (finalCh19Boost)
             {
-                Ch19FinalBoostSfx = Audio.Play("event:/desolozantas/final_content/char/chara/booster_finalfinal_part2", Position);
+                Ch19FinalBoostSfx = Audio.Play("event:/desolo_zantas/final_content/char/chara/booster_finalfinal_part2", Position);
             }
             Engine.FreezeTimer = 0.1f;
             yield return null;

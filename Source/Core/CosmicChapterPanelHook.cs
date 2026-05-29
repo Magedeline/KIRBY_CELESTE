@@ -124,7 +124,10 @@ public static class CosmicChapterPanelHook
             if (GFX.Gui.Has(MasteryBgTexPath))
                 bgTex = GFX.Gui[MasteryBgTexPath];
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Warn, "CosmicChapterPanelHook", $"Failed to load mastery background texture: {ex.Message}");
+        }
 
         // Card position — the chapter panel sits near screen centre in vanilla.
         // We offset slightly behind/below to create a layered effect.

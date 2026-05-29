@@ -32,9 +32,7 @@ namespace Celeste
 
             Logger.Log(LogLevel.Info, nameof(TapeManager), "Initializing Tape Manager system...");
 
-            initializeLuaState(
-            // Set up Lua globals
-            tapeLuaManager);
+            initializeLuaState();
             loadTapeConfigurations();
             hookEvents();
 
@@ -56,7 +54,7 @@ namespace Celeste
             IsInitialized = false;
         }
 
-        private static void initializeLuaState(NLua tapeLuaManager)
+        private static void initializeLuaState()
         {
             tapeLuaManager = new NLua();
 
@@ -110,18 +108,7 @@ namespace Celeste
             orig(self, introTypes, isFromLoader);
 
             // Execute any tape-related Lua scripts for this level
-            executeLevelTapeScript(self.Session.Area, introTypes);
-        }
-
-        private static void executeLevelTapeScript(AreaKey sessionArea, global::Celeste.Player.IntroTypes levelName)
-        {
-            if (tapeLuaManager == null)
-            {
-                Logger.Log(LogLevel.Warn, nameof(TapeManager), "Lua state is not initialized. Skipping tape script execution.");
-                return;
-            }
-
-            var scriptPath = $"Scripts/{sessionArea.GetSID()}/{levelName}.lua";
+            executeLevelTapeScript(self.Session.Area, self.Session.Level);
         }
 
         /// <summary>

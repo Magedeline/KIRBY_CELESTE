@@ -14,9 +14,9 @@ namespace Celeste.Cutscenes
     [Tracked]
     public class CS21_RealTheEnd : CutsceneEntity
     {
-        private const string MUSIC_THE_END = "event:/desolozantas/music/menu/goodnight";
+        private const string MUSIC_THE_END = "event:/desolo_zantas/music/menu/goodnight";
 
-        private const string MUSIC_FAKE_THE_END = "event:/desolozantas/music/menu/els_win";
+        private const string MUSIC_FAKE_THE_END = "event:/desolo_zantas/music/menu/els_win";
 
         private Player player;
         private bool wasGoodEnding;
@@ -47,7 +47,7 @@ namespace Celeste.Cutscenes
             level.PauseLock = true;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 11;
+                player.StateMachine.State = Player.StDummy;
 
             Add(new Coroutine(Sequence(level)));
         }
@@ -127,7 +127,7 @@ namespace Celeste.Cutscenes
             level.PauseLock = false;
 
             if (player?.StateMachine != null)
-                player.StateMachine.State = 0;
+                player.StateMachine.State = Player.StNormal;
         }
 
         public override void Render()

@@ -58,7 +58,7 @@ namespace Celeste.Entities
         private void SetupComponents()
         {
             // Sprite setup
-            sprite = new Sprite(GFX.Game, "objects/Ingeste/superCoreBlock/");
+            sprite = new Sprite(GFX.Game, "objects/superCoreBlock/");
             sprite.AddLoop("hot_idle", "hot_idle", 0.08f);
             sprite.AddLoop("hot_active", "hot_active", 0.04f);
             sprite.AddLoop("cold_idle", "cold_idle", 0.08f);
@@ -469,7 +469,10 @@ namespace Celeste.Entities
                     return true;
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "SuperCoreBlock", $"Failed to parse color hex '{hex}': {ex.Message}");
+            }
             return false;
         }
     }

@@ -14,15 +14,15 @@ BloomStrength: 1.0
 
 Modes:
   - AudioState:
-      Music: event:/desolozantas/music/lvl16/cinematic/intro01
-      Ambience: event:/desolozantas/env/16_myworld
+      Music: event:/desolo_zantas/music/lvl16/cinematic/intro01
+      Ambience: event:/desolo_zantas/env/16_myworld
     Inventory: Default
     HeartIsEnd: false
     SeekerSlowdown: false
 
 Mountain:
-    MountainModelDirectory: Mountain/Maggy/Desolo_Zantas
-    MountainTextureDirectory: Mountain/Maggy/Desolo_Zantas
+    MountainModelDirectory: Mountain/Maggy/ASide
+    MountainTextureDirectory: Maggy/ASide
     Idle:
         Position: [-1.916, 33.050, 11.185]
         Target: [-1.479, 32.938, 9.236]

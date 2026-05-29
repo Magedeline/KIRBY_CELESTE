@@ -86,7 +86,7 @@ public class CS19_HubSecondIntro : CutsceneEntity
         {
             player.Throw();
         }
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.ForceCameraUpdate = true;
         while (!player.OnGround())
         {
@@ -175,7 +175,7 @@ public class CS19_HubSecondIntro : CutsceneEntity
         player.Speed = Vector2.Zero;
         player.DummyAutoAnimate = true;
         player.ForceCameraUpdate = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         level.Camera.Y = level.Bounds.Bottom - 180;
         level.Session.SetFlag("hub_introsecondtime");
         level.ResetZoom();

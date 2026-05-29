@@ -25,7 +25,7 @@ public class CS05_OshiroHallway2(global::Celeste.Player player, NPC oshiro) : Cu
         level.Session.Audio.Music.Layer(1, value: false);
         level.Session.Audio.Music.Layer(2, value: true);
         level.Session.Audio.Apply(forceSixteenthNoteHack: false);
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.StateMachine.Locked = true;
         yield return Textbox.Say("CH5_OSHIRO_HALLWAY_B");
         oshiro.MoveToAndRemove(new Vector2(level.Bounds.Right + 64, oshiro.Y));
@@ -41,7 +41,7 @@ public class CS05_OshiroHallway2(global::Celeste.Player player, NPC oshiro) : Cu
         level.Session.Audio.Music.Layer(2, value: false);
         level.Session.Audio.Apply(forceSixteenthNoteHack: false);
         player.StateMachine.Locked = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         level.Session.SetFlag("oshiro_resort_talked_3");
         if (WasSkipped)
         {

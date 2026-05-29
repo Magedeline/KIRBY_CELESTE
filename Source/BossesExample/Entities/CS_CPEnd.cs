@@ -40,7 +40,7 @@ public class CS_CPEnd : CutsceneEntity
       else
         break;
     }
-    this.player.StateMachine.State = 11;
+    this.player.StateMachine.State = Player.StDummy;
     this.player.StateMachine.Locked = true;
     while (!((Actor) this.player).OnGround(1) || (double) this.player.Speed.Y < 0.0)
       yield return (object) null;

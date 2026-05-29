@@ -81,7 +81,7 @@ internal class BoomBooster : Entity
       return;
     this.cannotUseTimer = 0.45f;
     this.hasDestroyDash = global::Celeste.Mod.MaggyHelper.BossesExample.BossesExampleModule.hasDestroyDash;
-    player.StateMachine.State = 4;
+    player.StateMachine.State = Player.StPickup;
     player.Speed = Vector2.Zero;
     new DynData<Player>(player).Set<Vector2>("boostTarget", this.Center);
     this.StartedBoosting = true;

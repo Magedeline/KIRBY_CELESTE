@@ -21,14 +21,6 @@ namespace Celeste
 
         public virtual void Render()
         {
-            Engine.Graphics.GraphicsDevice.Clear(ClearColor);
-            Draw.SpriteBatch.Begin();
-            
-            if (Presentation != null)
-                ActiveFont.DrawOutline(Dialog.Clean("WAVEFAZESLAMMER_PAGE_TITLE"), new Vector2(Width / 2f, Height / 4f),
-                    new Vector2(0.5f, 0.5f), Vector2.One, Color.White, 2f, Color.Black);
-
-            Draw.SpriteBatch.End();
         }
 
         protected IEnumerator PressButton()

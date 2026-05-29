@@ -49,7 +49,7 @@ public class CS05_OshiroLobby : CutsceneEntity
         startLightAlpha = level.Lighting.Alpha;
         float endLightAlpha = 1f;
         float from = oshiro.Y;
-        player.StateMachine.State = 11;
+        player.StateMachine.State = Player.StDummy;
         player.StateMachine.Locked = true;
         yield return 0.5f;
         yield return player.DummyWalkTo(oshiro.X - 16f);
@@ -112,7 +112,7 @@ public class CS05_OshiroLobby : CutsceneEntity
             yield return null;
         }
         yield return tween2.Wait();
-        Audio.SetMusic("event:/desolozantas/music/lvl5/oshiro_theme");
+        Audio.SetMusic("event:/desolo_zantas/music/lvl5/oshiro_theme");
         player.DummyAutoAnimate = true;
         yield return Textbox.Say("CH5_OSHIRO_FRONT_DESK", ZoomOut);
         foreach (MrOshiroDoor item in Scene.Entities.FindAll<MrOshiroDoor>())
@@ -136,7 +136,7 @@ public class CS05_OshiroLobby : CutsceneEntity
     public override void OnEnd(Level level)
     {
         player.StateMachine.Locked = false;
-        player.StateMachine.State = 0;
+        player.StateMachine.State = Player.StNormal;
         if (WasSkipped)
         {
             foreach (MrOshiroDoor item in base.Scene.Entities.FindAll<MrOshiroDoor>())
@@ -147,7 +147,7 @@ public class CS05_OshiroLobby : CutsceneEntity
         level.Lighting.Alpha = startLightAlpha;
         level.Lighting.UnsetSpotlight();
         level.Session.SetFlag("oshiro_resort_talked_1");
-        level.Session.Audio.Music.Event = "event:/desolozantas/music/lvl5/explore";
+        level.Session.Audio.Music.Event = "event:/desolo_zantas/music/lvl5/explore";
         level.Session.Audio.Music.Progress = 1;
         level.Session.Audio.Apply(forceSixteenthNoteHack: false);
         if (WasSkipped)

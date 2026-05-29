@@ -62,7 +62,7 @@ public class NPC05_Oshiro_Suite : NPC
         if (player != null)
         {
             player.StateMachine.Locked = false;
-            player.StateMachine.State = 0;
+            player.StateMachine.State = Player.StNormal;
         }
         if (!finishedTalking)
         {
