@@ -49,6 +49,14 @@ namespace Celeste.Extensions
             }
 
             TryApplyPlayerSprite(player, "kirby_player");
+
+            // Attach the Kirby gameplay controller so mechanics actually work
+            if (player.Get<KirbyPlayerController>() == null)
+                player.Add(new KirbyPlayerController());
+
+            // Attach the Kirby sprite state controller
+            if (player.Get<KirbyPlayerSpriteController>() == null)
+                player.Add(new KirbyPlayerSpriteController());
         }
 
         /// <summary>
@@ -69,6 +77,16 @@ namespace Celeste.Extensions
 
             string spriteId = global::Celeste.PlayerSpriteModeExtensions.GetSpriteBankId(player.Sprite.Mode);
             TryApplyPlayerSprite(player, spriteId);
+
+            // Remove the Kirby gameplay controller
+            var controller = player.Get<KirbyPlayerController>();
+            if (controller != null)
+                player.Remove(controller);
+
+            // Remove the Kirby sprite state controller
+            var spriteCtrl = player.Get<KirbyPlayerSpriteController>();
+            if (spriteCtrl != null)
+                player.Remove(spriteCtrl);
         }
 
         public static void EnableKirbyPlayerMode(this Player player, int maxDashes = 3)
@@ -134,6 +152,12 @@ namespace Celeste.Extensions
             }
 
             TryApplyPlayerSprite(player, "kirby_player");
+
+            // Re-attach controllers after level transition if missing
+            if (player.Get<KirbyPlayerController>() == null)
+                player.Add(new KirbyPlayerController());
+            if (player.Get<KirbyPlayerSpriteController>() == null)
+                player.Add(new KirbyPlayerSpriteController());
 
             if (TryGetStoredKirbyPower(session, out KirbyMode.KirbyPowerState powerState) &&
                 powerState != KirbyMode.KirbyPowerState.None)

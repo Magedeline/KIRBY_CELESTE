@@ -225,9 +225,9 @@ namespace Celeste.Mod.MaggyHelper
             // Chapter progression hooks for late-game unlock flow
             ChapterProgressionManager.Load();
 
-            // Note: Kirby player mechanics are now integrated directly into Celeste.Entities.K_Player
-            // The skill-based combat system (AirDrift, CycloneSlash, etc.) is handled internally
-            // by the Player class state machine. No external controller needed.
+            // Kirby player map-entry hooks (Everest + MonoMod + vanilla compatibility)
+            // Ensures controllers attach on Player spawn and metadata-based activation works.
+            global::Celeste.KirbyPlayerMapHooks.Load();
 
             // Kirby health system hooks for hazard damage integration
             global::Celeste.KirbyHealthSystemHooks.Load();
@@ -306,6 +306,7 @@ namespace Celeste.Mod.MaggyHelper
             global::Celeste.CosmicChapterPanelHook.Unload();
             global::Celeste.ChapterMasteryTracker.Unload();
             global::Celeste.MountainOverworldManager.Unload();
+            global::Celeste.KirbyPlayerMapHooks.Unload();
             global::Celeste.KirbyHealthSystemHooks.Unload();
             global::Celeste.OverworldMusicManager.Unload();
             global::Celeste.TitleScreen_ExtHook.Unload();
