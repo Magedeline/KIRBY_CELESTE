@@ -74,6 +74,25 @@ This checklist summarizes the current project state and next work needed across 
 
 ## Priority 5 — Audio And Music
 
+- [x] Fix broken audio event paths across C#, Lua, Julia, and `.meta.yaml` files:
+  - `pusheen/final_content` → `pusheen/extra_content` (54 code files + 3 `.meta.yaml`)
+  - `19_farewell` / `19_the_end` → `19_spaces` (18 files)
+  - `08_truth` / `08_outrun` → `08_edge` (5 files)
+  - `09_core` → `18_core` (1 file)
+  - `01_city` → `01_metro` (1 file)
+  - `07_hell` → `07_inferno` (1 file)
+  - `warpstar_*` → `feather_*` in `08_edge` (2 files)
+- [ ] **Pending audio path decisions** — need owner input on replacement events:
+  - `event:/pusheen/extra_content/music/lvl20/burn_in_despair` → bank only has `angel`, `asriel`
+  - `event:/pusheen/extra_content/music/lvl20/his_theme01`
+  - `event:/pusheen/extra_content/music/lvl20/his_theme02`
+  - `event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_02`
+  - `event:/pusheen/extra_content/music/lvl19/tragiclost` → bank has `lost`
+  - `event:/pusheen/extra_content/music/lvl19/dogsong` → no bank match
+  - `event:/pusheen/extra_content/music/lvl19/inmyway` → bank has `inmyway_slow`
+  - `event:/pusheen/char/madeline/cell_phone_ringing` → not in bank
+  - `event:/pusheen/extra_content/env/19_vortex` → not in bank
+  - `event:/pusheen/extra_content/env/19_maggypc` → not in bank
 - [ ] Build a track list mapping every FMOD event to its creator/remixer/source and where it is used in the mod.
 - [ ] Verify music credits for Nintendo/HAL/Kirby-inspired material, Undertale/Deltarune-inspired material, Touhou-inspired material, and every remixer listed in dialog credits.
 - [ ] Confirm loop points, transitions, and fallback silence behavior for every chapter and boss.
