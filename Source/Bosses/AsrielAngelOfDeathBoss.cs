@@ -73,6 +73,7 @@ namespace Celeste
         private Sprite faceSprite;
         private Sprite orbSprite;
         private Sprite orbwingSprite;
+        private Sprite armSprite;
         private Sprite shoulderSprite;
         private Sprite stemSprite;
         private Sprite bgSprite;
@@ -139,7 +140,7 @@ namespace Celeste
         private const string MUSIC_BURN_IN_DESPAIR = "event:/pusheen/extra_content/music/lvl20/burn_in_despair";
         private const string MUSIC_HIS_THEME_01 = "event:/pusheen/extra_content/music/lvl20/his_theme01";
         private const string MUSIC_HIS_THEME_02 = "event:/pusheen/extra_content/music/lvl20/his_theme02";
-        private const string MUSIC_KIRBY_VS_ASRIEL = "event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_2";
+        private const string MUSIC_KIRBY_VS_ASRIEL = "event:/pusheen/extra_content/music/lvl20/angel";
         
         // Lost soul tracking
         private Dictionary<string, bool> soulsSaved;
@@ -254,6 +255,7 @@ namespace Celeste
             CreateSpriteLayer(ref faceSprite, "face", "00");
             CreateSpriteLayer(ref orbSprite, "orb", "00");
             CreateSpriteLayer(ref orbwingSprite, "orbwing", "00");
+            CreateSpriteLayer(ref armSprite, "arm", "00");
             CreateSpriteLayer(ref shoulderSprite, "shoulder", "00");
             CreateSpriteLayer(ref stemSprite, "stem", "00");
             CreateSpriteLayer(ref crySprite, "cry", "00");
@@ -291,10 +293,10 @@ namespace Celeste
                     }
                     sprite.AddLoop("idle", "00", 0.1f);
                 }
-                else if (folder == "cosmoswing" || folder == "orb" || folder == "orbwing" || folder == "stem" || folder == "shoulder")
+                else if (folder == "cosmoswing" || folder == "orb" || folder == "orbwing" || folder == "stem" || folder == "shoulder" || folder == "arm")
                 {
                     // These have animation frames - add numbered loops
-                    int frameCount = folder == "stem" ? 5 : (folder == "shoulder" ? 4 : 3);
+                    int frameCount = folder == "stem" ? 5 : ((folder == "shoulder" || folder == "arm") ? 4 : 3);
                     // Add individual frame loops (00, 01, 02, etc.)
                     for (int i = 0; i < frameCount; i++)
                     {
@@ -971,7 +973,7 @@ namespace Celeste
             // Play defeat animation
             if (Sprite != null)
             {
-                Sprite.Play("defeat");
+                Sprite.Play("crying");
             }
             
             // Transition to Els reveal
@@ -1760,41 +1762,41 @@ namespace Celeste
             DrawFace(0, rx, ry);
 
             // GML: draw_sprite_ext(spr_afinal_arm, floor(anim/6), (x-58)+rx, y+56+(yoff*2)+ry, 2, 2, armrot, ...)
-            if (shoulderSprite != null)
+            if (armSprite != null)
             {
-                string sanim = shoulderSprite.Has(wingAnim) ? wingAnim : (shoulderSprite.Has("idle") ? "idle" : null);
+                string aanim = armSprite.Has(wingAnim) ? wingAnim : (armSprite.Has("idle") ? "idle" : null);
                 // Left arm
-                shoulderSprite.Position = new Vector2(-58 + rx, 56 + (yoff * 2) + ry);
-                shoulderSprite.Scale = new Vector2(2, 2);
-                shoulderSprite.Rotation = armrot * MathHelper.Pi / 180f;
-                shoulderSprite.Color = Color.White * (1f - bodyfader);
-                if (sanim != null) shoulderSprite.Play(sanim);
-                shoulderSprite.Render();
+                armSprite.Position = new Vector2(-58 + rx, 56 + (yoff * 2) + ry);
+                armSprite.Scale = new Vector2(2, 2);
+                armSprite.Rotation = armrot * MathHelper.Pi / 180f;
+                armSprite.Color = Color.White * (1f - bodyfader);
+                if (aanim != null) armSprite.Play(aanim);
+                armSprite.Render();
                 // Right arm (GML: x+56+rx, -armrot)
-                shoulderSprite.Position = new Vector2(56 + rx, 56 + (yoff * 2) + ry);
-                shoulderSprite.Scale = new Vector2(-2, 2);
-                shoulderSprite.Rotation = -armrot * MathHelper.Pi / 180f;
-                shoulderSprite.Color = Color.White * (1f - bodyfader);
-                if (sanim != null) shoulderSprite.Play(sanim);
-                shoulderSprite.Render();
+                armSprite.Position = new Vector2(56 + rx, 56 + (yoff * 2) + ry);
+                armSprite.Scale = new Vector2(-2, 2);
+                armSprite.Rotation = -armrot * MathHelper.Pi / 180f;
+                armSprite.Color = Color.White * (1f - bodyfader);
+                if (aanim != null) armSprite.Play(aanim);
+                armSprite.Render();
             }
 
-            // GML: draw_sprite_ext(spr_afinal_shoulder, floor(anim/6), x-84, y, 2, 2, 0, ...) â€” centered origin, shoulder sprite
-            if (Sprite != null)
+            // GML: draw_sprite_ext(spr_afinal_shoulder, floor(anim/6), x-84, y+32, 2, 2, 0, ...)
+            if (shoulderSprite != null)
             {
-                string shanim = Sprite.Has(wingAnim) ? wingAnim : (Sprite.Has("idle") ? "idle" : null);
+                string shanim = shoulderSprite.Has(wingAnim) ? wingAnim : (shoulderSprite.Has("idle") ? "idle" : null);
                 // Left shoulder
-                Sprite.Position = new Vector2(-84, 0);
-                Sprite.Scale = new Vector2(2, 2);
-                if (shanim != null) Sprite.Play(shanim);
-                Sprite.Color = Color.White * (1f - bodyfader);
-                Sprite.Render();
+                shoulderSprite.Position = new Vector2(-84, 32);
+                shoulderSprite.Scale = new Vector2(2, 2);
+                if (shanim != null) shoulderSprite.Play(shanim);
+                shoulderSprite.Color = Color.White * (1f - bodyfader);
+                shoulderSprite.Render();
                 // Right shoulder (flipped)
-                Sprite.Position = new Vector2(82, 0);
-                Sprite.Scale = new Vector2(-2, 2);
-                if (shanim != null) Sprite.Play(shanim);
-                Sprite.Color = Color.White * (1f - bodyfader);
-                Sprite.Render();
+                shoulderSprite.Position = new Vector2(82, 32);
+                shoulderSprite.Scale = new Vector2(-2, 2);
+                if (shanim != null) shoulderSprite.Play(shanim);
+                shoulderSprite.Color = Color.White * (1f - bodyfader);
+                shoulderSprite.Render();
             }
 
             // Render beam charge effects (from bcon logic in GML draw)

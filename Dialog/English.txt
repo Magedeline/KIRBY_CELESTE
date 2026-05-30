@@ -16234,7 +16234,7 @@ so please give me a break!!!
 [KIRBY left surprised]
 di- did I win?
 [kirby left distracted]
-another heartgem?
+another heart crystal?
 [kirby left sad]
 wait... no... this isn't right...
 but what if I just need to use it more?
@@ -16296,7 +16296,7 @@ and for myself I would not say anththing but...
 
 [ELS left normal]
 {# 560000}Predictable silence... heh...{#}
-{trigger 9 Els crushed Kirby heart and shattered it}
+{trigger 9 Els crushed Kirby love heart and shattered it}
 [ELS left normal]
 {# 560000}Your love is Soulless now.{#}
 {# 560000}Functionality ceases entirely.{#}
@@ -16374,6 +16374,7 @@ And... that fountain... it's real?
 
 [GRANNY right wise]
 Real enough for a final wish.
+It's kirby who made the wish come true.
 Peace returns when the light is carried forward.
 
 [GASTER left mysterious]
@@ -16388,10 +16389,10 @@ What a privilege, to witness it again.
 Your determination calls it into being, beloved.
 
 [BADELINE right angryalt]
-And your identity is?
+Wait are you suppose to be gone?
 
 [TITANKING left awkard]
-Complicated circumstances brought me here.
+Well it's complicated under the circumstances brought me here.
 My corporeal form was sacrificed for your preservation.
 
 [MADELINE left sad]
@@ -16419,35 +16420,36 @@ This is your last wish: take the fountain's light and help {+KIRBY}.
 Carry it into the fight.
 
 [GASTER left urgent]
-{# 808080}* THE MORTAL REALM FACES EXTINCTION.{#}
-{# 808080}* CONCENTRATED MALEVOLENCE THREATENS UNIVERSAL CONSUMPTION.{#}
-{# 808080}* YOUR COMPANION... ISOLATION GUARANTEES HIS DEFEAT.{#}
+{# 808080}* BUT WE DO NOT HAVE MUCH TIME.{#}
+{# 808080}* THE PHYSICAL WORLD AND THE PEOPLE WILL PERISH WITHOUT YOUR HELP.{#}
+{# 808080}* YOU HAVE THE POWER TO DEFEAT ELS AND YOU MUST MAKE THE DECISION NOW.{#}
+{# 808080}* I HONESTLY BELIVED YOU ARE THE ONE WHO IS STRONGER THAN ELS.{#}
 
-[BADELINE left worrried]
+[BADELINE left worried]
 {+KIRBY}... his battle continues, doesn't it?
 Despite our absence...
 
 [EIGHT_SOULS left offering]
 {# RAINBOW}Resurrection becomes possible through us...{#}
 {# RAINBOW}Transformed beyond your former selves...{#}
-{# RAINBOW}As embodiments of hope.{#}
+{# RAINBOW}As embodiments of hope and dreams.{#}
 
 [Stellar left normal]
 My power flows freely to you, darling.
 
 [void dreamer left normal]
-Any sacrifice for our child's success.
+Any sacrifice for our son's success.
 
 [titan king left normal]
 My forces and my being merge with you willingly.
 whatever the price, companionship ensures victory.
 
 [MADELINE left determinedclosed]
-Acceptance is given.
-Any opportunity to aid {+KIRBY}...
-Any chance for universal salvation...
+Alright then.
+Any opportunity to help {+KIRBY}...
+Any chance for saving the reality...
 [MADELINE left determined]
-We seize it.
+We will take it.
 
 {trigger 3 Dream Fountain light pours into Madeline and Badeline}
 
@@ -16455,7 +16457,6 @@ We seize it.
 The Dream Fountain's Wish Has Been Taken....
 
 CH20_DREAM_FRIENDS_CAPTURED=
-[none left]
 {trigger 0 Scene shifts back to Kirby struggling against Els}
 [KIRBY left exhausted]
 My body... screaming... can't hold on much longer...
@@ -16464,7 +16465,7 @@ Please... ANYONE... I need help!
 {# 560000}Oh Really{#}
 {trigger 1 Dark tendrils emerge and capture all of Kirby's allies}
 
-[ELS left triumphant]
+[ELS left normal]
 {# 560000}BEHOLD YOUR PRECIOUS FRIENDS, {+KIRBY}!{#}
 {# 560000}WATCH AS I DEVOUR THEIR VERY SOULS!{#}
 {# 560000}EVERY DREAM, EVERY HOPE, EVERY LOVING MEMORY...{#}
@@ -16534,28 +16535,35 @@ and Stay determined!
 your heart has shown so much kindness and compassion, and that is what makes you truly special!
 now go fourth as a star warrior and save everyone!
 
-[ELS left losing_control]
+[]
+you can win
+you have to win
+you need to be stronger
+never give up and never backdown
+we belived in you
+froggit...:3
+
+[ELS left normal]
 {# 560000}No... NOO! THIS CAN'T BE HAPPENING!{#}
 {# 560000}Fucking Unbelievable!{#}
 {# 560000}You... you are all... just{#}
-{music mute}
+{trigger 4 music mute}
 [ELS left normal]
 {# 560000}I can't believe this... that you are all too stupid.{#}
 {# 560000}all of there soul are now mine!!!!!{#}
 
-# Phase 1.1: "Finally..." - Asriel breaks free momentarily
 CH20_ASRIEL_FINALLY=
-[ASRIEL_GOD right glitch]
+[ASRIEL_KID right glitch]
 Finally...
-I was so tired of being in the shadows.
+I was so tired of being in the total darkness.
 [KIRBY left surprised]
 ...!
-[ASRIEL_GOD right glitch]
+[ASRIEL_KID right glitch]
 Trapped in that form...
 Unable to feel anything...
 But now...
 Now I can feel again!
-{trigger glitch effect}
+{trigger 0 glitch effect}
 
 # Phase 5-6: "Howdy!" - Kid Asriel appearance
 CH20_ASRIEL_HOWDY=
@@ -16567,7 +16575,7 @@ Asriel...?
 Are you there?
 It's me...
 Your best friend.
-{trigger kid form animation}
+{trigger 1 kid form animation}
 
 # Phase 12: Final name reveal
 CH20_ASRIEL_NAME_FINAL=
@@ -16575,11 +16583,8 @@ CH20_ASRIEL_NAME_FINAL=
 {~}A S R I E L   D R E E M U R R{/~}
 [ASRIEL_GOD center godform glow]
 {~}T H E   F I N A L   Z E R O{/~}
-{trigger final transformation}
+{trigger 1 final transformation}
 
-# ====================================================================
-# ASRIEL GOD BOSS - MID FIGHT DIALOG
-# ====================================================================
 CH20_KIRBY_THEEND_INTRO=
 [KIRBY left sadder]
 This is The End...
@@ -16596,32 +16601,32 @@ azzyboss_06=
 All your progress, all your efforts, all your sacrifices...
 I will make everyting fall to zero!
 
-azzyboss-08=
+azzyboss_08=
 then we can do this all over again!
 
-azzyboss-10=
+azzyboss_10=
 infact did you know what the best part about all of this is?
 you'll do it...
 
-azzyboss-12=
+azzyboss_12=
 and then you lose to me again...
 
-azzyboss-14=
+azzyboss_14=
 and again!
 
-azzyboss-16=
+azzyboss_16=
 AND AGAIN!!!
 
-azzyboss-18=
+azzyboss_18=
 because you want a final ending
 
-azzyboss-20=
+azzyboss_20=
 because you love your friends.
 
-azzyboss-22=
+azzyboss_22=
 because you never ever give up!
 
-azzyboss-24=
+azzyboss_24=
 is this wonderful or what?
 your determination, that power let you get this far.
 this will be your doom!
@@ -16634,38 +16639,39 @@ It's Time for this Timeline to be purge once and for all!
 CH20_MADELINE_AND_BADELINE_SAVE_KIRBY_FROM_ASRIEL_FIRST_SPECIAL_ATTACK=
 [KIRBY left surprised]
 Oh god no!
-{trigger x a slice cut the meterorite in half}
+{trigger 1 a slice cut the meterorite in half}
 [MADELINE_SPIRIT left together]
 Sorry were late after us were erased
 [KIRBY left surprised]
 MADELINE! YOUR BACK!!!?
-[KIRBY left ditracted]
+[KIRBY left distracted]
 but I thought you were...
-[MADELINE_SPIRIT right sad]
+[MADELINE_SPIRIT right upset]
 Dead well yeah.
 [MADELINE_SPIRIT right normal]
 but turns out death is just another thing to climb the mountian.
 [BADELINE_SPIRIT right scoff]
 and this time your not alone with us.
 
-[ASRIEL_GOD left shocked]
+[ASRIEL_GOD left normal]
 Madeline and Badeline are back!?
+{trigger 1 asriel voice change to zero}
 No! This can't be happening!
 You can't be alive! I killed you both!
 
 [BADELINE_SPIRIT right angryalt]
 Watch it you goat boy, you better not hurt my friend here or I will end you right here and now!
 
-[MADELINE_SPIRIT left warm]
+[MADELINE_SPIRIT left sad]
 {# AAAAFF}Infact We never really left, {+KIRBY}.{#}
 {# AAAAFF}Our love for you {~}TRANSCENDED{/~} mortality itself.{#}
 
-[ASRIEL_GOD left fine]
+[ASRIEL_GOD left normal]
 Fine, you can have your little reunion, but it won't stop me from killing you all!
 then I will have to do this myself!
 
 CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK=
-[ASRIEL_GOD left furious]
+[ASRIEL_GOD left normal]
 UGH! This is getting old, and very Tiring.
 Time to end this universe once and for all!
 
@@ -16673,10 +16679,9 @@ CH20_ASRIEL_HYPERGONER_IMPRESSED=
 [ASRIEL_GOD left shocked]
 Wh-, you still stand after all that?
 
-CH20_MADELINE_BADELINE_RETURN=
 [KIRBY left determined]
 It's because Madeline and Badeine and I have something that they don't and include you have something too
-It's Called Determination and Love, and that is what keeps us going, and that is what makes us strong, and that is what makes us undefeatable!
+It's Called Determination and Love, and that is what keeps us going!
 
 CH20_ASRIEL_MOCKING_HEROES=
 [ASRIEL_GOD left mocking]
@@ -16686,65 +16691,46 @@ CH20_ASRIEL_MOCKING_HEROES=
 {# 990000}They have no power here!{#}
 {# 990000}However Don't get me wrong, I do find it amusing that you think those things can stop me!{#}
 {# 990000}Up until now I thought you were just a joke, but now I see that you're just a delusional fool!{#}
-
-CH20_ASRIEL_FRACTION_POWER=
 [ASRIEL_GOD left mocking]
 {# 990000}And after all it's only a fraction of my power, I haven't even shown you my true power yet!{#}
-[MADELINE_SPIRIT left surprised]
+[MADELINE left surprised]
 wait you haven't even shown your true power yet?
 [ASRIEL_GOD left fine]
 {# 990000}Oh you have not seen a combination of zero, void, giygas and me?{#}
 {# 990000}Well then see this for yourself{#}
 
-CH20_ASRIEL_ANGEL_TRANSFORMATION=
-[ASRIEL_GOD left fine]
-{# 990000}Behold my TRUE form!{#}
-{trigger 0 asriel god transformation begins}
-[KIRBY left panic]
-What... what is happening to him!?
-[MADELINE_SPIRIT left surprised]
-{# AAAAFF}Asriel... he's... transforming!{#}
-[ASRIEL_GOD center godform glow]
-{~}I AM THE ANGEL OF DEATH!!!{/~}
-
-# ====================================================================
-# CHAPTER 20: ASRIEL ZERO - ANGEL OF DEATH BOSS PHASE 2
-# ====================================================================
-
 CH20_ASRIEL_ZERO_RISE_KILL=
 {trigger 0_angel of death rised}
-[MADELINE_SPIRIT left surprised]
+[MADELINE left surprised]
 {# AAAAFF}Asriel... What is that!!!{#}
 [ASRIEL_ZERO left transcendent]
-{# 000000}BEHOLD MY TRUE POWER.{#}
+{# ffffff}BEHOLD MY TRUE POWER.{#}
 {trigger 1 gravity overwiegths kirby and mad with bad down and lift the soul up}
 [KIRBY right panic]
 I... I can't {~}MOVE{/~}!
-
 [ASRIEL_ZERO left omnipotent]
-{# 000000}Hah Finally At last I can feel your death!{#}
-{# 000000}Everytime you three died, this world slip you away!{#}
-{# 000000}Everytime you died, your friend and family forget you abit more!{#}
-{# 000000}Your Life Will End Here where in this world is truely Game Over!{#}
+{# ffffff}Hah Finally At last I can feel your death!{#}
+{# ffffff}Everytime you three died, this world slip you away!{#}
+{# ffffff}Everytime you died, your friend and family forget you abit more!{#}
+{# ffffff}Your Life Will End Here where in this world is truely Game Over!{#}
 {trigger 2 angel lift them up and smack harder to the ground lifting out of there soul out of them}
-
-[Madeline_Spirit left panic]
+[MADELINE left panic]
 {# AAAAFF}No! Please! Don't do this to us again!{#}
 [ASRIEL_ZERO left omnipotent]
-{# 000000}Your Still hanging on little strawberry?{#}
-{# 000000}I thought you would have given up by now!{#}
-{# 000000}After all in few moment your soul will be mine and you will be nothing but a memory!{#}
-{# 000000}You will be serve into you all of afterlife{#}
+{# ffffff}Your Still hanging on little strawberry?{#}
+{# ffffff}I thought you would have given up by now!{#}
+{# ffffff}After all in few moment your soul will be mine and you will be nothing but a memory!{#}
+{# ffffff}You will be serve into you all of afterlife{#}
 
 {trigger 3 angel lift them up and smack harder to the ground lifting out of there soul out of them harder than before}
 
 [ASRIEL_ZERO left omnipotent]
-{# 000000}Still? Oh shut up!{#}
-{# 000000}Show me your true love and determination!{#}
-{# 000000}Show me how much you want to live!{#}
-{# 000000}Show me how much you want to save your friends and family!{#}
-{# 000000}Show me how much you want to save this world!{#}
-{# 000000}NOW SHOW IT TO ME!{#}
+{# ffffff}Still? Oh shut up!{#}
+{# ffffff}Show me your true love and determination!{#}
+{# ffffff}Show me how much you want to live!{#}
+{# ffffff}Show me how much you want to save your friends and family!{#}
+{# ffffff}Show me how much you want to save this world!{#}
+{# ffffff}NOW SHOW IT TO ME!{#}
 
 {trigger 4 faded back to black and show the soul of kirby and mad with bad floating in the air}
 
@@ -16755,8 +16741,6 @@ yet you refuse to give up, even as your soul is lifted out of your body and into
 Asriel Zero's power is immense, but your will to live and protect those you care about is stronger.
 How will you overcome this seemingly insurmountable obstacle and save your friends and family from oblivion?
 {trigger 5 save point ui apears}
-
-CH20_ASRIEL_ZERO_CALL_FOR_HELP=
 []
 no that wouldn't work,
 theres has to be a way to save everyone, and stop Asriel Zero from taking you all away, but how?
@@ -16765,36 +16749,13 @@ theres has to be a way to save everyone, and stop Asriel Zero from taking you al
 I reach out to the abyss and call someone else for help.
 So I Call out for help one last time...
 
-CH20_ASRIEL_ZERO_CALL_MADELINE=
-[KIRBY right desperate]
-{# FFAAFF}Madeline...!{#}
-[Madeline left panic]
-{# AAAAFF}I... I'm here... but I can't reach you...{#}
-
-CH20_ASRIEL_ZERO_CALL_BADELINE=
-[KIRBY right desperate]
-{# FF88FF}Badeline...! Anyone...!{#}
-[BADELINE left sad]
-{# FF00FF}I'm trying... I can't break through his power...!{#}
-
-CH20_ASRIEL_ZERO_CALL_ANYONE=
-[]
-...
-...
-...
-...
-Is there anyone out there...?
-Anyone at all...?
-
 CH20_ASRIEL_ZERO_CALL_VOID=
 []
 ...
-... I reach out to the deepest darkness... to the void beyond all voids...
+...
+...
+...
 ... THE VOID ANSWERS YOUR CALL!!!
-
-# ====================================================================
-# PHASE 4: ASTRAL BIRTH VOID ANSWERS
-# ====================================================================
 
 CH20_ASRIEL_ZERO_VOID_ANSWERS=
 []
@@ -16812,10 +16773,6 @@ But not gone.
 If you can reach them... if you can remind them who they are...
 ... you can save them all.
 ... and maybe, just maybe, save Asriel too.
-
-# ====================================================================
-# PHASE 5: LOST SOULS - SAVING EACH CHARACTER
-# ====================================================================
 
 CH20_ASRIEL_ZERO_LOST_SOULS_INTRO=
 []
