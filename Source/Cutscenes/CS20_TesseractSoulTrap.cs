@@ -9,15 +9,15 @@ namespace Celeste
     /// Cutscene for Chapter 20: Tesseract Soul trap reveal.
     ///
     /// Plays immediately after the Tesseract Soul boss is defeated.
-    /// Kirby thinks he has won and spots what looks like a heartgem —
+    /// Kirby thinks he has won and spots what looks like a heartgem â€”
     /// but it is Els's trick. The moment Kirby tries to claim it,
     /// Els breaks the illusion with "GOT YOU, KIRBY!" (SOUL_Maggy_CSide_20_THEEND_A).
     ///
     /// Dialog keys used
-    /// ─────────────────────────────────────────────────────────────────
-    /// CH20_TESSERACT_SOUL  (end section — no embedded triggers here,
+    /// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    /// CH20_TESSERACT_SOUL  (end section â€” no embedded triggers here,
     ///                        all effects fire between the two Textbox.Say calls)
-    /// SOUL_Maggy_CSide_20_THEEND_A  — Els's gotcha line
+    /// SOUL_Maggy_CSide_20_THEEND_A  â€” Els's gotcha line
     /// </summary>
     [Tracked(true)]
     public class CS20_TesseractSoulTrap : CutsceneEntity
@@ -31,9 +31,9 @@ namespace Celeste
         private const string FLAG_TRAP_DONE = "ch20_tesseract_soul_trap_done";
 
         // SFX
-        private const string SFX_FAKE_HEARTGEM_PULSE   = "event:/pusheen/final_content/game/20_last_push/fake_heartgem_pulse";
-        private const string SFX_FAKE_HEARTGEM_SHATTER = "event:/pusheen/final_content/game/20_last_push/fake_heartgem_shatter";
-        private const string SFX_ELS_LAUGH              = "event:/pusheen/final_content/game/20_last_push/els_reveal_laugh";
+        private const string SFX_FAKE_HEARTGEM_PULSE   = "event:/pusheen/extra_content/game/20_last_push/fake_heartgem_pulse";
+        private const string SFX_FAKE_HEARTGEM_SHATTER = "event:/pusheen/extra_content/game/20_last_push/fake_heartgem_shatter";
+        private const string SFX_ELS_LAUGH              = "event:/pusheen/extra_content/game/20_last_push/els_reveal_laugh";
 
         #endregion
 
@@ -58,7 +58,7 @@ namespace Celeste
         }
 
         /// <summary>
-        /// Static factory — call from a trigger or level hook to begin the cutscene.
+        /// Static factory â€” call from a trigger or level hook to begin the cutscene.
         /// </summary>
         public static void Start(Level level)
         {
@@ -101,27 +101,27 @@ namespace Celeste
 
         private IEnumerator CutsceneSequence()
         {
-            // Lock player — Kirby stands still while the "victory" illusion unfolds.
+            // Lock player â€” Kirby stands still while the "victory" illusion unfolds.
             player.StateMachine.State = Player.StDummy;
             player.DummyAutoAnimate   = false;
 
-            // ── Phase 1: fake heartgem materialises ──────────────────────────────
+            // â”€â”€ Phase 1: fake heartgem materialises â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             yield return SpawnFakeHeartgem();
 
-            // ── Phase 2: Kirby's doubt dialogue ──────────────────────────────────
+            // â”€â”€ Phase 2: Kirby's doubt dialogue â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             // "di- did I win? / another heartgem? / wait... no... this isn't right..."
             yield return Textbox.Say(DIALOGUE_KEY_KIRBY_DOUBT);
 
             // Brief hopeful pause before the trap springs
             yield return 0.4f;
 
-            // ── Phase 3: Kirby steps toward the gem ──────────────────────────────
+            // â”€â”€ Phase 3: Kirby steps toward the gem â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             yield return KirbyApproachGem();
 
-            // ── Phase 4: Els springs the trap ────────────────────────────────────
+            // â”€â”€ Phase 4: Els springs the trap â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             yield return SpringTrap();
 
-            // ── Phase 5: Els's gotcha line ───────────────────────────────────────
+            // â”€â”€ Phase 5: Els's gotcha line â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             // "GOT YOU, KIRBY!"
             yield return Textbox.Say(DIALOGUE_KEY_ELS_GOTCHA);
 
@@ -188,7 +188,7 @@ namespace Celeste
             Audio.Play(SFX_FAKE_HEARTGEM_SHATTER,
                 fakeGemEntity != null ? fakeGemEntity.Position : player.Position);
 
-            // Violent flash — the illusion breaks
+            // Violent flash â€” the illusion breaks
             level.Flash(Color.White, drawPlayerOver: false);
             level.Shake(0.5f);
 

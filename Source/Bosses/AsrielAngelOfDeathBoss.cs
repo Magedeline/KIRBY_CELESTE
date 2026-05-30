@@ -136,10 +136,10 @@ namespace Celeste
         private bool barrierActive;
         
         // Audio - FMOD Events
-        private const string MUSIC_BURN_IN_DESPAIR = "event:/pusheen/final_content/music/lvl20/burn_in_despair";
-        private const string MUSIC_HIS_THEME_01 = "event:/pusheen/final_content/music/lvl20/his_theme01";
-        private const string MUSIC_HIS_THEME_02 = "event:/pusheen/final_content/music/lvl20/his_theme02";
-        private const string MUSIC_KIRBY_VS_ASRIEL = "event:/pusheen/final_content/music/lvl20/kirby_vs_asriel_fight_2";
+        private const string MUSIC_BURN_IN_DESPAIR = "event:/pusheen/extra_content/music/lvl20/burn_in_despair";
+        private const string MUSIC_HIS_THEME_01 = "event:/pusheen/extra_content/music/lvl20/his_theme01";
+        private const string MUSIC_HIS_THEME_02 = "event:/pusheen/extra_content/music/lvl20/his_theme02";
+        private const string MUSIC_KIRBY_VS_ASRIEL = "event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_2";
         
         // Lost soul tracking
         private Dictionary<string, bool> soulsSaved;
@@ -984,7 +984,7 @@ namespace Celeste
 
         #region Attack Implementations
 
-        // ── Ultima Bullet ────────────────────────────────────────────────────────
+        // â”€â”€ Ultima Bullet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Three expanding rings of 8 aimed bullets fired in sequence.
         private IEnumerator UltimaBulletAttack()
         {
@@ -1015,8 +1015,8 @@ namespace Celeste
             yield return 0.8f;
         }
 
-        // ── Cross Shocker ────────────────────────────────────────────────────────
-        // Four cardinal lightning bolts that fire simultaneously, then again rotated 45°.
+        // â”€â”€ Cross Shocker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // Four cardinal lightning bolts that fire simultaneously, then again rotated 45Â°.
         private IEnumerator CrossShockerAttack()
         {
             Sprite?.Play("attack_crossshocker_start");
@@ -1044,7 +1044,7 @@ namespace Celeste
             yield return 0.3f;
         }
 
-        // ── Cosmic Sweep ─────────────────────────────────────────────────────────
+        // â”€â”€ Cosmic Sweep â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // A slow laser beam that sweeps left-to-right across the arena.
         private IEnumerator CosmicSweepAttack()
         {
@@ -1064,7 +1064,7 @@ namespace Celeste
             yield return 0.5f;
         }
 
-        // ── Divine Lightning ─────────────────────────────────────────────────────
+        // â”€â”€ Divine Lightning â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Three columns of warning markers drop on the player's location, then strike.
         private IEnumerator DivineLightningAttack()
         {
@@ -1077,7 +1077,7 @@ namespace Celeste
             for (int i = 0; i < 3; i++)
                 strikeXs[i] = player.Center.X + Calc.Random.Range(-80f, 80f);
 
-            // Warn phase – show column markers
+            // Warn phase â€“ show column markers
             var warnings = new AsrielLightningWarning[3];
             for (int i = 0; i < 3; i++)
             {
@@ -1103,7 +1103,7 @@ namespace Celeste
             yield return 0.6f;
         }
 
-        // ── Shocker Breaker 3 ────────────────────────────────────────────────────
+        // â”€â”€ Shocker Breaker 3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Three expanding hexagonal shockwave rings.
         private IEnumerator ShockerBreaker3Attack()
         {
@@ -1131,7 +1131,7 @@ namespace Celeste
             yield return 0.6f;
         }
 
-        // ── Galactic Nova ────────────────────────────────────────────────────────
+        // â”€â”€ Galactic Nova â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // A tight outward spiral of bullets.
         private IEnumerator GalacticNovaAttack()
         {
@@ -1163,7 +1163,7 @@ namespace Celeste
             yield return 0.8f;
         }
 
-        // ── HyperGoner ───────────────────────────────────────────────────────────
+        // â”€â”€ HyperGoner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Massive horizontal beam that fills the screen, telegraphed with darkening.
         private IEnumerator HyperGonerAttack()
         {
@@ -1189,7 +1189,7 @@ namespace Celeste
             yield return 0.5f;
         }
 
-        // ── Rainbow Delta ────────────────────────────────────────────────────────
+        // â”€â”€ Rainbow Delta â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         // Five aimed bursts in a fan, followed by eight bouncing projectiles.
         private IEnumerator RainbowDeltaAttack()
         {
@@ -1225,7 +1225,7 @@ namespace Celeste
             yield return 0.8f;
         }
 
-        // ── Weak Cosmic Burst (desperation) ──────────────────────────────────────
+        // â”€â”€ Weak Cosmic Burst (desperation) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         private IEnumerator WeakCosmicBurst()
         {
             if (level == null) { yield break; }
@@ -1779,7 +1779,7 @@ namespace Celeste
                 shoulderSprite.Render();
             }
 
-            // GML: draw_sprite_ext(spr_afinal_shoulder, floor(anim/6), x-84, y, 2, 2, 0, ...) — centered origin, shoulder sprite
+            // GML: draw_sprite_ext(spr_afinal_shoulder, floor(anim/6), x-84, y, 2, 2, 0, ...) â€” centered origin, shoulder sprite
             if (Sprite != null)
             {
                 string shanim = Sprite.Has(wingAnim) ? wingAnim : (Sprite.Has("idle") ? "idle" : null);

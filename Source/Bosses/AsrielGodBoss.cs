@@ -18,21 +18,21 @@ namespace Celeste.Entities
         #region Constants and Audio Events
         
         // Audio Events
-        private const string SFX_BARRIER_SHATTER = "event:/pusheen/final_content/char/asriel/Asriel_BarrierShatter";
-        private const string SFX_BIG_BULLET_FIRE = "event:/pusheen/final_content/char/asriel/Asriel_Big_Bullet_Fire";
-        private const string SFX_BIGGER_GUN_FIRE = "event:/pusheen/final_content/char/asriel/Asriel_Bigger_Gun_Fire";
-        private const string SFX_BIGGER_LIGHTNING_HIT = "event:/pusheen/final_content/char/asriel/Asriel_Bigger_Lightninghit";
-        private const string SFX_BIGGER_GUN_MECHANIZED = "event:/pusheen/final_content/char/asriel/Asriel_BiggerGunMechanized";
-        private const string SFX_CINEMATIC_CUT = "event:/pusheen/final_content/char/asriel/Asriel_Cinematiccut";
-        private const string SFX_GRAB = "event:/pusheen/final_content/char/asriel/Asriel_Grab";
-        private const string SFX_GUNSHOT = "event:/pusheen/final_content/char/asriel/Asriel_Gunshot";
-        private const string SFX_HYPERGONER_CHARGE = "event:/pusheen/final_content/char/asriel/Asriel_Hypergoner_Charge";
-        private const string SFX_LIGHTNING_HIT = "event:/pusheen/final_content/char/asriel/Asriel_Lightninghit";
-        private const string SFX_SEGA_POWER_01 = "event:/pusheen/final_content/char/asriel/Asriel_Segapower01";
-        private const string SFX_SEGA_POWER_02 = "event:/pusheen/final_content/char/asriel/Asriel_Segapower02";
-        private const string SFX_SPARKLES = "event:/pusheen/final_content/char/asriel/Asriel_Sparkles";
-        private const string SFX_SPELLCAST_GLITCH = "event:/pusheen/final_content/char/asriel/Asriel_Spellcast_Glitch";
-        private const string SFX_STAR = "event:/pusheen/final_content/char/asriel/Asriel_Star";
+        private const string SFX_BARRIER_SHATTER = "event:/pusheen/extra_content/char/asriel/Asriel_BarrierShatter";
+        private const string SFX_BIG_BULLET_FIRE = "event:/pusheen/extra_content/char/asriel/Asriel_Big_Bullet_Fire";
+        private const string SFX_BIGGER_GUN_FIRE = "event:/pusheen/extra_content/char/asriel/Asriel_Bigger_Gun_Fire";
+        private const string SFX_BIGGER_LIGHTNING_HIT = "event:/pusheen/extra_content/char/asriel/Asriel_Bigger_Lightninghit";
+        private const string SFX_BIGGER_GUN_MECHANIZED = "event:/pusheen/extra_content/char/asriel/Asriel_BiggerGunMechanized";
+        private const string SFX_CINEMATIC_CUT = "event:/pusheen/extra_content/char/asriel/Asriel_Cinematiccut";
+        private const string SFX_GRAB = "event:/pusheen/extra_content/char/asriel/Asriel_Grab";
+        private const string SFX_GUNSHOT = "event:/pusheen/extra_content/char/asriel/Asriel_Gunshot";
+        private const string SFX_HYPERGONER_CHARGE = "event:/pusheen/extra_content/char/asriel/Asriel_Hypergoner_Charge";
+        private const string SFX_LIGHTNING_HIT = "event:/pusheen/extra_content/char/asriel/Asriel_Lightninghit";
+        private const string SFX_SEGA_POWER_01 = "event:/pusheen/extra_content/char/asriel/Asriel_Segapower01";
+        private const string SFX_SEGA_POWER_02 = "event:/pusheen/extra_content/char/asriel/Asriel_Segapower02";
+        private const string SFX_SPARKLES = "event:/pusheen/extra_content/char/asriel/Asriel_Sparkles";
+        private const string SFX_SPELLCAST_GLITCH = "event:/pusheen/extra_content/char/asriel/Asriel_Spellcast_Glitch";
+        private const string SFX_STAR = "event:/pusheen/extra_content/char/asriel/Asriel_Star";
         private const string SFX_BOSS_HIT = "event:/char/badeline/boss_hug";
         private const string SFX_BOSS_LASER_CHARGE = "event:/char/badeline/boss_laser_charge";
         private const string SFX_BOSS_LASER_FIRE = "event:/char/badeline/boss_laser_fire";
@@ -398,10 +398,10 @@ namespace Celeste.Entities
 
         // Music progression
         private string[] musicTracks = {
-            "event:/pusheen/final_content/music/lvl20/kirby_vs_asriel_fight_1",
+            "event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_1",
         };
         
-        private const string ASRIEL_REMEMBER_PART_2 = "event:/pusheen/final_content/music/lvl20/kirby_vs_asriel_fight_1";
+        private const string ASRIEL_REMEMBER_PART_2 = "event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_1";
         private bool asrielRememberTriggered = false;
         private bool hyperGonerPhaseTransitionTriggered = false;
         
@@ -1178,7 +1178,7 @@ namespace Celeste.Entities
             CreateShockwaveEffect(isKirbyMode);
             
             // Play pushback sound
-            Audio.Play("event:/pusheen/final_content/char/asriel/Asriel_scream_hit", Center);
+            Audio.Play("event:/pusheen/extra_content/char/asriel/Asriel_scream_hit", Center);
             
             // Screen shake
             level.Shake(0.3f);
@@ -1296,7 +1296,7 @@ namespace Celeste.Entities
 
         /// <summary>
         /// Gets or sets the boss backdrop starfield.
-        /// Note: Backdrops are typically added via the map editor (Lönn) as stylegrounds.
+        /// Note: Backdrops are typically added via the map editor (LÃ¶nn) as stylegrounds.
         /// This property allows external access for cutscenes or dynamic effects.
         /// </summary>
         public AsrielGodBossStarfield BossBackdrop
@@ -2073,7 +2073,7 @@ namespace Celeste.Entities
 
         private IEnumerator Attack30Sequence()
         {
-            // CH20_KIRBY_REFUSED_TO_DIE → CH20_ASRIEL_FIRST_SPECIAL_ATTACK → CH20_MADELINE_AND_BADELINE_SAVE_KIRBY_FROM_ASRIEL_FIRST_SPECIAL_ATTACK
+            // CH20_KIRBY_REFUSED_TO_DIE â†’ CH20_ASRIEL_FIRST_SPECIAL_ATTACK â†’ CH20_MADELINE_AND_BADELINE_SAVE_KIRBY_FROM_ASRIEL_FIRST_SPECIAL_ATTACK
             if (!dialogTriggered_RefusedToDie && dialog)
             {
                 dialogTriggered_RefusedToDie = true;
@@ -2541,7 +2541,7 @@ namespace Celeste.Entities
 
         private IEnumerator Attack60Sequence()
         {
-            // CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK → CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK_END in azzyboss-60
+            // CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK â†’ CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK_END in azzyboss-60
             if (!dialogTriggered_SecondSpecialAttack && dialog)
             {
                 dialogTriggered_SecondSpecialAttack = true;
@@ -2784,7 +2784,7 @@ namespace Celeste.Entities
         {
             var asrielboss = this;
             currentAttackPhase = AttackPhase.Charging;
-            Audio.Play("event:/pusheen/final_content/char/els/Els_StarDeath", asrielboss.Position);
+            Audio.Play("event:/pusheen/extra_content/char/els/Els_StarDeath", asrielboss.Position);
             yield return 0.5f;
             var entity = asrielboss.level.Tracker.GetEntity<global::Celeste.Player>();
             if (entity != null)
@@ -2913,7 +2913,7 @@ namespace Celeste.Entities
             string[] transitionRoomIds = new string[]
             {
                 "azzyboss-00",          // Intro room - CH20_ASRIEL_REVEAL_IDENTITY
-                "azzyboss-60",          // CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK → CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK_END
+                "azzyboss-60",          // CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK â†’ CH20_ASRIEL_GOD_SECOND_SPECIAL_ATTACK_END
                 "azzyboss-hypergoner",  // HyperGoner specific room
             };
             
@@ -3372,7 +3372,7 @@ namespace Celeste.Entities
             yield return 0.5f;
 
             // Start boss music now that the god boss has appeared
-            level.Session.Audio.Music.Event = "event:/pusheen/final_content/music/lvl20/kirby_vs_asriel_fight_1";
+            level.Session.Audio.Music.Event = "event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_1";
             level.Session.Audio.Apply();
 
             // Restore player control
@@ -3473,7 +3473,7 @@ namespace Celeste.Entities
         {
             Logger.Log(LogLevel.Info, "MaggyHelper", "AsrielGodBoss: Trigger 2 - RevealIdentity_AsrielTurnIntoGodAndFinalWriter started");
             // Play the Asriel create sound effect
-            Audio.Play("event:/pusheen/final_content/char/asriel/Asriel_Create");
+            Audio.Play("event:/pusheen/extra_content/char/asriel/Asriel_Create");
 
             // Screen flash for dramatic effect
             if (level != null)

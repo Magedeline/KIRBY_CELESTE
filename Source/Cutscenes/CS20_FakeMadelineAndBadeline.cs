@@ -9,8 +9,8 @@ namespace Celeste.Cutscenes
     /// only to be lured into a trap by Els using them as vessels.
     /// 
     /// Dialog triggers:
-    ///   {trigger 0 kirby look closer}   → camera zooms in, Kirby faces them
-    ///   {trigger 1 approach them}       → Kirby walks toward the NPCs
+    ///   {trigger 0 kirby look closer}   Ã¢â€ â€™ camera zooms in, Kirby faces them
+    ///   {trigger 1 approach them}       Ã¢â€ â€™ Kirby walks toward the NPCs
     /// </summary>
     public class CS20_FakeMadelineAndBadeline : CutsceneEntity
     {
@@ -38,13 +38,13 @@ namespace Celeste.Cutscenes
         {
             if (player?.StateMachine == null) yield break;
 
-            // ── Setup ────────────────────────────────────────────────────────────────
+            // Ã¢â€â‚¬Ã¢â€â‚¬ Setup Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
             player.StateMachine.State = Player.StDummy; // Player.StDummy
             player.DummyGravity       = true;
             player.DummyAutoAnimate   = true;
             player.Speed              = Vector2.Zero;
 
-            // Face the pair — they appear ahead and to the right
+            // Face the pair Ã¢â‚¬â€ they appear ahead and to the right
             player.Facing = Facings.Right;
             player.Sprite.Play("lookUp");
 
@@ -59,14 +59,14 @@ namespace Celeste.Cutscenes
             // Play the dialogue with two action triggers
             yield return Textbox.Say("CH20_FAKE_MADELINE_AND_BADELINE", new Func<IEnumerator>[]
             {
-                LookCloser,   // trigger 0 – kirby look closer
-                ApproachThem  // trigger 1 – approach them
+                LookCloser,   // trigger 0 Ã¢â‚¬â€œ kirby look closer
+                ApproachThem  // trigger 1 Ã¢â‚¬â€œ approach them
             });
 
-            // ── Els' reveal: flash and screen shake before the "final act" ──────────
+            // Ã¢â€â‚¬Ã¢â€â‚¬ Els' reveal: flash and screen shake before the "final act" Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
             yield return 0.2f;
 
-            Audio.Play("event:/pusheen/final_content/game/19_the_end/glitch_long",
+            Audio.Play("event:/pusheen/extra_content/game/19_spaces/glitch_long",
                        player.Position);
 
             level.Shake(0.8f);
@@ -79,7 +79,7 @@ namespace Celeste.Cutscenes
 
             yield return 0.35f;
 
-            // Remove the fake NPCs — they were illusions
+            // Remove the fake NPCs Ã¢â‚¬â€ they were illusions
             fakeMadeline?.RemoveSelf();
             fakeBadeline?.RemoveSelf();
 
@@ -88,7 +88,7 @@ namespace Celeste.Cutscenes
             EndCutscene(level);
         }
 
-        // ── Action sequence: trigger 0 – "kirby look closer" ─────────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Action sequence: trigger 0 Ã¢â‚¬â€œ "kirby look closer" Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
         private IEnumerator LookCloser()
         {
             // Kirby leans forward and the camera gently zooms in
@@ -104,7 +104,7 @@ namespace Celeste.Cutscenes
             yield return 0.6f;
         }
 
-        // ── Action sequence: trigger 1 – "approach them" ─────────────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Action sequence: trigger 1 Ã¢â‚¬â€œ "approach them" Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
         private IEnumerator ApproachThem()
         {
             // Kirby walks toward the fake NPCs' position
@@ -119,7 +119,7 @@ namespace Celeste.Cutscenes
             yield return 0.2f;
         }
 
-        // ── Helpers ───────────────────────────────────────────────────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Helpers Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
         private void SpawnFakeDummies(Level level)
         {
@@ -159,7 +159,7 @@ namespace Celeste.Cutscenes
             return e;
         }
 
-        // ── Cleanup on skip ───────────────────────────────────────────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Cleanup on skip Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
         public override void OnEnd(Level level)
         {
             fakeMadeline?.RemoveSelf();

@@ -22,7 +22,7 @@ Modes:
 
 Mountain:
     BackgroundMusic: event:/pusheen/music/menu/level_select
-    BackgroundAmbience: event:/pusheen/final_content/env/gen_last_push
+    BackgroundAmbience: event:/pusheen/extra_content/env/gen_last_push
     BackgroundMusicParams:
         moon_and_blackhole: 1
     MarkerTexture: marker/runNoBackpack

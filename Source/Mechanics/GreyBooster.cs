@@ -118,7 +118,7 @@ namespace Celeste.Entities
         private void Respawn()
         {
             string respawnEvent = red 
-                ? "event:/pusheen/game/07_hell/redbooster_reappear"
+                ? "event:/pusheen/game/07_inferno/redbooster_reappear"
                 : "event:/pusheen/game/06_stronghold/greenbooster_reappear";
             Audio.Play(respawnEvent, Position);
             
@@ -158,7 +158,7 @@ namespace Celeste.Entities
                 
                 // Play enter sound
                 string enterEvent = red 
-                    ? "event:/pusheen/game/07_hell/redbooster_enter"
+                    ? "event:/pusheen/game/07_inferno/redbooster_enter"
                     : "event:/pusheen/game/06_stronghold/greenbooster_enter";
                 Audio.Play(enterEvent, Position);
                 
@@ -311,7 +311,7 @@ namespace Celeste.Entities
         private void RedBoost(global::Celeste.Player player)
         {
             // Play dash sound
-            Audio.Play("event:/pusheen/game/07_hell/redbooster_dash", Position);
+            Audio.Play("event:/pusheen/game/07_inferno/redbooster_dash", Position);
             
             player.StateMachine.State = Player.StDash; // RedDash state
             player.Speed = Vector2.Zero;
@@ -323,7 +323,7 @@ namespace Celeste.Entities
             outline.Visible = true;
             
             // Start looping movement sound
-            loopingSfx.Play(" event:/pusheen/game/07_hell/redbooster_move");
+            loopingSfx.Play(" event:/pusheen/game/07_inferno/redbooster_move");
             
             dashRoutine.Replace(BoostRoutine(player, Vector2.UnitX * (float)player.Facing * BoostSpeed));
         }
@@ -344,7 +344,7 @@ namespace Celeste.Entities
             outline.Visible = true;
             
             // Start looping movement sound
-            loopingSfx.Play(" event:/pusheen/game/07_hell/redbooster_move");
+            loopingSfx.Play(" event:/pusheen/game/07_inferno/redbooster_move");
             
             dashRoutine.Replace(BoostRoutine(player, direction * BoostSpeed));
         }
@@ -356,7 +356,7 @@ namespace Celeste.Entities
             
             // Play end sound
             string endEvent = red 
-                ? "event:/pusheen/game/07_hell/redbooster_end"
+                ? "event:/pusheen/game/07_inferno/redbooster_end"
                 : "event:/pusheen/game/06_stronghold/greenbooster_end";
             Audio.Play(endEvent, sprite.RenderPosition);
             

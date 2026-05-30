@@ -7,7 +7,7 @@ namespace Celeste.Cutscenes
     /// <summary>
     /// Chapter 21 - Fake Asriel God Of Hyper Death
     /// A dramatic false climax played after CS21_Cast.
-    /// Asriel appears to ascend to full godhood — it looks like the real end —
+    /// Asriel appears to ascend to full godhood â€” it looks like the real end â€”
     /// but it is a feint that chains into AsrielJoking.
     /// </summary>
     [Tracked]
@@ -52,7 +52,7 @@ namespace Celeste.Cutscenes
 
             yield return 1f;
 
-            // Asriel's power erupts — a blinding white flash
+            // Asriel's power erupts â€” a blinding white flash
             Audio.SetParameter(Audio.CurrentAmbienceEventInstance, "end", 1f);
 
             for (float t = 0f; t < 2.5f; t += Engine.DeltaTime)
@@ -65,7 +65,7 @@ namespace Celeste.Cutscenes
 
             yield return 0.8f;
 
-            // Fade back from white — the form is revealed
+            // Fade back from white â€” the form is revealed
             for (float t = 0f; t < 2f; t += Engine.DeltaTime)
             {
                 overlayColor = Color.White;
@@ -81,8 +81,8 @@ namespace Celeste.Cutscenes
 
             yield return 1f;
 
-            // "Ascension" flash — screen goes pure white again, then blacks out
-            Audio.Play("event:/pusheen/final_content/char/asriel/Asriel_Segapower02");
+            // "Ascension" flash â€” screen goes pure white again, then blacks out
+            Audio.Play("event:/pusheen/extra_content/char/asriel/Asriel_Segapower02");
 
             for (float t = 0f; t < 1f; t += Engine.DeltaTime)
             {

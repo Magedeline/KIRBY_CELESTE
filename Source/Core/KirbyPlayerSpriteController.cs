@@ -19,7 +19,8 @@ namespace Celeste.Entities
         private static readonly string[] AbilityPrefixes = new[]
         {
             "fire", "ice", "spark", "stone", "sword", "beam",
-            "cutter", "hammer", "wing", "archer", "leaf", "water"
+            "cutter", "hammer", "wing", "needle", "parasol", "wheel",
+            "bomb", "fighter", "suplex", "ninja", "mirror", "ufo", "sleep"
         };
 
         // Current visual state
@@ -145,15 +146,25 @@ namespace Celeste.Entities
         {
             return ability switch
             {
-                CopyAbilityType.Fire => "fire",
-                CopyAbilityType.Ice => "ice",
-                CopyAbilityType.Spark => "spark",
-                CopyAbilityType.Stone => "stone",
-                CopyAbilityType.Sword => "sword",
-                CopyAbilityType.Beam => "beam",
-                CopyAbilityType.Cutter => "cutter",
-                CopyAbilityType.Hammer => "hammer",
-                CopyAbilityType.Wing => "wing",
+                CopyAbilityType.Fire    => "fire",
+                CopyAbilityType.Ice     => "ice",
+                CopyAbilityType.Spark   => "spark",
+                CopyAbilityType.Stone   => "stone",
+                CopyAbilityType.Sword   => "sword",
+                CopyAbilityType.Beam    => "beam",
+                CopyAbilityType.Cutter  => "cutter",
+                CopyAbilityType.Hammer  => "hammer",
+                CopyAbilityType.Wing    => "wing",
+                CopyAbilityType.Needle  => "needle",
+                CopyAbilityType.Parasol => "parasol",
+                CopyAbilityType.Wheel   => "wheel",
+                CopyAbilityType.Bomb    => "bomb",
+                CopyAbilityType.Fighter => "fighter",
+                CopyAbilityType.Suplex  => "suplex",
+                CopyAbilityType.Ninja   => "ninja",
+                CopyAbilityType.Mirror  => "mirror",
+                CopyAbilityType.UFO     => "ufo",
+                CopyAbilityType.Sleep   => "sleep",
                 _ => null
             };
         }

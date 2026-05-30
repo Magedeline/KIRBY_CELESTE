@@ -8,15 +8,15 @@ namespace Celeste.Entities
     /// Phase 3: The Fallen Path - Corrupted dark-path Kirby nightmare form.
     /// 
     /// Attack sets derived from the Siamo Zero sprite assets:
-    ///   • Aeon Hero moves: crescent_beam_shot, energy_sword, tornado_slash,
+    ///   â€¢ Aeon Hero moves: crescent_beam_shot, energy_sword, tornado_slash,
     ///     revolution_sword, rising_spine, down_thrust, drill_stab,
     ///     thirty_energy_shower, final_beam_sword, spin_slash, rapid_slash
-    ///   • Morpho Knight moves: vortex_strike, double_side_slash, emerge
-    ///   • Timeborder: 120-frame reality-distortion overlay
+    ///   â€¢ Morpho Knight moves: vortex_strike, double_side_slash, emerge
+    ///   â€¢ Timeborder: 120-frame reality-distortion overlay
     /// 
     /// 12 unique attacks total, organized into two sub-phases:
-    ///   • Aeon Hero Fake (melee/sword) - 8 attacks
-    ///   • Morpho Knight Fake (vortex/slash) - 4 attacks
+    ///   â€¢ Aeon Hero Fake (melee/sword) - 8 attacks
+    ///   â€¢ Morpho Knight Fake (vortex/slash) - 4 attacks
     /// </summary>
     public partial class SiamoZeroFinalBoss
     {
@@ -29,16 +29,16 @@ namespace Celeste.Entities
         private const string SiamoZeroContraPath = "siamo_zero_contra/";
 
         // SFX constants for Siamo Zero
-        private const string SFX_SIAMO_SWORD_SWING = "event:/pusheen/final_content/char/els/Els_Slice";
-        private const string SFX_SIAMO_BEAM_CHARGE = "event:/pusheen/final_content/char/els/Els_Charge";
-        private const string SFX_SIAMO_BEAM_FIRE = "event:/pusheen/final_content/char/els/Els_BeamSlash";
-        private const string SFX_SIAMO_TORNADO = "event:/pusheen/final_content/char/els/Els_Shell_Screamer";
-        private const string SFX_SIAMO_DRILL = "event:/pusheen/final_content/char/els/Els_Build";
-        private const string SFX_SIAMO_VORTEX = "event:/pusheen/final_content/char/els/Els_Time_Manipulator_Start";
-        private const string SFX_SIAMO_EMERGE = "event:/pusheen/final_content/char/els/Els_Darkmatter_Spawn";
-        private const string SFX_SIAMO_TRANSFORM = "event:/pusheen/final_content/char/els/Els_Final_Cry";
-        private const string SFX_SIAMO_IMPACT = "event:/pusheen/final_content/char/els/Els_BigHit";
-        private const string SFX_SIAMO_RISING = "event:/pusheen/final_content/char/els/Els_Rift";
+        private const string SFX_SIAMO_SWORD_SWING = "event:/pusheen/extra_content/char/els/Els_Slice";
+        private const string SFX_SIAMO_BEAM_CHARGE = "event:/pusheen/extra_content/char/els/Els_Charge";
+        private const string SFX_SIAMO_BEAM_FIRE = "event:/pusheen/extra_content/char/els/Els_BeamSlash";
+        private const string SFX_SIAMO_TORNADO = "event:/pusheen/extra_content/char/els/Els_Shell_Screamer";
+        private const string SFX_SIAMO_DRILL = "event:/pusheen/extra_content/char/els/Els_Build";
+        private const string SFX_SIAMO_VORTEX = "event:/pusheen/extra_content/char/els/Els_Time_Manipulator_Start";
+        private const string SFX_SIAMO_EMERGE = "event:/pusheen/extra_content/char/els/Els_Darkmatter_Spawn";
+        private const string SFX_SIAMO_TRANSFORM = "event:/pusheen/extra_content/char/els/Els_Final_Cry";
+        private const string SFX_SIAMO_IMPACT = "event:/pusheen/extra_content/char/els/Els_BigHit";
+        private const string SFX_SIAMO_RISING = "event:/pusheen/extra_content/char/els/Els_Rift";
 
         // Phase colors
         private static readonly Color SiamoAeonGold = new Color(255, 220, 128);
@@ -459,7 +459,7 @@ namespace Celeste.Entities
             }
             catch
             {
-                // Frame path doesn't exist — silently skip
+                // Frame path doesn't exist â€” silently skip
             }
         }
 
@@ -525,7 +525,7 @@ namespace Celeste.Entities
             if (hasMorphoKnightSprite)
                 morphoKnightSprite.Visible = currentSiamoSubPhase == SiamoSubPhase.MorphoKnightFake && morphoKnightSprite.Animating;
 
-            // Core light for Siamo phase — deep red / dark magenta
+            // Core light for Siamo phase â€” deep red / dark magenta
             if (coreLight != null)
             {
                 Color siamoColor = GetSiamoCoreColor((energyPulse.Value + 1f) * 0.5f);
@@ -610,7 +610,7 @@ namespace Celeste.Entities
         #region Aeon Hero Fake Attacks
 
         /// <summary>
-        /// Crescent Beam Shot — fires 3 crescent projectiles in a fan pattern.
+        /// Crescent Beam Shot â€” fires 3 crescent projectiles in a fan pattern.
         /// Sprite: crescent_beam_shot
         /// </summary>
         private void siamoAttack_CrescentBeamShot()
@@ -651,7 +651,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Energy Sword Combo — 6-hit sword slash combo with teleporting.
+        /// Energy Sword Combo â€” 6-hit sword slash combo with teleporting.
         /// Sprites: energy_sword (6 sub-anims a-f)
         /// </summary>
         private void siamoAttack_EnergySwordCombo()
@@ -718,7 +718,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Conquered Peak Cascade — Celeste-style corner warps into crossing sword dives.
+        /// Conquered Peak Cascade â€” Celeste-style corner warps into crossing sword dives.
         /// Uses repeated diagonal rushes inspired by FinalBoss / Conquered Peak attack language.
         /// </summary>
         private void siamoAttack_ConqueredPeakCascade()
@@ -830,7 +830,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Tornado Slash — spinning tornado with trailing slash projectiles.
+        /// Tornado Slash â€” spinning tornado with trailing slash projectiles.
         /// Sprites: tornado_attack, tornado_slash
         /// </summary>
         private void siamoAttack_TornadoSlash()
@@ -898,7 +898,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Revolution Sword — spinning sword ring that expands outward.
+        /// Revolution Sword â€” spinning sword ring that expands outward.
         /// Sprites: revolution_sword (5 sub-anims a-e)
         /// </summary>
         private void siamoAttack_RevolutionSword()
@@ -945,7 +945,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Rising Spine — vertical chain of spine projectiles rising from the ground.
+        /// Rising Spine â€” vertical chain of spine projectiles rising from the ground.
         /// Sprites: rising_spine (13 sub-anims a-m)
         /// </summary>
         private void siamoAttack_RisingSpine()
@@ -987,7 +987,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Down Thrust — dives downward with a powerful thrust attack.
+        /// Down Thrust â€” dives downward with a powerful thrust attack.
         /// Sprites: down_thrust (2 sub-anims a-b)
         /// </summary>
         private void siamoAttack_DownThrust()
@@ -1040,7 +1040,7 @@ namespace Celeste.Entities
             lvl?.Displacement.AddBurst(Position, 2f, 128f, 256f, 1.5f);
             lvl?.Flash(GetSiamoAeonColor(0.28f) * 0.6f, false);
 
-            // Ground shockwave — spawn blades radiating outward
+            // Ground shockwave â€” spawn blades radiating outward
             int shockwaveBlades = GetSiamoCount(8, 10, 12);
             for (int i = 0; i < shockwaveBlades; i++)
             {
@@ -1055,7 +1055,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Drill Stab — rapid forward drill attack leaving projectile trail.
+        /// Drill Stab â€” rapid forward drill attack leaving projectile trail.
         /// Sprites: drill_stab (3 sub-anims a-c)
         /// </summary>
         private void siamoAttack_DrillStab()
@@ -1113,7 +1113,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Energy Shower — rain of 30 energy projectiles from above.
+        /// Energy Shower â€” rain of 30 energy projectiles from above.
         /// Sprites: thirty_energy_shower (5 sub-anims a-e)
         /// </summary>
         private void siamoAttack_EnergyShower()
@@ -1169,7 +1169,7 @@ namespace Celeste.Entities
         #region Morpho Knight Fake Attacks
 
         /// <summary>
-        /// Vortex Strike — summons a vortex that pulls player in, then strikes.
+        /// Vortex Strike â€” summons a vortex that pulls player in, then strikes.
         /// Sprites: vortex_summon, vortex_pull, vortex_strike
         /// </summary>
         private void siamoAttack_VortexStrike()
@@ -1192,7 +1192,7 @@ namespace Celeste.Entities
             lvl?.Flash(GetSiamoMorphoColor(0.16f) * 0.5f, false);
             yield return GetSiamoValue(0.75f, 0.6f, 0.45f);
 
-            // Pull phase — displacement pulls inward
+            // Pull phase â€” displacement pulls inward
             PlaySiamoOverlay(SiamoSubPhase.MorphoKnightFake, "vortex_pull");
             Audio.Play(SFX_SIAMO_VORTEX, Position);
 
@@ -1234,7 +1234,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Double Side Slash — two sweeping crescent slashes from left/right.
+        /// Double Side Slash â€” two sweeping crescent slashes from left/right.
         /// Sprites: double_side_slash
         /// </summary>
         private void siamoAttack_DoubleSideSlash()
@@ -1288,7 +1288,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Morpho Emerge — disappears then erupts from below with a massive strike.
+        /// Morpho Emerge â€” disappears then erupts from below with a massive strike.
         /// Sprites: emerge, c_emerge
         /// </summary>
         private void siamoAttack_MorphoEmerge()
@@ -1357,7 +1357,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Timeborder Collapse — activates the 120-frame timeborder overlay and
+        /// Timeborder Collapse â€” activates the 120-frame timeborder overlay and
         /// tears reality with waves of projectiles from all sides.
         /// Sprites: siamo_zero_timeborders/timeborders (120 frames)
         /// </summary>

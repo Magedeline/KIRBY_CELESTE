@@ -175,7 +175,7 @@ namespace Celeste.Cutscenes
             // Play locking sound
             try
             {
-                Audio.Play("event:/pusheen/final_content/game/19_the_end/locked_door_appear_1", player.Position);
+                Audio.Play("event:/pusheen/extra_content/game/19_spaces/locked_door_appear_1", player.Position);
             }
             catch (Exception ex)
             {

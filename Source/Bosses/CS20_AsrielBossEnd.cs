@@ -9,7 +9,7 @@ namespace Celeste.Cutscenes
 {
     /// <summary>
     /// Post-boss cutscene for the Asriel Angel of Death fight.
-    /// Asriel, broken and tearful, is comforted by Madeline, Kirby and Badeline —
+    /// Asriel, broken and tearful, is comforted by Madeline, Kirby and Badeline Ã¢â‚¬â€
     /// then Els reveals itself as the true villain and begins to transform.
     ///
     /// Dialog key: CH20_ASRIEL_BOSS_END
@@ -28,9 +28,9 @@ namespace Celeste.Cutscenes
         public const string Flag = "ch20_asriel_boss_end";
 
         private const string DIALOG_KEY = "CH20_ASRIEL_BOSS_END";
-        private const string MUSIC_HIS_THEME = "event:/pusheen/final_content/music/lvl20/musicbox";
-        private const string SFX_GLITCH_LONG = "event:/pusheen/final_content/game/19_the_end/glitch_long";
-        private const string SFX_POWER = "event:/pusheen/final_content/char/asriel/Asriel_Segapower01";
+        private const string MUSIC_HIS_THEME = "event:/pusheen/extra_content/music/lvl20/musicbox";
+        private const string SFX_GLITCH_LONG = "event:/pusheen/extra_content/game/19_spaces/glitch_long";
+        private const string SFX_POWER = "event:/pusheen/extra_content/char/asriel/Asriel_Segapower01";
 
         private global::Celeste.Player player;
         private AsrielAngelOfDeathBoss asrielBoss;
@@ -103,7 +103,7 @@ namespace Celeste.Cutscenes
             EndCutscene(level);
         }
 
-        // ── trigger 0: madeline and badeline comfort asriel ──────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ trigger 0: madeline and badeline comfort asriel Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private IEnumerator MadelineAndBadelineComfortAsriel()
@@ -121,7 +121,7 @@ namespace Celeste.Cutscenes
             yield return 1.0f;
         }
 
-        // ── trigger 1: camera slightly move to els on the right ──────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ trigger 1: camera slightly move to els on the right Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private IEnumerator CameraRevealEls()
@@ -130,7 +130,7 @@ namespace Celeste.Cutscenes
             yield return CameraTo(target, 0.8f, Ease.SineInOut);
         }
 
-        // ── trigger 2: madeline walk forward and confront els ────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ trigger 2: madeline walk forward and confront els Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private IEnumerator MadelineConfrontsEls()
@@ -140,7 +140,7 @@ namespace Celeste.Cutscenes
             yield return 0.6f;
         }
 
-        // ── trigger 3: els start angry with distortion effect ────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ trigger 3: els start angry with distortion effect Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private IEnumerator ElsAngryDistortion()
@@ -153,7 +153,7 @@ namespace Celeste.Cutscenes
             Glitch.Value = 0f;
         }
 
-        // ── trigger 4: els calm down and disappointed ────────────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ trigger 4: els calm down and disappointed Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private IEnumerator ElsCalmDown()
@@ -164,7 +164,7 @@ namespace Celeste.Cutscenes
             yield return 0.2f;
         }
 
-        // ── trigger 5: els transform into humanoid form with glitch effects ──
+        // Ã¢â€â‚¬Ã¢â€â‚¬ trigger 5: els transform into humanoid form with glitch effects Ã¢â€â‚¬Ã¢â€â‚¬
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private IEnumerator ElsTransform()
@@ -188,7 +188,7 @@ namespace Celeste.Cutscenes
             Glitch.Value = 0f;
         }
 
-        // ── trigger 6: els faded to black ────────────────────────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ trigger 6: els faded to black Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private IEnumerator ElsFadeToBlack()
@@ -198,7 +198,7 @@ namespace Celeste.Cutscenes
             yield return 1.5f;
         }
 
-        // ── Helper: walk entity to a target X position ───────────────────────
+        // Ã¢â€â‚¬Ã¢â€â‚¬ Helper: walk entity to a target X position Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
         private IEnumerator WalkEntityTo(Entity entity, float targetX, float speed = 40f)
         {

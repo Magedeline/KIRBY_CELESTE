@@ -14,7 +14,7 @@ public static class PostcardUnlockSystem
 {
     private const string DefaultPostcardTexture = "Maggy/postcard";
 
-    // ── Postcard Configuration Per Side ──────────────────────────────────
+    // â”€â”€ Postcard Configuration Per Side â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /// <summary>
     /// Configuration for each side's unlock postcard.
@@ -67,13 +67,13 @@ public static class PostcardUnlockSystem
     {
         DialogKey = "POSTCARD_ULTRA_VARIANT_UNLOCK",
         TexturePath = "postcards/ultra_variant_unlock",
-        SfxIn = "event:/pusheen/final_content/ui/postcard_desolo_variants_in",
-        SfxOut = "event:/pusheen/final_content/ui/postcard_desolo_variants_out",
+        SfxIn = "event:/pusheen/extra_content/ui/postcard_desolo_variants_in",
+        SfxOut = "event:/pusheen/extra_content/ui/postcard_desolo_variants_out",
         TintColor = new Color(255, 160, 220),
         UnlockMusic = "event:/pusheen/music/menu/complete_cside_summit"
     };
 
-    // ── Postcard Display ─────────────────────────────────────────────────
+    // â”€â”€ Postcard Display â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /// <summary>
     /// Gets the postcard config for a side unlock based on which side was just completed.

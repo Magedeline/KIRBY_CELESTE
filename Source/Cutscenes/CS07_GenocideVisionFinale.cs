@@ -78,7 +78,7 @@ namespace Celeste.Cutscenes
             level.Camera.Position = player.CameraTarget;
             player.ForceCameraUpdate = true;
             mainChara.PlayAttack();
-            Audio.Play("event:/pusheen/game/08_truth/chara_heartgem_slice", kirbyTarget);
+            Audio.Play("event:/pusheen/game/08_edge/chara_heartgem_slice", kirbyTarget);
 
             fader.Target = 1f;
             Glitch.Value = 0.15f;

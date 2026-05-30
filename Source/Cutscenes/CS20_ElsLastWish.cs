@@ -23,11 +23,11 @@ namespace Celeste
         private const string FLAG_ELS_LAST_WISH_DONE = "ch20_els_last_wish_done";
 
         // SFX
-        private const string SFX_PUNCH_IMPACT      = "event:/pusheen/final_content/game/20_last_push/els_punch_impact";
-        private const string SFX_HEART_PULLED       = "event:/pusheen/final_content/game/20_last_push/els_heart_pull";
-        private const string SFX_HEART_SHATTERED    = "event:/pusheen/final_content/game/20_last_push/els_heart_shatter";
-        private const string SFX_TESSERACT_GRAB     = "event:/pusheen/final_content/game/20_last_push/tesseract_grab";
-        private const string SFX_DARK_AMBIENCE      = "event:/pusheen/final_content/game/20_last_push/els_last_wish_ambience";
+        private const string SFX_PUNCH_IMPACT      = "event:/pusheen/extra_content/game/20_last_push/els_punch_impact";
+        private const string SFX_HEART_PULLED       = "event:/pusheen/extra_content/game/20_last_push/els_heart_pull";
+        private const string SFX_HEART_SHATTERED    = "event:/pusheen/extra_content/game/20_last_push/els_heart_shatter";
+        private const string SFX_TESSERACT_GRAB     = "event:/pusheen/extra_content/game/20_last_push/tesseract_grab";
+        private const string SFX_DARK_AMBIENCE      = "event:/pusheen/extra_content/game/20_last_push/els_last_wish_ambience";
 
         #endregion
 
@@ -52,7 +52,7 @@ namespace Celeste
         }
 
         /// <summary>
-        /// Static factory method — call this to begin the cutscene from a trigger.
+        /// Static factory method â€” call this to begin the cutscene from a trigger.
         /// </summary>
         public static void Start(Level level)
         {
@@ -113,7 +113,7 @@ namespace Celeste
             yield return Textbox.Say(
                 DIALOGUE_KEY,
                 Trigger0_TesseractGrabsKirby,   // {trigger 0 Tesseract grab Kirby and pull him}
-                null,                            // trigger 1 — unused gap
+                null,                            // trigger 1 â€” unused gap
                 Trigger2_PunchOne,               // {trigger 2 Els punch Kirby one}
                 Trigger3_PunchTwo,               // {trigger 3 Els punch Kirby two}
                 Trigger4_PunchThree,             // {trigger 4 Els punch Kirby three}
@@ -133,7 +133,7 @@ namespace Celeste
         #region Trigger Methods
 
         /// <summary>
-        /// Trigger 0 — Tesseract materialises and levitates Kirby helplessly into the air.
+        /// Trigger 0 â€” Tesseract materialises and levitates Kirby helplessly into the air.
         /// </summary>
         private IEnumerator Trigger0_TesseractGrabsKirby()
         {
@@ -170,7 +170,7 @@ namespace Celeste
         }
 
         /// <summary>
-        /// Generic reusable punch helper — shakes the screen, plays a sound,
+        /// Generic reusable punch helper â€” shakes the screen, plays a sound,
         /// and jolts Kirby's suspended position.
         /// </summary>
         private IEnumerator PunchSequence(float shakeStrength)
@@ -192,22 +192,22 @@ namespace Celeste
             yield return 0.2f;
         }
 
-        /// <summary>Trigger 2 — Els punch Kirby one</summary>
+        /// <summary>Trigger 2 â€” Els punch Kirby one</summary>
         private IEnumerator Trigger2_PunchOne()   => PunchSequence(0.25f);
 
-        /// <summary>Trigger 3 — Els punch Kirby two</summary>
+        /// <summary>Trigger 3 â€” Els punch Kirby two</summary>
         private IEnumerator Trigger3_PunchTwo()   => PunchSequence(0.30f);
 
-        /// <summary>Trigger 4 — Els punch Kirby three</summary>
+        /// <summary>Trigger 4 â€” Els punch Kirby three</summary>
         private IEnumerator Trigger4_PunchThree() => PunchSequence(0.35f);
 
-        /// <summary>Trigger 5 — Els punch Kirby four</summary>
+        /// <summary>Trigger 5 â€” Els punch Kirby four</summary>
         private IEnumerator Trigger5_PunchFour()  => PunchSequence(0.40f);
 
-        /// <summary>Trigger 6 — Els punch Kirby five</summary>
+        /// <summary>Trigger 6 â€” Els punch Kirby five</summary>
         private IEnumerator Trigger6_PunchFive()  => PunchSequence(0.50f);
 
-        /// <summary>Trigger 7 — Els final devastating punch</summary>
+        /// <summary>Trigger 7 â€” Els final devastating punch</summary>
         private IEnumerator Trigger7_PunchFinal()
         {
             Audio.Play(SFX_PUNCH_IMPACT, player.Position);
@@ -215,7 +215,7 @@ namespace Celeste
             level.Flash(Color.Red * 0.4f, drawPlayerOver: false);
             Glitch.Value = 0.6f;
 
-            // Heavy recoil — Kirby gets thrown back
+            // Heavy recoil â€” Kirby gets thrown back
             Vector2 originalPos = player.Position;
             player.Position += new Vector2(-20f, 10f);
             yield return 0.12f;
@@ -234,7 +234,7 @@ namespace Celeste
             yield return 0.3f;
         }
 
-        /// <summary>Trigger 8 — Els reaches into Kirby's chest and pulls out his heart.</summary>
+        /// <summary>Trigger 8 â€” Els reaches into Kirby's chest and pulls out his heart.</summary>
         private IEnumerator Trigger8_PullHeartOut()
         {
             Audio.Play(SFX_HEART_PULLED, player.Position);
@@ -247,7 +247,7 @@ namespace Celeste
             Glitch.Value = 0f;
         }
 
-        /// <summary>Trigger 9 — Els crushes and shatters Kirby's heart.</summary>
+        /// <summary>Trigger 9 â€” Els crushes and shatters Kirby's heart.</summary>
         private IEnumerator Trigger9_ShatterHeart()
         {
             Audio.Play(SFX_HEART_SHATTERED, player.Position);
@@ -290,7 +290,7 @@ namespace Celeste
             Glitch.Value = 0f;
         }
 
-        /// <summary>Trigger 10 — Els releases Kirby and lets him fall.</summary>
+        /// <summary>Trigger 10 â€” Els releases Kirby and lets him fall.</summary>
         private IEnumerator Trigger10_DropKirby()
         {
             // Re-show the player sprite now that the dummy trick is done
@@ -302,7 +302,7 @@ namespace Celeste
                 kirbyDummy = null;
             }
 
-            // Freefall — gravity pulls Kirby down
+            // Freefall â€” gravity pulls Kirby down
             Vector2 startPos   = player.Position;
             Vector2 groundPos  = startPos + new Vector2(0f, 80f);
             float fallDuration = 0.9f;
@@ -321,7 +321,7 @@ namespace Celeste
             level.Shake(0.3f);
             Audio.Play("event:/pusheen/char/kirby/landing", player.Position);
 
-            // Brief beat of silence — scene ends
+            // Brief beat of silence â€” scene ends
             yield return 1.5f;
         }
 

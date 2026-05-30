@@ -27,7 +27,7 @@ namespace Celeste.Extensions
         /// <summary>
         /// Enable Kirby mode on the player.
         /// </summary>
-        public static void EnableKirbyMode(this Player player, int maxDashes = 3)
+        public static void EnableKirbyMode(this Player player, int maxDashes = 1)
         {
             var session = MaggyHelperModule.Session;
             if (session != null)

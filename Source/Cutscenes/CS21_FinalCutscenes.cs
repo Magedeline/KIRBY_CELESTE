@@ -12,7 +12,7 @@ namespace Celeste.Cutscenes
     ///                Shows a hopeful resolution and peace.
     ///
     /// Normal Ending: player never faced or defeated the true final boss.
-    ///                Shows an ambiguous, bittersweet close — the threat lingers.
+    ///                Shows an ambiguous, bittersweet close â€” the threat lingers.
     ///
     /// Both paths chain into CS21_RealTheEnd.
     /// </summary>
@@ -66,7 +66,7 @@ namespace Celeste.Cutscenes
             Add(new Coroutine(goodEnding ? GoodEndingSequence(level) : NormalEndingSequence(level)));
         }
 
-        // ── Good Ending ──────────────────────────────────────────────────────
+        // â”€â”€ Good Ending â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private IEnumerator GoodEndingSequence(Level level)
         {
@@ -90,7 +90,7 @@ namespace Celeste.Cutscenes
 
             yield return 2f;
 
-            // Screen brightens — the world heals
+            // Screen brightens â€” the world heals
             for (float t = 0f; t < 2f; t += Engine.DeltaTime)
             {
                 overlayColor = Color.White;
@@ -115,7 +115,7 @@ namespace Celeste.Cutscenes
             EndCutscene(level);
         }
 
-        // ── Normal Ending ────────────────────────────────────────────────────
+        // â”€â”€ Normal Ending â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         private IEnumerator NormalEndingSequence(Level level)
         {
@@ -124,7 +124,7 @@ namespace Celeste.Cutscenes
 
             Audio.SetMusic(MUSIC_NORMAL_END);
 
-            // Slow fade in — the world is still uncertain
+            // Slow fade in â€” the world is still uncertain
             for (float t = 0f; t < 4f; t += Engine.DeltaTime)
             {
                 overlayAlpha = 1f - Ease.SineOut(t / 4f);
@@ -134,13 +134,13 @@ namespace Celeste.Cutscenes
 
             yield return 1.5f;
 
-            // The threat still lingers…
+            // The threat still lingersâ€¦
             yield return Textbox.Say(DIALOGUE_NORMAL);
 
             yield return 2f;
 
-            // A distant rumble — Els is not truly gone
-            Audio.Play("event:/pusheen/final_content/game/21_desolo_zantas/falling_into_the_void");
+            // A distant rumble â€” Els is not truly gone
+            Audio.Play("event:/pusheen/extra_content/game/21_desolo_zantas/falling_into_the_void");
 
             yield return 1f;
 
@@ -151,7 +151,7 @@ namespace Celeste.Cutscenes
                 overlayAlpha = Ease.CubeIn(t / 3f);
                 yield return null;
             }
-            Audio.Play("event:/pusheen/final_content/game/21_desolo_zantas/final_laugh");
+            Audio.Play("event:/pusheen/extra_content/game/21_desolo_zantas/final_laugh");
             overlayAlpha = 1f;
 
             yield return 0.5f;
@@ -160,7 +160,7 @@ namespace Celeste.Cutscenes
             EndCutscene(level);
         }
 
-        // ── Shared ───────────────────────────────────────────────────────────
+        // â”€â”€ Shared â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
         public override void OnEnd(Level level)
         {

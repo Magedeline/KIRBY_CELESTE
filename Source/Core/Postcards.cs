@@ -223,7 +223,7 @@ public class PostcardMaggy : Entity
         }
         else if (soundId == "variants")
         {
-            return "event:/pusheen/final_content/ui/postcard_desolo_variants";
+            return "event:/pusheen/extra_content/ui/postcard_desolo_variants";
         }
         else
         {

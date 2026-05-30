@@ -263,8 +263,8 @@ namespace Celeste.Entities
                 2 => "event:/game/general/refill_two_get",
                 3 => "event:/pusheen/game/general/reddiamond_touch",
                 4 => "event:/pusheen/game/general/cyandiamond_touch",
-                5 => "event:/pusheen/final_content/game/19_the_end/gigadiamond_touch",
-                >= 10 => "event:/pusheen/final_content/game/20_last_push/savediamond_touch",
+                5 => "event:/pusheen/extra_content/game/19_spaces/gigadiamond_touch",
+                >= 10 => "event:/pusheen/extra_content/game/20_last_push/savediamond_touch",
                 _ => "event:/game/general/refill_get"
             };
         }

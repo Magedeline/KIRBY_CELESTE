@@ -576,11 +576,11 @@ namespace Celeste.Entities
             public const string char_mad_crystaltheo_throw = "event:/pusheen/char/kirby/crystalmaddy_throw";
 
             // Game
-            public const string game_06_feather_state_bump = "event:/pusheen/game/08_truth/warpstar_state_bump";
-            public const string game_06_feather_state_end = "event:/pusheen/game/08_truth/warpstar_state_end";
-            public const string game_06_feather_state_loop = "event:/pusheen/game/08_truth/warpstar_state_loop";
-            public const string game_06_feather_state_warning = "event:/pusheen/game/08_truth/warpstar_state_warning";
-            public const string game_09_conveyor_activate = "event:/pusheen/game/09_core/conveyor_activate";
+            public const string game_06_feather_state_bump = "event:/pusheen/game/08_edge/feather_state_bump";
+            public const string game_06_feather_state_end = "event:/pusheen/game/08_edge/feather_state_end";
+            public const string game_06_feather_state_loop = "event:/pusheen/game/08_edge/feather_state_loop";
+            public const string game_06_feather_state_warning = "event:/pusheen/game/08_edge/feather_state_warning";
+            public const string game_09_conveyor_activate = "event:/pusheen/game/18_core/conveyor_activate";
             public const string game_assist_dreamblockbounce = "event:/pusheen/game/general/assist_dreamblockbounce";
 
             // Music
@@ -637,10 +637,10 @@ namespace Celeste.Entities
             Hair.Color = NormalHairColor;
             startHairCount = Sprite.HairCount;
 
-            // Kirby hat + scarf — replaces hair visually at all times
+            // Kirby hat + scarf Ã¢â‚¬â€ replaces hair visually at all times
             Add(HatScarf = new KirbyHatScarf(this));
 
-            // Kirby player sprite — loaded from kirby_player_ext sprite bank entry
+            // Kirby player sprite Ã¢â‚¬â€ loaded from kirby_player_ext sprite bank entry
             kirbySprite = GFX.SpriteBank.Create("kirby_player_ext");
             kirbySprite.Visible = false;
             Add(kirbySprite);
@@ -1654,7 +1654,7 @@ namespace Celeste.Entities
                 HatScarf.AccentColor = Color.Lerp(resolvedColor, Microsoft.Xna.Framework.Color.White, 0.45f);
             }
 
-            // Hair is always invisible — hat+scarf handles all visuals
+            // Hair is always invisible Ã¢â‚¬â€ hat+scarf handles all visuals
             Hair.Visible = false;
             Hair.SimulateMotion = false;
 
@@ -6612,7 +6612,7 @@ namespace Celeste.Entities
             Sprite.Scale = new Vector2(1.3f, 0.75f);
             kirbySprite?.Play("kirby_float");
 
-            // Puff sound — reuse jump sound pitched differently via FMOD
+            // Puff sound Ã¢â‚¬â€ reuse jump sound pitched differently via FMOD
             Play(Sfxs.char_mad_jump);
 
             // Entry puff particles downward
@@ -6644,10 +6644,10 @@ namespace Celeste.Entities
                 Sprite.Scale = new Vector2(1.2f, 0.85f);
             }
 
-            // Horizontal movement — slightly floatier than normal
+            // Horizontal movement Ã¢â‚¬â€ slightly floatier than normal
             Speed.X = Calc.Approach(Speed.X, KirbyFloatHSpeed * moveX, RunAccel * .55f * Engine.DeltaTime);
 
-            // Gentle float gravity — drifts slowly downward
+            // Gentle float gravity Ã¢â‚¬â€ drifts slowly downward
             Speed.Y = Calc.Approach(Speed.Y, KirbyFloatFallSpeed, KirbyFloatGravity * Engine.DeltaTime);
 
             // Fast-fall: hold down to drop out of float
@@ -6671,11 +6671,11 @@ namespace Celeste.Entities
                 level.Particles.Emit(P_DashA, 2, BottomCenter, Vector2.UnitX * 4, Calc.Down);
             }
 
-            // Out of flaps — gravity takes over, return to normal when going fast enough downward
+            // Out of flaps Ã¢â‚¬â€ gravity takes over, return to normal when going fast enough downward
             if (kirbyFlapCount <= 0 && Speed.Y > KirbyFloatFallSpeed)
                 return StNormal;
 
-            // Land — restore flap count and exit float
+            // Land Ã¢â‚¬â€ restore flap count and exit float
             if (onGround && Speed.Y >= 0)
             {
                 kirbyFlapCount = MaggyHelperModule.Settings?.KirbyMaxFloatJumps ?? 5;
