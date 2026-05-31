@@ -902,6 +902,9 @@
 {6ac3734b-1bcd-4095-918e-3673aa4ac903} event:/pusheen/env/local/waterfall_small_in_deep
 {866079e5-d564-4360-92dd-a0d0dd039d57} event:/pusheen/env/local/waterfall_small_in_shallow
 {550dc455-4fa5-4743-8980-0a80d800845c} event:/pusheen/env/local/waterfall_small_main
+{ccb7cee6-a8d9-4ec8-b19c-24859cf16246} event:/pusheen/extra_content/char/madeline/final_launch
+{f9cea3ee-1ede-4653-9ffc-a80db3216e45} event:/pusheen/extra_content/char/madeline/final_launch_part1
+{2d5614f7-0c6d-460b-a38f-f5c5dda8cb48} event:/pusheen/extra_content/char/madeline/final_launch_part2
 {5a4fe022-10cf-401c-b06b-6a8b6d1fc1f2} event:/pusheen/extra_content/char/chara/birdcrash_scene_float
 {8a7d632a-1f1f-4238-bc3b-0cd538560f9e} event:/pusheen/extra_content/char/chara/booster_finalfinal_part1
 {1731a0dc-ccd3-48ad-89e3-110f93147eb7} event:/pusheen/extra_content/char/chara/booster_finalfinal_part2
@@ -910,6 +913,7 @@
 {4cb0c7c7-dc4f-447d-9aac-ae3191f99cbe} event:/pusheen/extra_content/char/chara/chara_join_quick
 {cffd2264-a09d-4208-a42c-c22a13492a9d} event:/pusheen/extra_content/char/granny/cane_tap_ending
 {99bf91cd-440e-44c5-881d-eaaf91faf8b3} event:/pusheen/extra_content/char/granny/dissipate
+{ece67fe7-c27d-4933-9ba0-0114cad41e09} event:/pusheen/extra_content/char/granny/serious
 {592974d9-0ac1-4ba0-969f-98b390b34cc6} event:/pusheen/extra_content/char/kirby/bounce_boost
 {641588e4-6fc9-4d2b-b9bb-b6e1ffe3269c} event:/pusheen/extra_content/char/kirby/death_golden
 {1a5ad607-7dcc-40a3-9db1-c9fc0f685ded} event:/pusheen/extra_content/char/kirby/glider_drop
@@ -920,6 +924,8 @@
 {8ffca4e0-746b-496f-abf9-8a2f0766d088} event:/pusheen/extra_content/char/kirby/screenentry_gran_landing
 {699c48dc-c556-4782-bc41-ab6ce7bc2ac3} event:/pusheen/extra_content/char/kirby/screenentry_lowgrav
 {7a94892e-fa79-4b9c-a405-443e4b80be73} event:/pusheen/extra_content/char/kirby/screenentry_stubborn
+{75d3710b-c8a7-463b-aa2d-cfce2f330ed7} event:/pusheen/extra_content/char/kirby/flyfinal
+{46f09735-1efb-4483-8c4d-f6867ab94c75} event:/pusheen/extra_content/char/kirby/flynext
 {f82a22b4-5c45-4f82-8dd7-f58a5052f681} event:/pusheen/extra_content/char/tutorial_ghost/appear
 {e128ab02-b892-49ac-8d3d-5cacf6b2f34a} event:/pusheen/extra_content/char/tutorial_ghost/dash_red_left
 {e8075df5-22e6-44ae-8428-5a4a7864e558} event:/pusheen/extra_content/char/tutorial_ghost/dash_red_right

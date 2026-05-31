@@ -62,7 +62,7 @@ internal class VanishingWall : Solid
       this.tiles.Alpha = 0.0f;
       this.fade = true;
       ((Component) this.cutout).Visible = false;
-      Audio.Play("event:/game/general/secret_revealed", ((Entity) this).Center);
+      global::Celeste.Audio.Play("event:/game/general/secret_revealed", ((Entity) this).Center);
       ((Entity) this).SceneAs<Level>().Session.DoNotLoad.Add(this.eid);
     }
     else
@@ -141,7 +141,7 @@ internal class VanishingWall : Solid
       return;
     ((Entity) this).SceneAs<Level>().Session.DoNotLoad.Add(this.eid);
     this.fade = true;
-    Audio.Play("event:/game/general/secret_revealed", ((Entity) this).Center);
+    global::Celeste.Audio.Play("event:/game/general/secret_revealed", ((Entity) this).Center);
   }
 
   public override void Render()

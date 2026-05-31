@@ -54,7 +54,7 @@ internal class ConquerorLightningStrike : Entity
     this.strike.Play("aim", false, false);
     yield return (object) 0.6f;
     this.strike.Play("strike", false, false);
-    Audio.Play("event:/ricky06/FightSFX/cb-lightning");
+    global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-lightning");
     for (int i = 0; i < 4; ++i)
     {
       this.Collider.Height += 40f;

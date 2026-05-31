@@ -66,7 +66,7 @@ public class CS_Powerup : CutsceneEntity
     level.Displacement.AddBurst(((Entity) this.player).Position, 0.5f, 8f, 48f, 0.5f, (Ease.Easer) null, (Ease.Easer) null);
     Input.Rumble((RumbleStrength) 0, (RumbleLength) 1);
     this.player.CreateSplitParticles();
-    Audio.Play("event:/char/badeline/maddy_split");
+    global::Celeste.Audio.Play("event:/char/badeline/maddy_split");
     Vector2 start2 = ((Entity) this.player).Position;
     ((GraphicsComponent) this.badeline.Sprite).Scale.X = 1f;
     this.badeline.FloatSpeed = 480f;
@@ -111,7 +111,7 @@ public class CS_Powerup : CutsceneEntity
     {
       new Func<IEnumerator>(this.sigh_trigger_0)
     });
-    Audio.Play("event:/new_content/char/badeline/maddy_join_quick", ((Entity) this.badeline).Position);
+    global::Celeste.Audio.Play("event:/new_content/char/badeline/maddy_join_quick", ((Entity) this.badeline).Position);
     Vector2 from = ((Entity) this.badeline).Position;
     for (float p = 0.0f; (double) p < 1.0; p += Engine.DeltaTime / 0.25f)
     {
@@ -148,10 +148,10 @@ public class CS_Powerup : CutsceneEntity
     ((GraphicsComponent) this.boss.Sprite).Scale.X *= -1f;
     ((Entity) this.boss).Visible = true;
     this.boss.Sprite.Play("xcharge", false, false);
-    Audio.Play("event:/ricky06/FightSFX/cb-horizontal-charge");
+    global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-horizontal-charge");
     yield return (object) 0.19f;
     this.boss.Sprite.Play("xattack", false, false);
-    Audio.Play("event:/ricky06/FightSFX/cb-horizontal-dash-fast");
+    global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-horizontal-dash-fast");
     this.boss.lightningVisible = true;
     this.boss.lightning.Play("once", true, false);
     for (float p = 0.0f; (double) p < 0.5; p += Engine.DeltaTime)

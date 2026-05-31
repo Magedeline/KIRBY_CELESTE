@@ -331,7 +331,7 @@ public class ConquerorBoss : Actor
         yield return (object) 0.08f;
       yield return (object) 0.1f;
       this.Sprite.Play("ycharge", false, false);
-      Audio.Play("event:/ricky06/FightSFX/cb-vertical-charge");
+      global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-vertical-charge");
       if (!this.HardMode)
         yield return (object) 0.07f;
       yield return (object) 0.32f;
@@ -345,7 +345,7 @@ public class ConquerorBoss : Actor
       if (this.Phase == 1)
       {
         this.Sprite.Play("xcharge", false, false);
-        Audio.Play("event:/ricky06/FightSFX/cb-horizontal-charge");
+        global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-horizontal-charge");
         this.lightningVisible = true;
         this.lightning.Play("once", true, false);
         ((GraphicsComponent) this.Sprite).Scale.X *= -1f;
@@ -353,7 +353,7 @@ public class ConquerorBoss : Actor
       else
       {
         this.Sprite.Play("ycharge", false, false);
-        Audio.Play("event:/ricky06/FightSFX/cb-vertical-charge");
+        global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-vertical-charge");
       }
       yield return (object) 0.39f;
     }
@@ -380,7 +380,7 @@ public class ConquerorBoss : Actor
       yield return (object) 0.08f;
     yield return (object) 0.1f;
     this.Sprite.Play("xcharge", false, false);
-    Audio.Play("event:/ricky06/FightSFX/cb-horizontal-charge");
+    global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-horizontal-charge");
     this.lightningVisible = true;
     this.lightning.Play("once", true, false);
     if (this.xFlipped)
@@ -418,7 +418,7 @@ public class ConquerorBoss : Actor
     this.attackSpeed = Calc.Approach(this.attackSpeed, 1600f, 8000f * Engine.DeltaTime);
     if (this.collidedVertically)
     {
-      Audio.Play("event:/ricky06/FightSFX/cb-vertical-impact");
+      global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-vertical-impact");
       return 5;
     }
     if (((Entity) this).Scene.OnInterval(0.015f))
@@ -481,9 +481,9 @@ public class ConquerorBoss : Actor
     this.attackSpeed = 0.0f;
     this.Sprite.Play("xattack", false, false);
     if (this.Phase != 4)
-      Audio.Play("event:/ricky06/FightSFX/cb-horizontal-dash-fast");
+      global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-horizontal-dash-fast");
     else
-      Audio.Play("event:/ricky06/FightSFX/cb-horizontal-dash-slow");
+      global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-horizontal-dash-slow");
   }
 
   private void AttackYBegin()
@@ -519,11 +519,11 @@ public class ConquerorBoss : Actor
     if (this.yTop)
     {
       this.Sprite.Play("ycharge", false, false);
-      Audio.Play("event:/ricky06/FightSFX/cb-vertical-charge");
+      global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-vertical-charge");
       yield return (object) 0.2f;
       this.beginFollowup = true;
       this.Sprite.Play("yattack", false, false);
-      Audio.Play("event:/ricky06/FightSFX/cb-vertical-impact");
+      global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-vertical-impact");
     }
     else
     {
@@ -748,7 +748,7 @@ public class ConquerorBoss : Actor
   private void Disappear()
   {
     this.Sprite.Play(nameof (Disappear), false, false);
-    Audio.Play("event:/ricky06/FightSFX/cb-disappear");
+    global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-disappear");
     ((Entity) this).Add((Component) new Coroutine(this.EmitParticles(), true));
   }
 
@@ -780,7 +780,7 @@ public class ConquerorBoss : Actor
     this.Sprite.Play("beamstrike", false, false);
     yield return (object) 0.5f;
     this.laserSfx1.Stop(true);
-    Audio.Play("event:/char/badeline/boss_laser_fire", ((Entity) this).Position);
+    global::Celeste.Audio.Play("event:/char/badeline/boss_laser_fire", ((Entity) this).Position);
     this.chargeWave.Play("invisible", false, false);
   }
 
@@ -919,7 +919,7 @@ public class ConquerorBoss : Actor
     if ((double) this.damageCooldown <= 0.0 | ignore)
     {
       this.damageCooldown = 0.2f;
-      Audio.Play("event:/ricky06/FightSFX/cb-boss-hit");
+      global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-boss-hit");
       this.chpGUI.removeHealth();
       player.UseRefill(false);
       this.health -= 2f;

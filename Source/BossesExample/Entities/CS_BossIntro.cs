@@ -80,7 +80,7 @@ public class CS_BossIntro : CutsceneEntity
     this.boss.Sprite.Play("screech", false, false);
     Input.Rumble((RumbleStrength) 1, (RumbleLength) 4);
     yield return (object) 1.5f;
-    Audio.Play("event:/ricky06/CutsceneSFX/screech");
+    global::Celeste.Audio.Play("event:/ricky06/CutsceneSFX/screech");
     for (int i = 0; i < 10; ++i)
     {
       level.Displacement.AddBurst(((Entity) this.boss).Position, 0.5f, 20f, 80f, 0.5f, (Ease.Easer) null, (Ease.Easer) null);

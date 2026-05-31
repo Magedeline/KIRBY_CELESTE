@@ -53,52 +53,96 @@ namespace Celeste.Mod.MaggyHelper
         // Base music events by chapter (structural complexity scales with progression)
         private static readonly Dictionary<string, string> ChapterMusicEvents = new Dictionary<string, string>
         {
-            ["00_Prologue"]   = "event:/pusheen/music/lvl0/explore",
-            ["01_City"]       = "event:/pusheen/music/lvl1/explore",
-            ["02_Nightmare"]  = "event:/pusheen/music/lvl2/explore",
-            ["03_Stars"]      = "event:/pusheen/music/lvl3/explore",
-            ["04_Legend"]     = "event:/pusheen/music/lvl4/explore",
-            ["05_Restore"]    = "event:/pusheen/music/lvl5/explore",
-            ["06_Stronghold"] = "event:/pusheen/music/lvl6/explore",
-            ["07_Hell"]       = "event:/pusheen/music/lvl7/explore",
-            ["08_Truth"]      = "event:/pusheen/music/lvl8/explore",
-            ["09_Summit"]     = "event:/pusheen/music/lvl9/explore",
+            ["00_Prologue"]   = "event:/pusheen/music/lvl0/intro",
+            ["01_City"]       = "event:/pusheen/music/lvl1/main",
+            ["02_Nightmare"]  = "event:/pusheen/music/lvl2/beginning",
+            ["03_Stars"]      = "event:/pusheen/music/lvl3/intro",
+            ["04_Legend"]     = "event:/pusheen/music/lvl4/beginning",
+            ["05_Restore"]    = "event:/pusheen/music/lvl5/intro",
+            ["06_Stronghold"] = "event:/pusheen/music/lvl6/main",
+            ["07_Hell"]       = "event:/pusheen/music/lvl7/main",
+            ["08_Truth"]      = "event:/pusheen/music/lvl8/main",
+            ["09_Summit"]     = "event:/pusheen/music/lvl9/main",
             ["10_Ruins"]      = "event:/pusheen/music/lvl10/main",
-            ["11_Snow"]       = "event:/pusheen/music/lvl11/explore",
-            ["12_Water"]      = "event:/pusheen/music/lvl12/explore",
-            ["13_Fire"]       = "event:/pusheen/music/lvl13/explore",
-            ["14_Digital"]    = "event:/pusheen/music/lvl14/explore",
-            ["15_Castle"]     = "event:/pusheen/music/lvl15/explore",
-            ["16_Corruption"] = "event:/pusheen/music/lvl16/explore",
-            ["17_Epilogue"]   = "event:/pusheen/music/lvl17/explore",
-            ["18_Heart"]      = "event:/pusheen/music/lvl18/explore",
-            ["19_Space"]      = "event:/pusheen/music/lvl19/explore",
-            ["20_TheEnd"]     = "event:/pusheen/music/lvl20/explore",
-            ["21_LastLevel"]  = "event:/pusheen/music/lvl21/explore",
+            ["11_Snow"]       = "event:/pusheen/music/lvl11/main",
+            ["12_Water"]      = "event:/pusheen/music/lvl12/main",
+            ["13_Fire"]       = "event:/pusheen/music/lvl13/main",
+            ["14_Digital"]    = "event:/pusheen/music/lvl14/main",
+            ["15_Castle"]     = "event:/pusheen/music/lvl15/main",
+            ["16_Corruption"] = "event:/pusheen/music/lvl16/main",
+            ["17_Epilogue"]   = "event:/pusheen/music/lvl17/main",
+            ["18_Heart"]      = "event:/pusheen/music/lvl18/main",
+            ["19_Space"]      = "event:/",
+            ["20_TheEnd"]     = "event:/",
+            ["21_LastLevel"]  = "event:/pusheen/extra_content/music/lvl21/main",
         };
 
         // Combat/intense music layers per chapter
         private static readonly Dictionary<string, string> ChapterCombatMusicEvents = new Dictionary<string, string>
         {
-            ["10_Ruins"]      = "event:/pusheen/music/lvl10/combat",
-            ["11_Snow"]       = "event:/pusheen/music/lvl11/combat",
-            ["13_Fire"]       = "event:/pusheen/music/lvl13/combat",
-            ["16_Corruption"] = "event:/pusheen/music/lvl16/combat",
-            ["18_Heart"]      = "event:/pusheen/music/lvl18/combat",
-            ["20_TheEnd"]     = "event:/pusheen/music/lvl20/combat",
+            ["10_Ruins"]      = "event:/pusheen/music/arena/battle_1",
+            ["11_Snow"]       = "event:/pusheen/music/arena/battle_2",
+            ["13_Fire"]       = "event:/pusheen/music/arena/battle_3",
+            ["16_Corruption"] = "event:/pusheen/music/arena/battle_4",
+            ["18_Heart"]      = "event:/pusheen/music/arena/battle_5",
+            ["20_TheEnd"]     = "event:/pusheen/music/arena/battle_6",
+            ["02_Nightmare"]  = "event:/pusheen/music/arena/battle_7",
+            ["06_Stronghold"] = "event:/pusheen/music/arena/battle_8",
+            ["07_Hell"]       = "event:/pusheen/music/arena/battle_9",
+            ["09_Summit"]     = "event:/pusheen/music/arena/battle_10",
+            ["12_Water"]      = "event:/pusheen/music/arena/battle_11",
+            ["14_Digital"]    = "event:/pusheen/music/arena/battle_12",
+            ["21_LastLevel"]  = "event:/pusheen/music/arena/battle_13",
         };
 
-        // Ambience events by environment type
-        private static readonly Dictionary<AmbienceState, string> AmbienceEvents = new Dictionary<AmbienceState, string>
+        // Global ambience events by chapter (00-18)
+        private static readonly Dictionary<string, string> ChapterAmbienceEvents = new Dictionary<string, string>
         {
-            [AmbienceState.Ruins]      = "event:/pusheen/ambience/ruins",
-            [AmbienceState.Snowdin]    = "event:/pusheen/ambience/snow",
-            [AmbienceState.Water]      = "event:/pusheen/ambience/water",
-            [AmbienceState.Fire]       = "event:/pusheen/ambience/fire",
-            [AmbienceState.Digital]    = "event:/pusheen/ambience/digital",
-            [AmbienceState.Space]      = "event:/pusheen/ambience/space",
-            [AmbienceState.Heart]      = "event:/pusheen/ambience/heart",
-            [AmbienceState.Corruption] = "event:/pusheen/ambience/corruption",
+            ["00_Prologue"]   = "event:/pusheen/env/amb/00",
+            ["01_City"]       = "event:/pusheen/env/amb/01",
+            ["02_Nightmare"]  = "event:/pusheen/env/amb/02",
+            ["03_Stars"]      = "event:/pusheen/env/amb/03",
+            ["04_Legend"]     = "event:/pusheen/env/amb/04",
+            ["05_Restore"]    = "event:/pusheen/env/amb/05",
+            ["06_Stronghold"] = "event:/pusheen/env/amb/06",
+            ["07_Hell"]       = "event:/pusheen/env/amb/07",
+            ["08_Truth"]      = "event:/pusheen/env/amb/08",
+            ["09_Summit"]     = "event:/pusheen/env/amb/09",
+            ["10_Ruins"]      = "event:/pusheen/env/amb/10",
+            ["11_Snow"]       = "event:/pusheen/env/amb/11",
+            ["12_Water"]      = "event:/pusheen/env/amb/12",
+            ["13_Fire"]       = "event:/pusheen/env/amb/13",
+            ["14_Digital"]    = "event:/pusheen/env/amb/14",
+            ["15_Castle"]     = "event:/pusheen/env/amb/15",
+            ["16_Corruption"] = "event:/pusheen/env/amb/16",
+            ["17_Epilogue"]   = "event:/pusheen/env/amb/17",
+            ["18_Heart"]      = "event:/pusheen/env/amb/18",
+            ["19_Space"]      = "event:/pusheen/extra_content/env/19",
+            ["20_TheEnd"]     = "event:/pusheen/extra_content/env/20",
+        };
+
+        // Local ambience events by chapter (00-18) - for localized environmental sounds
+        private static readonly Dictionary<string, string> ChapterLocalAmbienceEvents = new Dictionary<string, string>
+        {
+            ["00_Prologue"]   = "event:/pusheen/env/local/00",
+            ["01_City"]       = "event:/pusheen/env/local/01",
+            ["02_Nightmare"]  = "event:/pusheen/env/local/02",
+            ["03_Stars"]      = "event:/pusheen/env/local/03",
+            ["04_Legend"]     = "event:/pusheen/env/local/04",
+            ["05_Restore"]    = "event:/pusheen/env/local/05",
+            ["06_Stronghold"] = "event:/pusheen/env/local/06",
+            ["07_Hell"]       = "event:/pusheen/env/local/07",
+            ["08_Truth"]      = "event:/pusheen/env/local/08",
+            ["09_Summit"]     = "event:/pusheen/env/local/09",
+            ["10_Ruins"]      = "event:/pusheen/env/local/10",
+            ["11_Snow"]       = "event:/pusheen/env/local/11",
+            ["12_Water"]      = "event:/pusheen/env/local/12",
+            ["13_Fire"]       = "event:/pusheen/env/local/13",
+            ["14_Digital"]    = "event:/pusheen/env/local/14",
+            ["15_Castle"]     = "event:/pusheen/env/local/15",
+            ["16_Corruption"] = "event:/pusheen/env/local/16",
+            ["17_Epilogue"]   = "event:/pusheen/env/local/17",
+            ["18_Heart"]      = "event:/pusheen/env/local/18",
         };
 
         // FMOD parameter names for dynamic mixing
@@ -238,44 +282,54 @@ namespace Celeste.Mod.MaggyHelper
         #region Ambience Management
 
         /// <summary>
-        /// Set the environmental ambience based on room type.
+        /// Set the environmental ambience based on chapter.
         /// </summary>
-        public static void SetAmbience(AmbienceState state)
+        public static void SetAmbienceForChapter(string chapterName)
         {
             if (!_initialized) return;
-            if (_currentAmbience == state) return;
 
             StopAmbience();
-            _currentAmbience = state;
 
-            if (AmbienceEvents.TryGetValue(state, out string eventPath) && !string.IsNullOrEmpty(eventPath))
+            if (ChapterAmbienceEvents.TryGetValue(chapterName, out string eventPath) && !string.IsNullOrEmpty(eventPath))
             {
                 _currentAmbienceInstance = global::Celeste.Audio.Play(eventPath);
                 _hasAmbienceInstance = true;
-                Logger.Log(LogLevel.Debug, "MaggyHelper/Audio", $"Ambience set to: {state}");
+                Logger.Log(LogLevel.Debug, "MaggyHelper/Audio", $"Global ambience set for chapter: {chapterName}");
+            }
+
+            // Also play local ambience if available
+            if (ChapterLocalAmbienceEvents.TryGetValue(chapterName, out string localEventPath) && !string.IsNullOrEmpty(localEventPath))
+            {
+                // Local ambience is played as a separate layer - could be stored separately if needed
+                global::Celeste.Audio.Play(localEventPath);
+                Logger.Log(LogLevel.Debug, "MaggyHelper/Audio", $"Local ambience set for chapter: {chapterName}");
             }
         }
 
         /// <summary>
-        /// Set ambience based on chapter name.
+        /// Set ambience based on legacy state (deprecated - use SetAmbienceForChapter instead).
         /// </summary>
-        public static void SetAmbienceForChapter(string chapterName)
+        [Obsolete("Use SetAmbienceForChapter(string chapterName) instead")]
+        public static void SetAmbience(AmbienceState state)
         {
-            AmbienceState state = chapterName switch
+            // Legacy method - map state back to approximate chapter
+            string chapterName = state switch
             {
-                "10_Ruins"      => AmbienceState.Ruins,
-                "11_Snow"       => AmbienceState.Snowdin,
-                "12_Water"      => AmbienceState.Water,
-                "13_Fire"       => AmbienceState.Fire,
-                "14_Digital"    => AmbienceState.Digital,
-                "15_Castle"     => AmbienceState.None,
-                "16_Corruption" => AmbienceState.Corruption,
-                "18_Heart"      => AmbienceState.Heart,
-                "19_Space"      => AmbienceState.Space,
-                _               => AmbienceState.None
+                AmbienceState.Ruins       => "10_Ruins",
+                AmbienceState.Snowdin     => "11_Snow",
+                AmbienceState.Water       => "12_Water",
+                AmbienceState.Fire        => "13_Fire",
+                AmbienceState.Digital     => "14_Digital",
+                AmbienceState.Corruption  => "16_Corruption",
+                AmbienceState.Heart       => "18_Heart",
+                AmbienceState.Space       => "19_Space",
+                _                         => null
             };
 
-            SetAmbience(state);
+            if (chapterName != null)
+            {
+                SetAmbienceForChapter(chapterName);
+            }
         }
 
         #endregion
@@ -339,7 +393,7 @@ namespace Celeste.Mod.MaggyHelper
             SetParameter(PARAM_MUSIC_LAYER, 0f);
             SetParameter(PARAM_TENSION, 0f);
             SetCombatIntensity(0f);
-            Audio.Play("event:/game/general/heartgem_get"); // Temporary victory sound
+            global::Celeste.Audio.Play("event:/game/general/heartgem_get"); // Temporary victory sound
         }
 
         private static void TransitionToTransition(string chapter)

@@ -51,10 +51,10 @@ public class CS_BossScreechBegin : CutsceneEntity
     yield return (object) 0.5f;
     ((Entity) this.boss).Visible = true;
     this.boss.Sprite.Play("quick_appear", false, false);
-    Audio.Play("event:/ricky06/FightSFX/cb-disappear");
+    global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-disappear");
     yield return (object) 0.3f;
     this.boss.Sprite.Play("screechfast", false, false);
-    this.screech = Audio.Play("event:/ricky06/CutsceneSFX/screech");
+    this.screech = global::Celeste.Audio.Play("event:/ricky06/CutsceneSFX/screech");
     yield return (object) 0.06f;
     Input.Rumble((RumbleStrength) 1, (RumbleLength) 4);
     Camera defaultCam = level.Camera;
@@ -63,10 +63,10 @@ public class CS_BossScreechBegin : CutsceneEntity
       level.Displacement.AddBurst(((Entity) this.boss).Position, 0.5f, 20f, 80f, 0.5f, (Ease.Easer) null, (Ease.Easer) null);
       yield return (object) this.shakeLevel(level, 0.1f, (float) (1 - i / 10));
     }
-    Audio.SetMusic("event:/ricky06/CP-OST6", true, true);
+    global::Celeste.Audio.SetMusic("event:/ricky06/CP-OST6", true, true);
     level.Camera = defaultCam;
     this.boss.Sprite.Play("disappear", false, false);
-    Audio.Play("event:/ricky06/FightSFX/cb-disappear");
+    global::Celeste.Audio.Play("event:/ricky06/FightSFX/cb-disappear");
     yield return (object) 0.5f;
     this.EndCutscene(level, true);
   }
@@ -128,7 +128,7 @@ public class CS_BossScreechBegin : CutsceneEntity
       }
     }
     if (this.WasSkipped && (((HandleBase) this.screech) != ((HandleBase) null)))
-      Audio.Stop(this.screech, true);
+      global::Celeste.Audio.Stop(this.screech, true);
     ((Entity) this.boss).Visible = false;
     Scene scene = ((Entity) this).Scene;
     Rectangle bounds1 = level.Bounds;
@@ -138,6 +138,6 @@ public class CS_BossScreechBegin : CutsceneEntity
     ConquerorBoss conquerorBoss = new ConquerorBoss(new Vector2((float) left, (float) top), 4, false, this.hardMode);
     scene.Add((Entity) conquerorBoss);
     level.Session.SetFlag("cb_screech_intro", true);
-    Audio.SetMusic("event:/ricky06/CP-OST6", true, true);
+    global::Celeste.Audio.SetMusic("event:/ricky06/CP-OST6", true, true);
   }
 }

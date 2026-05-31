@@ -190,7 +190,7 @@ public class DashCopyBerry : Actor
                 level.ParticlesFG?.Emit(P_Absorb, 20, Center, Vector2.One * 14f);
         }
 
-        Audio.Play("event:/game/general/strawberry_blue_touch", Position);
+        global::Celeste.Audio.Play("event:/game/general/strawberry_blue_touch", Position);
         Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
 
         // White flash on the player sprite briefly
@@ -244,7 +244,7 @@ public class DashCopyBerry : Actor
                 level.ParticlesFG?.Emit(P_Glow, 10, Center, Vector2.One * 10f);
         }
 
-        Audio.Play("event:/game/general/strawberry_touch", Position);
+        global::Celeste.Audio.Play("event:/game/general/strawberry_touch", Position);
         Input.Rumble(RumbleStrength.Medium, RumbleLength.Short);
     }
 

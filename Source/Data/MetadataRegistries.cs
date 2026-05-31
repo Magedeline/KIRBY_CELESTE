@@ -1234,6 +1234,7 @@ internal static class MetadataManager
         AudioMetadataRegistry.Initialize(modRoot);
         ParticleMetadataRegistry.Initialize(modRoot);
         UIMetadataRegistry.Initialize(modRoot);
+        global::Celeste.Mod.MaggyHelper.Audio.AudioExt.Initialize(modRoot);
         
         IngesteLogger.Info("All metadata registries initialized successfully");
         LogMetadataStatistics();
@@ -1253,6 +1254,7 @@ internal static class MetadataManager
         AudioMetadataRegistry.Reload();
         ParticleMetadataRegistry.Reload();
         UIMetadataRegistry.Reload();
+        global::Celeste.Mod.MaggyHelper.Audio.AudioExt.Reload();
         
         IngesteLogger.Info("All metadata registries reloaded successfully");
         LogMetadataStatistics();

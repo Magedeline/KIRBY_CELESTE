@@ -57,7 +57,7 @@ internal class ConquerorBook : CutsceneEntity
     yield return (object) this.page.EaseOut();
     if (this.isTomb && !this.level.Session.GetFlag("cp_secret_reveal") && this.page != null && this.page.getImageKey().Length == 3)
     {
-      Audio.Play("event:/ricky06/CutsceneSFX/earthquake");
+      global::Celeste.Audio.Play("event:/ricky06/CutsceneSFX/earthquake");
       this.level.Shake(1.1f);
       Rectangle bounds1 = this.level.Bounds;
       double num1 = (double) bounds1.Left + 1480.0;
@@ -138,7 +138,7 @@ internal class ConquerorBook : CutsceneEntity
     public IEnumerator EaseIn()
     {
       if (!this.noSound)
-        Audio.Play("event:/game/03_resort/memo_in");
+        global::Celeste.Audio.Play("event:/game/03_resort/memo_in");
       Vector2 center = ((new Vector2((float) Engine.Width, (float) Engine.Height)) / (2f));
       Vector2 from = ((center) + (new Vector2(0.0f, 200f)));
       Vector2 to = center;
@@ -157,13 +157,13 @@ internal class ConquerorBook : CutsceneEntity
     {
       while (!Input.MenuConfirm.Pressed)
         yield return (object) null;
-      Audio.Play("event:/ui/main/button_lowkey");
+      global::Celeste.Audio.Play("event:/ui/main/button_lowkey");
     }
 
     public IEnumerator EaseOut()
     {
       if (!this.noSound)
-        Audio.Play("event:/game/03_resort/memo_out");
+        global::Celeste.Audio.Play("event:/game/03_resort/memo_out");
       this.easingOut = true;
       Vector2 from = this.Position;
       Vector2 to = ((((new Vector2((float) Engine.Width, (float) Engine.Height)) / (2f))) + (new Vector2(0.0f, -200f)));

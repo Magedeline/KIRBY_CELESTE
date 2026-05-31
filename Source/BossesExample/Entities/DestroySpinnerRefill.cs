@@ -146,7 +146,7 @@ internal class DestroySpinnerRefill : Entity
     ((Component) this.outline).Visible = false;
     this.Depth = -100;
     this.wiggler.Start();
-    Audio.Play(this.twoDashes ? "event:/new_content/game/10_farewell/pinkdiamond_return" : "event:/game/general/diamond_return", this.Position);
+    global::Celeste.Audio.Play(this.twoDashes ? "event:/new_content/game/10_farewell/pinkdiamond_return" : "event:/game/general/diamond_return", this.Position);
     this.level.ParticlesFG.Emit(this.p_regen, 16 /*0x10*/, this.Position, ((Vector2.One) * (2f)));
   }
 
@@ -166,7 +166,7 @@ internal class DestroySpinnerRefill : Entity
   {
     if (!player.UseRefill(this.twoDashes) && global::Celeste.Mod.MaggyHelper.BossesExample.BossesExampleModule.hasDestroyDash)
       return;
-    Audio.Play(this.twoDashes ? "event:/new_content/game/10_farewell/pinkdiamond_touch" : "event:/game/general/diamond_touch", this.Position);
+    global::Celeste.Audio.Play(this.twoDashes ? "event:/new_content/game/10_farewell/pinkdiamond_touch" : "event:/game/general/diamond_touch", this.Position);
     Input.Rumble((RumbleStrength) 1, (RumbleLength) 1);
     this.Collidable = false;
     this.Add((Component) new Coroutine(this.RefillRoutine(player), true));

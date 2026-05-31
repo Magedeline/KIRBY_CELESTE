@@ -52,8 +52,8 @@ internal class LevelGlitchTrigger : Trigger
       return;
     Level level = ((Entity) this).SceneAs<Level>();
     if (this.lowPass)
-      Audio.SetMusicParam("lowpass", this.lowPassValue);
-    Audio.Play("event:/new_content/game/10_farewell/glitch_short");
+      global::Celeste.Audio.SetMusicParam("lowpass", this.lowPassValue);
+    global::Celeste.Audio.Play("event:/new_content/game/10_farewell/glitch_short");
     LevelData leveldata = level.Session.LevelData;
     Session session = (((Entity) this).Scene as Level).Session;
     EntityID id = this.id;
@@ -107,7 +107,7 @@ internal class LevelGlitchTrigger : Trigger
         }
       }
       if (this.noMusicOnTeleport)
-        Audio.SetMusic("", true, false);
+        global::Celeste.Audio.SetMusic("", true, false);
       for (int index1 = 0; index1 < leader.PastPoints.Count; ++index1)
       {
         List<Vector2> pastPoints = leader.PastPoints;

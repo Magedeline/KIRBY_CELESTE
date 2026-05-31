@@ -70,7 +70,7 @@ internal class BossFightTrigger : Trigger
       double top = (double) bounds.Top;
       ConquerorBoss conquerorBoss = new ConquerorBoss(new Vector2((float) left, (float) top), 4, false, this.hardMode);
       scene.Add((Entity) conquerorBoss);
-      Audio.SetMusic("event:/ricky06/CP-OST6", true, true);
+      global::Celeste.Audio.SetMusic("event:/ricky06/CP-OST6", true, true);
     }
     yield return (object) null;
   }

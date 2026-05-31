@@ -104,7 +104,7 @@ internal class LevelResetZone : SeekerBarrier
     Level level = ((Entity) this).SceneAs<Level>();
     LevelData leveldata = level.Session.LevelData;
     if (audioID != null)
-      Audio.Play(audioID, ((Entity) player).Position);
+      global::Celeste.Audio.Play(audioID, ((Entity) player).Position);
     level.Flash(((Color.White) * (0.2f)), false);
     ((Scene) level).OnEndOfFrame += (Action) (() =>
     {

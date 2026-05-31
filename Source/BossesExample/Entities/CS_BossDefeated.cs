@@ -39,7 +39,7 @@ public class CS_BossDefeated : CutsceneEntity
     base.Added(scene);
     this.level = ((Entity) this).SceneAs<Level>();
     this.original_pos = ((Entity) this.boss).Position;
-    Audio.SetMusic("event:/ricky06/cpostsilence", true, true);
+    global::Celeste.Audio.SetMusic("event:/ricky06/cpostsilence", true, true);
   }
 
   public override void OnBegin(Level level)
@@ -49,7 +49,7 @@ public class CS_BossDefeated : CutsceneEntity
 
   private void GlitchLevel()
   {
-    Audio.Play("event:/new_content/game/10_farewell/glitch_short");
+    global::Celeste.Audio.Play("event:/new_content/game/10_farewell/glitch_short");
     this.level.Shake(0.3f);
     Input.Rumble((RumbleStrength) 0, (RumbleLength) 0);
     Tween tween1 = Tween.Create((Tween.TweenMode) 1, (Ease.Easer) null, 0.05f, true);
@@ -90,7 +90,7 @@ public class CS_BossDefeated : CutsceneEntity
     ((Entity) this.boss).Position = this.original_pos;
     yield return (object) 0.5f;
     this.boss.Sprite.Play("deathEnd", false, false);
-    Audio.Play("event:/ricky06/CutsceneSFX/deathExplosion2");
+    global::Celeste.Audio.Play("event:/ricky06/CutsceneSFX/deathExplosion2");
     this.tween = Tween.Create((Tween.TweenMode) 1, (Ease.Easer) null, 1.1f, true);
     this.tween.OnUpdate = (Action<Tween>) (t => Glitch.Value = t.Eased * 2f);
     this.tween.OnComplete = (Action<Tween>) (t => this.EndCutscene(level, true));
@@ -157,7 +157,7 @@ public class CS_BossDefeated : CutsceneEntity
     }
     if (this.tween != null)
       ((Entity) this.player).Remove((Component) this.tween);
-    Audio.SetMusic("event:/ricky06/cpostsilence", true, true);
+    global::Celeste.Audio.SetMusic("event:/ricky06/cpostsilence", true, true);
     Glitch.Value = 0.0f;
     level.ResetZoom();
     LevelData leveldata = level.Session.LevelData;

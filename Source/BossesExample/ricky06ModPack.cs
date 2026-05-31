@@ -108,7 +108,7 @@ public static class BossesExampleModule
             return true;
         }
 
-        Audio.Play("event:/char/madeline/predeath");
+        global::Celeste.Audio.Play("event:/char/madeline/predeath");
         return false;
     }
 
@@ -210,7 +210,7 @@ public static class BossesExampleModule
             return;
         }
 
-        Audio.Play("event:/char/madeline/jump_super");
+        global::Celeste.Audio.Play("event:/char/madeline/jump_super");
         destroyDashDelay = new Coroutine(DestroyDashDelay(self), true);
         self.Add(destroyDashDelay);
     }

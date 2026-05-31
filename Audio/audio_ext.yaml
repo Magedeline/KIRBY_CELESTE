@@ -1,0 +1,64 @@
+# audio_ext.yaml — External audio event path overrides for DesoloZantas
+#
+# Override any compiled-in FMOD event path without recompiling.
+# Keys are dot-separated and case-insensitive. Values must be valid FMOD paths.
+# Any key not listed here falls back to the default in AudioEvents.cs.
+#
+# Call AudioExt.Reload() in-game (or via console) to pick up changes at runtime.
+#
+# ── Character SFX ───────────────────────────────────────────────────────────
+# char.badeline.appear:           "event:/char/badeline/appear"
+# char.badeline.disappear:        "event:/char/badeline/disappear"
+# char.badeline.level_entry:      "event:/char/badeline/level_entry"
+# char.badeline.footstep:         "event:/char/badeline/footstep"
+# char.badeline.jump:             "event:/char/badeline/jump"
+# char.badeline.boss_bullet:      "event:/char/badeline/boss_bullet"
+# char.badeline.boss_laser_fire:  "event:/char/badeline/boss_laser_fire"
+# char.badeline.dash_red_left:    "event:/char/badeline/dash_red_left"
+# char.badeline.dash_red_right:   "event:/char/badeline/dash_red_right"
+# char.badeline.maddy_join:       "event:/char/badeline/maddy_join"
+# char.badeline.maddy_split:      "event:/char/badeline/maddy_split"
+#
+# char.madeline.death:            "event:/char/madeline/death"
+# char.madeline.jump:             "event:/char/madeline/jump"
+# char.madeline.dash_red_left:    "event:/char/madeline/dash_red_left"
+# char.madeline.dash_red_right:   "event:/char/madeline/dash_red_right"
+# char.madeline.landing:          "event:/char/madeline/landing"
+# char.madeline.revive:           "event:/char/madeline/revive"
+#
+# ── Game SFX ────────────────────────────────────────────────────────────────
+# game.general.spring:                    "event:/game/general/spring"
+# game.general.key_get:                   "event:/game/general/key_get"
+# game.general.strawberry_get:            "event:/game/general/strawberry_get"
+# game.general.cassette_get:              "event:/game/general/cassette_get"
+# game.general.crystalheart_red_get:      "event:/game/general/crystalheart_red_get"
+# game.general.crystalheart_blue_get:     "event:/game/general/crystalheart_blue_get"
+# game.general.crystalheart_gold_get:     "event:/game/general/crystalheart_gold_get"
+# game.general.diamond_touch:             "event:/game/general/diamond_touch"
+#
+# ── UI SFX ──────────────────────────────────────────────────────────────────
+# ui.main.button_select:  "event:/ui/main/button_select"
+# ui.main.button_back:    "event:/ui/main/button_back"
+# ui.main.button_invalid: "event:/ui/main/button_invalid"
+# ui.game.pause:          "event:/ui/game/pause"
+# ui.game.unpause:        "event:/ui/game/unpause"
+#
+# ── Music ────────────────────────────────────────────────────────────────────
+# music.cassette.forsaken_city: "event:/music/cassette/01_forsaken_city"
+# music.cassette.old_site:      "event:/music/cassette/02_old_site"
+# music.cassette.resort:        "event:/music/cassette/03_resort"
+# music.cassette.cliffside:     "event:/music/cassette/04_cliffside"
+# music.cassette.mirror_temple: "event:/music/cassette/05_mirror_temple"
+# music.cassette.reflection:    "event:/music/cassette/06_reflection"
+# music.cassette.summit:        "event:/music/cassette/07_summit"
+# music.cassette.core:          "event:/music/cassette/09_core"
+#
+# music.lvl1.main:          "event:/music/lvl1/main"
+# music.lvl2.beginning:     "event:/music/lvl2/beginning"
+# music.lvl2.chase:         "event:/music/lvl2/chase"
+# music.lvl6.badeline_fight:"event:/music/lvl6/badeline_fight"
+# music.lvl7.main:          "event:/music/lvl7/main"
+# music.lvl9.main:          "event:/music/lvl9/main"
+#
+# ── Example override (uncomment to activate) ────────────────────────────────
+# char.badeline.appear: "event:/pusheen/char/badeline/appear"

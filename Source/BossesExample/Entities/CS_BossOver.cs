@@ -37,7 +37,7 @@ public class CS_BossOver : CutsceneEntity
   {
     base.Added(scene);
     this.level = ((Entity) this).SceneAs<Level>();
-    Audio.SetMusic("event:/ricky06/cpostsilence", true, true);
+    global::Celeste.Audio.SetMusic("event:/ricky06/cpostsilence", true, true);
   }
 
   public override void OnBegin(Level level)
@@ -170,7 +170,7 @@ public class CS_BossOver : CutsceneEntity
       Player player = this.player;
       ((Entity) player).Y = ((Entity) player).Y - 1f;
     }
-    Audio.SetMusic("event:/ricky06/cpostsilence", true, true);
+    global::Celeste.Audio.SetMusic("event:/ricky06/cpostsilence", true, true);
     Glitch.Value = 0.0f;
     level.ResetZoom();
     if (this.boss == null)

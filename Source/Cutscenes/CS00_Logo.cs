@@ -210,7 +210,7 @@ namespace Celeste.Mod.MaggyHelper.Cutscenes {
         private IEnumerator Cutscene(Level level) {
             player.StateMachine.State = Player.StDummy;
             player.Dashes = 1;
-            Audio.SetMusicParam("outro", 1);
+            global::Celeste.Audio.SetMusicParam("outro", 1);
             yield return 0.5f;
             yield return player.DummyWalkTo(basket.X - 12f);
             yield return 0.4f;
@@ -225,14 +225,14 @@ namespace Celeste.Mod.MaggyHelper.Cutscenes {
             Scene.Add(logo);
             yield return logo.EaseIn();
             // Celeste 64 boot title hit — play when logo lands
-            Audio.Play("event:/pusheen/ui/game/pre_title_firstinput");
+            global::Celeste.Audio.Play("event:/pusheen/ui/game/pre_title_firstinput");
             yield return 4f;
             yield return ShowConfirmButton();
             while (!Input.MenuConfirm.Pressed) {
                 yield return null;
             }
             // Title confirm out sound
-            Audio.Play("event:/pusheen/ui/game/title_firstinput");
+            global::Celeste.Audio.Play("event:/pusheen/ui/game/title_firstinput");
             EndCutscene(level);
         }
 

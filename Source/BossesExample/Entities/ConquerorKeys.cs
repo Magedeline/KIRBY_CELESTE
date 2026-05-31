@@ -94,7 +94,7 @@ public class ConquerorKeys : Entity
     {
       if (!this.Visible)
         return;
-      Audio.Play("event:/game/general/crystalheart_pulse", this.Position);
+      global::Celeste.Audio.Play("event:/game/general/crystalheart_pulse", this.Position);
       this.scaleWiggler.Start();
       (this.Scene as Level).Displacement.AddBurst(((this.Position) + (((GraphicsComponent) this.sprite).Position)), 0.35f, 4f, 24f, 0.25f, (Ease.Easer) null, (Ease.Easer) null);
     });
@@ -140,7 +140,7 @@ public class ConquerorKeys : Entity
       Input.Rumble((RumbleStrength) 1, (RumbleLength) 1);
       if ((double) this.bounceSfxDelay > 0.0)
         return;
-      Audio.Play("event:/game/general/crystalheart_bounce", this.Position);
+      global::Celeste.Audio.Play("event:/game/general/crystalheart_bounce", this.Position);
       this.bounceSfxDelay = 0.1f;
     }
   }
@@ -228,7 +228,7 @@ public class ConquerorKeys : Entity
     scene.CanRetry = true;
     scene.FormationBackdrop.Display = false;
     Engine.TimeRate = 1f;
-    Audio.SetMusicParam("lowpass", 0.0f);
+    global::Celeste.Audio.SetMusicParam("lowpass", 0.0f);
     if (this.sfx == null)
       return;
     this.sfx.Source.Param("end", 1f);
@@ -239,7 +239,7 @@ public class ConquerorKeys : Entity
     if (this.roomID.Length == 0)
       return;
     Player player = this.Scene.Tracker.GetEntity<Player>();
-    Audio.Play("event:/new_content/game/10_farewell/glitch_short");
+    global::Celeste.Audio.Play("event:/new_content/game/10_farewell/glitch_short");
     Level level = this.SceneAs<Level>();
     LevelData leveldata = level.Session.LevelData;
     Session session = (this.Scene as Level).Session;

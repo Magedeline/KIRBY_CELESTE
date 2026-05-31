@@ -161,7 +161,7 @@ public class CustomMoveBlock : Solid
       this.state = CustomMoveBlock.MovementState.Idling;
       while (!this.triggered && !this.HasPlayerRider())
         yield return (object) null;
-      Audio.Play("event:/game/04_cliffside/arrowblock_activate", ((Entity) this).Position);
+      global::Celeste.Audio.Play("event:/game/04_cliffside/arrowblock_activate", ((Entity) this).Position);
       this.state = CustomMoveBlock.MovementState.Moving;
       ((Platform) this).StartShaking(0.2f);
       this.ActivateParticles();
@@ -287,7 +287,7 @@ label_43:
         else
           break;
       }
-      Audio.Play("event:/game/04_cliffside/arrowblock_break", ((Entity) this).Position);
+      global::Celeste.Audio.Play("event:/game/04_cliffside/arrowblock_break", ((Entity) this).Position);
       this.moveSfx.Stop(true);
       this.state = CustomMoveBlock.MovementState.Breaking;
       this.speed = this.targetSpeed = 0.0f;
@@ -320,7 +320,7 @@ label_43:
       while (((Entity) this).CollideCheck<Actor>() || ((Entity) this).CollideCheck<Solid>())
         yield return (object) null;
       ((Entity) this).Collidable = true;
-      EventInstance instance = Audio.Play("event:/game/04_cliffside/arrowblock_reform_begin", ((Entity) debris[0]).Position);
+      EventInstance instance = global::Celeste.Audio.Play("event:/game/04_cliffside/arrowblock_reform_begin", ((Entity) debris[0]).Position);
       CustomMoveBlock moveBlock = this;
       Coroutine component;
       Coroutine routine = component = new Coroutine(this.SoundFollowsDebrisCenter(instance, debris), true);
@@ -334,7 +334,7 @@ label_43:
       ((Component) routine).RemoveSelf();
       foreach (CustomMoveBlock.Debris item4 in debris)
         ((Entity) item4).RemoveSelf();
-      Audio.Play("event:/game/04_cliffside/arrowblock_reappear", ((Entity) this).Position);
+      global::Celeste.Audio.Play("event:/game/04_cliffside/arrowblock_reappear", ((Entity) this).Position);
       ((Entity) this).Visible = true;
       ((Platform) this).EnableStaticMovers();
       this.speed = this.targetSpeed = 0.0f;
@@ -365,7 +365,7 @@ label_43:
         foreach (CustomMoveBlock.Debris debri in debris)
           zero = ((zero) + (((Entity) debri).Position));
         zero = ((zero) / ((float) debris.Count));
-        Audio.Position(instance, zero);
+        global::Celeste.Audio.Position(instance, zero);
         yield return (object) null;
         zero = new Vector2();
       }
@@ -389,9 +389,9 @@ label_43:
       foreach (GraphicsComponent graphicsComponent in this.rightButton)
         graphicsComponent.X = ((Entity) this).Width + (flag2 ? -2f : 0.0f);
       if (flag1 && !this.leftPressed || flag3 && !this.topPressed || flag2 && !this.rightPressed)
-        Audio.Play("event:/game/04_cliffside/arrowblock_side_depress", ((Entity) this).Position);
+        global::Celeste.Audio.Play("event:/game/04_cliffside/arrowblock_side_depress", ((Entity) this).Position);
       if (!flag1 && this.leftPressed || !flag3 && this.topPressed || !flag2 && this.rightPressed)
-        Audio.Play("event:/game/04_cliffside/arrowblock_side_release", ((Entity) this).Position);
+        global::Celeste.Audio.Play("event:/game/04_cliffside/arrowblock_side_release", ((Entity) this).Position);
       this.leftPressed = flag1;
       this.rightPressed = flag2;
       this.topPressed = flag3;
