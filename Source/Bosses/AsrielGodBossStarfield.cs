@@ -51,8 +51,8 @@ namespace Celeste.Entities
             UseSpritebatch = false;
             
             // Try to load the custom background texture
-            bgTexture = GFX.Game.Has("bgs/maggy/20/asriel/bg00") 
-                ? GFX.Game["bgs/maggy/20/asriel/bg00"] 
+            bgTexture = GFX.Game.Has("bgs/20/asriel/bg00") 
+                ? GFX.Game["bgs/20/asriel/bg00"] 
                 : GFX.Game["objects/temple/portal/portal"];
             
             // Initialize rainbow star particles

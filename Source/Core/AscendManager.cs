@@ -254,7 +254,7 @@ public class AscendManagerBeyond : Entity
         {
             this.manager = manager;
             Depth = 15;
-            textures = GFX.Game.GetAtlasSubtextures("bgs/maggy/18/giygas/bg");
+            textures = GFX.Game.GetAtlasSubtextures("bgs/18/giygas/bg");
             alphaColors = new Color[textures.Count];
             for (int index = 0; index < particles.Length; ++index)
             {
@@ -329,7 +329,7 @@ public class AscendManagerBeyond : Entity
         {
             this.manager = manager;
             Depth = -1000020;
-            depthLayers = GFX.Game.GetAtlasSubtextures("bgs/maggy/00/anotherhuman/IMAGE_DEPTH");
+            depthLayers = GFX.Game.GetAtlasSubtextures("bgs/00/anotherhuman/IMAGE_DEPTH");
             scrollSpeeds = new float[depthLayers.Count];
             scrollOffsets = new float[depthLayers.Count];
             

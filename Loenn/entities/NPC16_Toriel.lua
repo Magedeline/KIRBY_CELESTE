@@ -3,7 +3,7 @@ local npc16_toriel = {}
 npc16_toriel.name = "MaggyHelper/NPC17_Toriel"
 npc16_toriel.depth = 0
 npc16_toriel.justification = {0.5, 1.0}
-npc16_toriel.texture = "characters/Maggy/DesoloZantas/toriel/idle00"
+npc16_toriel.texture = "characters/toriel/idle00"
 
 npc16_toriel.placements = {
     {

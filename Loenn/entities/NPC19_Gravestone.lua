@@ -3,7 +3,7 @@ local npc19_gravestone = {}
 npc19_gravestone.name = "MaggyHelper/NPC19_Gravestone"
 npc19_gravestone.depth = 0
 npc19_gravestone.justification = {0.5, 1.0}
-npc19_gravestone.texture = "characters/Maggy/DesoloZantas/gravestones/maddygrave00"
+npc19_gravestone.texture = "characters/gravestones/maddygrave00"
 
 npc19_gravestone.placements = {
     {

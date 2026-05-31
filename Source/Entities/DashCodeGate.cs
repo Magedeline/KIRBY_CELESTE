@@ -244,9 +244,9 @@ public class DashCodeGate : Solid
 				text += "right";
 			}
 			// TODO: Port DoonvHelper graphics to your mod
-			// After porting, change path from "objects/DoonvHelper/" to "objects/MaggyHelper/"
+			// After porting, change path from "objects/DoonvHelper/" to "objects/"
 			// Graphics to copy: dashcodegate/arrows/inactive-*.png and active-*.png
-			string spritePathPrefix = "objects/DoonvHelper"; // Change to "objects/MaggyHelper" after porting
+			string spritePathPrefix = "objects/DoonvHelper"; // Change to "objects" after porting
 			this.inactiveIcons[i] = GFX.Game[String.Format(
 				"{0}/dashcodegate/arrows/inactive-{1}",
 			spritePathPrefix, text.Trim('-'))];

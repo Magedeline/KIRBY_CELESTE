@@ -59,15 +59,15 @@ function customBerry.texture(room, entity)
         end
     elseif berryType == "voidstarberry" then
         if winged or hasNodes then
-            return "collectables/maggy/voidstarberry/Maggy/DesoloZantas/ghost/000"
+            return "collectables/voidstarberry/ghost/000"
         else
             return "collectables/maggy/voidstarberry/spin/000"
         end
     elseif berryType == "popstarberry" then
         if winged or hasNodes then
-            return "collectables/maggy/popstarberry/Maggy/DesoloZantas/ghost/000"
+            return "collectables/popstarberry/ghost/000"
         else
-            return "collectables/maggy/popstarberry/Maggy/DesoloZantas/spin/000"
+            return "collectables/popstarberry/spin/000"
         end
     elseif berryType == "pinkplatinumberry" then
         if winged or hasNodes then

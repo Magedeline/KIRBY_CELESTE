@@ -3,7 +3,7 @@ local npc05_magolor_vents = {}
 npc05_magolor_vents.name = "MaggyHelper/NPC05_Magolor_Vents"
 npc05_magolor_vents.depth = 0
 npc05_magolor_vents.justification = {0.5, 1.0}
-npc05_magolor_vents.texture = "characters/Maggy/DesoloZantas/magolor/idle00"
+npc05_magolor_vents.texture = "characters/magolor/idle00"
 
 npc05_magolor_vents.placements = {
     {

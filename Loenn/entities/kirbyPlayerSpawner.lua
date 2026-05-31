@@ -74,9 +74,9 @@ kirbyKglobal::PlayerSpawner.fieldOrder = {
 function kirbyKglobal::PlayerSpawner.sprite(room, entity)
     local texture
     if entity.enableKirbyMode then
-        texture = "characters/Maggy/DesoloZantas/kirby/idle00"
+        texture = "characters/kirby/idle00"
     else
-        texture = "characters/Maggy/DesoloZantas/Kglobal::Player/sitDown00"
+        texture = "characters/Kglobal::Player/sitDown00"
     end
 
     local sprite = drawableSprite.fromTexture(texture, entity)

@@ -9,7 +9,7 @@ local asrielAngelBoss = {}
 
 asrielAngelBoss.name = "MaggyHelper/AsrielAngelOfDeathBoss"
 asrielAngelBoss.depth = -100000
-asrielAngelBoss.texture = "characters/asrielangelofdeathboss/face/00"
+asrielAngelBoss.texture = "bosses/angelofdeath/simple00"
 asrielAngelBoss.justification = {0.5, 0.5}
 asrielAngelBoss.nodeLimits = {0, 4}
 asrielAngelBoss.nodeLineRenderType = "line"
@@ -240,7 +240,7 @@ function asrielAngelBoss.sprite(room, entity)
     
     -- If no sprites loaded, use fallback
     if #sprites == 0 then
-        local fallback = drawableSprite.fromTexture("characters/Maggy/DesoloZantas/asriel/idle00", entity)
+        local fallback = drawableSprite.fromTexture("characters/asriel/idle00", entity)
         if fallback then
             fallback:setJustification(0.5, 1.0)
             table.insert(sprites, fallback)

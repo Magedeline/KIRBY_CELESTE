@@ -42,7 +42,7 @@ floweyNPC.fieldInformation = {
 }
 
 function floweyNPC.texture(room, entity)
-    return "characters/Maggy/DesoloZantas/flowey/idle00"
+    return "characters/flowey/idle00"
 end
 
 return floweyNPC

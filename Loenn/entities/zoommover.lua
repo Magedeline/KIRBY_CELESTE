@@ -85,9 +85,9 @@ local function getThemePath(theme)
     if theme == "Moon" then
         return "moon/"
     elseif theme == "FoundLevels" then
-        return "foundlevMaggy/DesoloZantas/els/"
+        return "foundlevels/els/"
     elseif theme == "FinalLevels" then
-        return "finallevMaggy/DesoloZantas/els/"
+        return "finallevels/els/"
     else
         return ""
     end

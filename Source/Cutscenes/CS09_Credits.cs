@@ -81,7 +81,7 @@ namespace Celeste.Cutscenes
             yield return 1f;
             
             // Load the credits atlas (similar to CS20_Ending loading TheEnd atlas)
-            Atlas = Atlas.FromAtlas(Path.Combine("Graphics", "Atlases", "Gui", "Maggy", "credits", "Part2"), Atlas.AtlasDataFormat.PackerNoAtlas);
+            Atlas = Atlas.FromAtlas(Path.Combine("Graphics", "Atlases", "Gui", "credits", "Part2"), Atlas.AtlasDataFormat.PackerNoAtlas);
             Frames = Atlas.GetAtlasSubtextures("");
             
             level.PauseLock = false;

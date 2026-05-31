@@ -56,17 +56,17 @@ refill.placements = {
 function refill.texture(room, entity)
     local dashCount = entity.dashCount or 1
     if dashCount == 2 then
-        return "objects/Maggy/DesoloZantas/refillTwo/idle00"
+        return "objects/refillTwo/idle00"
     elseif dashCount == 3 then
-        return "objects/Maggy/DesoloZantas/solarrefill/idle00"
+        return "objects/solarrefill/idle00"
     elseif dashCount == 4 then
-        return "objects/Maggy/DesoloZantas/lunarrefill/idle00"
+        return "objects/lunarrefill/idle00"
     elseif dashCount == 5 then
-        return "objects/Maggy/DesoloZantas/blackholerefill/idle00"
+        return "objects/blackholerefill/idle00"
     elseif dashCount == 10 then
-        return "objects/Maggy/DesoloZantas/savestarrefill/idle00"
+        return "objects/savestarrefill/idle00"
     else
-        return "objects/Maggy/DesoloZantas/refill/idle00"
+        return "objects/refill/idle00"
     end
 end
 

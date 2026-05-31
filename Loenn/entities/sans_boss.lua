@@ -36,8 +36,8 @@ sansBoss.fieldOrder = {
 
 function sansBoss.sprite(room, entity)
     local textures = {
-        "characters/Maggy/DesoloZantas/sans/idle00",
-        "characters/Maggy/DesoloZantas/Kglobal::Player/sitDown00"
+        "characters/sans/idle00",
+        "characters/Kglobal::Player/sitDown00"
     }
 
     for _, texture in ipairs(textures) do

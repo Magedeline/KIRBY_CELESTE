@@ -3,7 +3,7 @@ local npc07_maddy_mirror = {}
 npc07_maddy_mirror.name = "MaggyHelper/NPC07_Maddy_Mirror"
 npc07_maddy_mirror.depth = 0
 npc07_maddy_mirror.justification = {0.5, 1.0}
-npc07_maddy_mirror.texture = "characters/Maggy/DesoloZantas/madeline/idle00"
+npc07_maddy_mirror.texture = "characters/madeline/idle00"
 
 npc07_maddy_mirror.placements = {
     {

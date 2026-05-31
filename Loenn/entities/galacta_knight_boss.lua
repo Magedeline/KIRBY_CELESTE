@@ -36,8 +36,8 @@ galactaKnightBoss.fieldOrder = {
 
 function galactaKnightBoss.sprite(room, entity)
     local textures = {
-        "Gui/Maggy/DesoloZantas/kirby/powers/knight",
-        "characters/Maggy/DesoloZantas/Kglobal::Player/sitDown00"
+        "gui/kirby/powers/knight",
+        "characters/Kglobal::Player/sitDown00"
     }
 
     for _, texture in ipairs(textures) do

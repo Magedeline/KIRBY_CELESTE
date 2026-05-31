@@ -133,7 +133,7 @@ namespace Celeste.Effects
         public PopstarBg()
         {
             // Load animation frames
-            frames = GFX.Game.GetAtlasSubtextures("bgs/maggy/19/say_goodbye/popstar/popstar");
+            frames = GFX.Game.GetAtlasSubtextures("bgs/19/say_goodbye/popstar/popstar");
             
             if (frames == null || frames.Count == 0)
             {

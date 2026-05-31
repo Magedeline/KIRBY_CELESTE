@@ -4,7 +4,7 @@ local mainCharaVisionActor = {}
 
 mainCharaVisionActor.name = "MaggyHelper/MainCharaVisionActor"
 mainCharaVisionActor.depth = 0
-mainCharaVisionActor.texture = "characters/MaggyHelper/mainchara_vision/down00"
+mainCharaVisionActor.texture = "characters/mainchara_vision/down00"
 mainCharaVisionActor.justification = {0.5, 1.0}
 
 mainCharaVisionActor.placements = {
@@ -126,10 +126,10 @@ mainCharaVisionActor.fieldInformation = {
 }
 
 local facingTextures = {
-    down = "characters/MaggyHelper/mainchara_vision/down00",
-    right = "characters/MaggyHelper/mainchara_vision/right00",
-    up = "characters/MaggyHelper/mainchara_vision/up00",
-    left = "characters/MaggyHelper/mainchara_vision/left00"
+    down = "characters/mainchara_vision/down00",
+    right = "characters/mainchara_vision/right00",
+    up = "characters/mainchara_vision/up00",
+    left = "characters/mainchara_vision/left00"
 }
 
 function mainCharaVisionActor.sprite(room, entity)

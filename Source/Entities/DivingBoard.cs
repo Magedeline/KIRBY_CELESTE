@@ -23,7 +23,7 @@ namespace Celeste.Entities
             // Validate that required textures exist before loading them to avoid runtime exceptions.
             if (boardTexture == null || baseTexture == null)
             {
-                throw new InvalidOperationException("Required diving board textures are missing for 'objects/MaggyHelper/divingBoard' or 'objects/divingBoard'.");
+                throw new InvalidOperationException("Required diving board textures are missing for 'objects/divingBoard'.");
             }
             
             Add(wiggler = Wiggler.Create(0.5f, 4f, delegate (float v)

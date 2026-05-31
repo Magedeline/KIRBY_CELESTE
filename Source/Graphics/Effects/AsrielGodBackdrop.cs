@@ -118,10 +118,10 @@ namespace Celeste.Effects
             // Load the perspective grid texture with null check
             try
             {
-                gridTexture = GFX.Game["bgs/maggy/20/asriel/bg00"];
+                gridTexture = GFX.Game["bgs/20/asriel/bg00"];
                 if (gridTexture == null)
                 {
-                    Logger.Log(LogLevel.Warn, "MaggyHelper/AsrielGodBackdrop", "Grid texture 'bgs/maggy/20/asriel/bg00' not found");
+                    Logger.Log(LogLevel.Warn, "MaggyHelper/AsrielGodBackdrop", "Grid texture 'bgs/20/asriel/bg00' not found");
                 }
             }
             catch (Exception ex)

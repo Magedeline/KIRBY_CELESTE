@@ -26,7 +26,7 @@ local siamoZeroFinalBoss = {}
 
 siamoZeroFinalBoss.name = "MaggyHelper/SiamoZeroFinalBoss"
 siamoZeroFinalBoss.depth = 0
-siamoZeroFinalBoss.texture = "characters/Maggy/DesoloZantas/els_true_final_boss/boss00"
+siamoZeroFinalBoss.texture = "characters/els_true_final_boss/boss00"
 siamoZeroFinalBoss.justification = {0.5, 1.0}
 siamoZeroFinalBoss.nodeVisibility = "always"
 

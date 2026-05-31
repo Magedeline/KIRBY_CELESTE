@@ -74,13 +74,13 @@ infernoMaddyGate.fieldOrder = {
 function infernoMaddyGate.sprite(room, entity)
     local sprites = {}
     local height = entity.height or 48
-    local texture = "objects/Maggy/DesoloZantas/door/templeDoor00"
+    local texture = "objects/door/templeDoor00"
     local spriteType = entity.sprite or "default"
 
     if spriteType == "mirror" then
-        texture = "objects/Maggy/DesoloZantas/door/templeDoorB00"
+        texture = "objects/door/templeDoorB00"
     elseif spriteType == "theo" then
-        texture = "objects/Maggy/DesoloZantas/door/templeDoorC00"
+        texture = "objects/door/templeDoorC00"
     end
 
     local sprite = drawableSprite.fromTexture(texture, entity)

@@ -1302,7 +1302,7 @@
       <Loop id="hug" path="hug" delay="0.08"/>
     </chara>
   
-    <maggy_mainchara_vision path="characters/MaggyHelper/mainchara_vision/" start="idle_down">
+    <maggy_mainchara_vision path="characters/mainchara_vision/" start="idle_down">
       <Justify x=".5" y="1" />
   
       <Loop id="idle" path="down" delay="0" frames="0" />
@@ -1570,7 +1570,7 @@
       <Anim id="kirby_death" path="combat/death_" delay="0.08" />
   </kirby_player_ext>
 
-  <maggy_badeline path="characters/MaggyHelper/badeline/">
+  <maggy_badeline path="characters/badeline/">
       <Justify x=".5" y="1" />
       
       <Loop id="idle" path="idle" delay="0.1" />
@@ -1644,7 +1644,7 @@
       </Metadata>
     </maggy_badeline>
 
-  <maggy_chara path="characters/MaggyHelper/chara/">
+  <maggy_chara path="characters/chara/">
       <Justify x=".5" y="1" />
       
       <Loop id="idle" path="idle" delay="0.1" />
@@ -2439,7 +2439,7 @@
       <Anim id="spawn" path="fragileRemix" delay="0.06" frames="6-12"/>
     </MaggyHelper_cloudFragileRemix>
 
-  <maggy_crushblock_face path="objects/MaggyHelper/crushblock/" start="idle">
+  <maggy_crushblock_face path="objects/crushblock/" start="idle">
         <Center/>
         <Loop id="idle" path="giant_block" frames="0" delay="0.08"/>
         <Anim id="hurt"  path="giant_block" frames="8-12" delay="0.08" goto="idle"/>
@@ -2461,7 +2461,7 @@
       <Anim id="blink" path="idle" frames="12-25" delay="0.08" goto="idle"/>
     </ralseiBoost>
 
-  <madelinesevensoulboost path="objects/MaggyHelper/madelinesevensoulboost/" start="idle">
+  <madelinesevensoulboost path="objects/madelinesevensoulboost/" start="idle">
       <Justify x="0.5" y="0.5"/>
       <Anim id="idle" path="idle" frames="0-15" delay="0.08" goto="idle:10,flash:2,blink"/>
       <Anim id="flash" path="idle" frames="0-6" delay="0.08" goto="idle"/>
@@ -2533,7 +2533,7 @@
       <Loop id="torielwalk" path="torielwalk" delay="0.2" />
     </toriel>
 
-  <maggy_flowey path="characters/MaggyHelper/flowey/" start="idle">
+  <maggy_flowey path="characters/flowey/" start="idle">
       <Justify x=".5" y="1" />
   
       <Loop id="idle" path="idle" delay="0.15" frames="0-3" />

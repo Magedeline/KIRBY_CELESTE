@@ -15,7 +15,7 @@ dialogNPC.placements = {
     {
         name = "normal",
         data = {
-            sprite = "characters/Maggy/DesoloZantas/Kglobal::Player/idle00",
+            sprite = "characters/Kglobal::Player/idle00",
             aiType = "None",
             hitboxXOffset = 0,
             hitboxYOffset = 0,
@@ -55,7 +55,7 @@ dialogNPC.placements = {
     {
         name = "theo_style", 
         data = {
-            sprite = "characters/Maggy/DesoloZantas/theo/idle00",
+            sprite = "characters/theo/idle00",
             aiType = "Wander",
             basicDialogID = "THEO_GREETING",
             XSpeed = 80.0,
@@ -67,7 +67,7 @@ dialogNPC.placements = {
     {
         name = "chara_style",
         data = {
-            sprite = "characters/Maggy/DesoloZantas/chara/idle00",
+            sprite = "characters/chara/idle00",
             aiType = "Chase Walk",
             basicDialogID = "CHARA_TAUNT", 
             XSpeed = 150.0,
@@ -114,7 +114,7 @@ dialogNPC.fieldInformation = {
 }
 
 function dialogNPC.sprite(room, entity)
-    local texture = entity.sprite or "characters/Maggy/DesoloZantas/Kglobal::Player/idle00"
+    local texture = entity.sprite or "characters/Kglobal::Player/idle00"
     local color = {0.2, 0.8, 0.2, 1.0}
     
     if entity.isHostile then

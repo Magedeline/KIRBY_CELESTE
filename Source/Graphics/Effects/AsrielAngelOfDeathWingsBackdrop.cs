@@ -49,7 +49,7 @@ namespace Celeste.Effects
         {
             try
             {
-                wingTexture = GFX.Game["decals/maggy/19_goodbye/hyperdreemurr_massive_wings"];
+                wingTexture = GFX.Game["decals/19_goodbye/hyperdreemurr_massive_wings"];
             }
             catch (Exception ex)
             {
@@ -59,7 +59,7 @@ namespace Celeste.Effects
 
             try
             {
-                bgTexture = GFX.Game["bgs/maggy/20/asriel/bg00"];
+                bgTexture = GFX.Game["bgs/20/asriel/bg00"];
             }
             catch (Exception ex)
             {

@@ -10,8 +10,8 @@ namespace Celeste.Entities
         private VirtualRenderTarget towerRenderTarget;
 
         // Model and texture paths
-        private const string model_path = @"C:\Program Files (x86)\Steam\steamapps\common\Celeste\Mods\deltaleste\Mountain\Maggy\Titan_Tower";
-        private const string texture_path = @"C:\Program Files (x86)\Steam\steamapps\common\Celeste\Mods\deltaleste\Graphics\Atlases\Mountain\Maggy\Titan_Tower";
+        private const string model_path = "Mountain/Titan_Tower";
+        private const string texture_path = "Mountain/Titan_Tower";
 
         // Tower parameters
         private const float tower_radius = 120f;
@@ -96,9 +96,9 @@ namespace Celeste.Entities
             {
                 // Attempt to load the tower texture from the specified path
                 // Note: In Celeste modding, textures are typically loaded through the atlas system
-                if (GFX.Game.HasAtlasSubtextures("Mountain/Maggy/Titan_Tower"))
+                if (GFX.Game.HasAtlasSubtextures("Mountain/Titan_Tower"))
                 {
-                    towerTexture = GFX.Game["Mountain/Maggy/Titan_Tower"];
+                    towerTexture = GFX.Game["Mountain/Titan_Tower"];
                     modelResourcesLoaded = true;
                 }
                 else

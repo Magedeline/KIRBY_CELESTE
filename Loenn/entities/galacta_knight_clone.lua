@@ -18,7 +18,7 @@ galactaKnightClone.placements = {
             dashSpeed = 340.0,
             playMusicOnStart = false,
             bossMusic = "event:/pusheen/music/lvl18/galacta_knight",
-            spritePath = "characters/els_true_final_boss/Maggy/DesoloZantas/siamo_zero_aeon_hero_fake/",
+            spritePath = "characters/els_true_final_boss/siamo_zero_aeon_hero_fake/",
             idleAnimationPath = "idle",
             moveAnimationPath = "move",
             chargeAnimationPath = "awaken",
@@ -96,7 +96,7 @@ galactaKnightClone.fieldOrder = {
 }
 
 local fallbackPreviewTextures = {
-    "characters/els_true_final_boss/Maggy/DesoloZantas/siamo_zero_aeon_hero_fake/idle00",
+    "characters/els_true_final_boss/siamo_zero_aeon_hero_fake/idle00",
     "objects/bosses/metaKnightBoss/idle00"
 }
 

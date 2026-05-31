@@ -74,7 +74,7 @@ function ancientSwitch.sprite(room, entity)
     
     return {
         {
-            texture = "objects/Maggy/DesoloZantas/temple/switch00",
+            texture = "objects/temple/switch00",
             x = entity.x,
             y = entity.y,
             color = color
