@@ -132,16 +132,16 @@ namespace Celeste.Triggers
         {
             if (level == null) return;
 
-            // Convert our enum to RainbowBlackholeBg.Strengths
-            var backdropStrength = (RainbowBlackholeBg.Strengths)Enum.Parse(
-                typeof(RainbowBlackholeBg.Strengths), 
+            // Convert our enum to RainbowBlackholeBG.Strengths
+            var backdropStrength = (RainbowBlackholeBG.Strengths)Enum.Parse(
+                typeof(RainbowBlackholeBG.Strengths), 
                 blackholeStrength.ToString()
             );
 
-            // Find and update all RainbowBlackholeBg instances
+            // Find and update all RainbowBlackholeBG instances
             foreach (var backdrop in level.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBg rainbowBg)
+                if (backdrop is RainbowBlackholeBG rainbowBg)
                 {
                     rainbowBg.NextStrength(level, backdropStrength);
                     rainbowBg.Visible = true;
@@ -150,7 +150,7 @@ namespace Celeste.Triggers
 
             foreach (var backdrop in level.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBg rainbowBg)
+                if (backdrop is RainbowBlackholeBG rainbowBg)
                 {
                     rainbowBg.NextStrength(level, backdropStrength);
                     rainbowBg.Visible = true;
@@ -213,7 +213,7 @@ namespace Celeste.Triggers
 
             foreach (Backdrop backdrop in scene.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBg rainbowBg)
+                if (backdrop is RainbowBlackholeBG rainbowBg)
                 {
                     rainbowBg.Visible = on;
                 }
@@ -221,7 +221,7 @@ namespace Celeste.Triggers
 
             foreach (Backdrop backdrop in scene.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBg rainbowBg)
+                if (backdrop is RainbowBlackholeBG rainbowBg)
                 {
                     rainbowBg.Visible = on;
                 }
@@ -235,7 +235,7 @@ namespace Celeste.Triggers
 
             foreach (Backdrop backdrop in scene.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBg rainbowBg)
+                if (backdrop is RainbowBlackholeBG rainbowBg)
                 {
                     rainbowBg.Alpha = max ? Math.Max(rainbowBg.Alpha, alpha) : alpha;
                 }
@@ -243,7 +243,7 @@ namespace Celeste.Triggers
 
             foreach (Backdrop backdrop in scene.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBg rainbowBg)
+                if (backdrop is RainbowBlackholeBG rainbowBg)
                 {
                     rainbowBg.Alpha = max ? Math.Max(rainbowBg.Alpha, alpha) : alpha;
                 }

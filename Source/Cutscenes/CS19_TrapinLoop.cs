@@ -5,28 +5,26 @@ using BirdNPC = Celeste.Entities.BirdNPC;
 
 namespace Celeste.Cutscenes
 {
-    public class Cs19TrapinLoop : CutsceneEntity
+    public class CS19_TrapinLoop : CutsceneEntity
     {
         // Existing fields
         private readonly global::Celeste.Player player;
-        private readonly CharaDummy chara;
+        private CharaDummy chara;
         private BirdNPC bird;
         private EventInstance snapshot;
         private Vector2 playerSpeed;
 
         // Additional entities for the cutscene
         private CharaDummy charaEntity;
-        private CustomCharaBoost charabooster;
+        private CharaBoost charabooster;
         private Npc19MaggyLoop magolorEntity;
         private TimeRateModifier timeRateModifier;
 
         // Constructor implementation
-        public Cs19TrapinLoop(global::Celeste.Player sourceTrapinLoop, CharaDummy charaDummy)
+        public CS19_TrapinLoop(global::Celeste.Player sourceTrapinLoop)
         {
             // Initialize the player with the provided Player object
             player = sourceTrapinLoop;
-            // Initialize other fields where necessary
-            chara = charaDummy; // Assign the provided CharaDummy instance
             bird = null; // BirdNPC may also appear depending on the logic inside cutscene
             snapshot = null; // May need initialization later if FMOD Events are used
 
@@ -49,7 +47,7 @@ namespace Celeste.Cutscenes
         // extracted routine from the old IEnumerator OnBegin
         private IEnumerator CutsceneRoutine(Level level)
         {
-            var boost = Scene.Entities.FindFirst<CustomCharaBoost>();
+            var boost = Scene.Entities.FindFirst<CharaBoost>();
             if (boost != null)
                 boost.Active = boost.Visible = boost.Collidable = false;
 
@@ -311,7 +309,7 @@ namespace Celeste.Cutscenes
             player.ForceCameraUpdate = false;
             player.StateMachine.State = Player.StDummy; // Return to normal state
             player.StateMachine.Locked = false;
-            var first = Scene.Entities.FindFirst<CustomCharaBoost>();
+            var first = Scene.Entities.FindFirst<CharaBoost>();
             if (first != null)
                 first.Active = first.Visible = first.Collidable = true;
             chara?.RemoveSelf();

@@ -2,18 +2,17 @@ using Celeste.Entities;
 using CutsceneNode = Celeste.Entities.CutsceneNode;
 using FMOD.Studio;
 using Facings = Celeste.Facings;
-using FlingBirdIntroMod = Celeste.Entities.FlingBirdIntroMod;
-using FlingBirdIntro = Celeste.Entities.FlingBirdIntroMod;
+using FlingBirdIntro = Celeste.Entities.FlingBirdIntro;
 using BirdNPC = Celeste.Entities.BirdNPC;
 using IL.Celeste;
 
-namespace Celeste;
+namespace Celeste.Cutscenes;
 
 public class CS19_KillTheBird : CutsceneEntity
 {
-    private Player player;
+    private global::Celeste.Player player;
 
-    private FlingBirdIntroMod flingBird;
+    private FlingBirdIntro flingBird;
 
     private CharaDummy chara;
 
@@ -23,22 +22,26 @@ public class CS19_KillTheBird : CutsceneEntity
 
     private EventInstance snapshot;
 
-    public CS19_KillTheBird(Player player, FlingBirdIntroMod flingBird)
+    public CS19_KillTheBird(global::Celeste.Player player)
     {
         this.player = player;
-        this.flingBird = flingBird;
-        birdWaitPosition = flingBird.BirdEndPosition;
     }
 
     public override void OnBegin(Level level)
     {
+        // Find the FlingBirdIntroMod in the scene
+        flingBird = Scene.Entities.FindFirst<FlingBirdIntro>();
+        if (flingBird != null)
+        {
+            birdWaitPosition = flingBird.BirdEndPosition;
+        }
         Add(new Coroutine(Cutscene(level)));
     }
 
     private IEnumerator Cutscene(Level level)
     {
         Audio.SetMusic("event:/pusheen/extra_content/music/lvl19/cinematic/bird_crash_second");
-        CustomCharaBoost boost = Scene.Entities.FindFirst<CustomCharaBoost>();
+        CharaBoost boost = Scene.Entities.FindFirst<CharaBoost>();
         if (boost != null)
         {
             bool visible = false;
@@ -267,7 +270,7 @@ public class CS19_KillTheBird : CutsceneEntity
         player.DummyAutoAnimate = true;
         player.ForceCameraUpdate = false;
         player.StateMachine.State = Player.StNormal;
-        CustomCharaBoost charaBoost = base.Scene.Entities.FindFirst<CustomCharaBoost>();
+        CharaBoost charaBoost = base.Scene.Entities.FindFirst<CharaBoost>();
         if (charaBoost != null)
         {
             charaBoost.Active = (charaBoost.Visible = (charaBoost.Collidable = true));
@@ -313,9 +316,9 @@ public class CS19_KillTheBird : CutsceneEntity
         base.SceneEnd(scene);
     }
 
-    public static void HandlePostCutsceneSpawn(FlingBirdIntroMod flingBird, Level level)
+    public static void HandlePostCutsceneSpawn(global::Celeste.Entities.FlingBirdIntro flingBird, Level level)
     {
-        CustomCharaBoost charaBoost = level.Entities.FindFirst<CustomCharaBoost>();
+        CharaBoost charaBoost = level.Entities.FindFirst<CharaBoost>();
         if (charaBoost != null)
         {
             charaBoost.Active = (charaBoost.Visible = (charaBoost.Collidable = true));

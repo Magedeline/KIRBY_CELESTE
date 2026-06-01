@@ -1,48 +1,49 @@
+using System;
+using System.Collections;
 using System.Runtime.CompilerServices;
-using Celeste.Entities;
 using FMOD.Studio;
-using Strawberry = global::Celeste.Strawberry;
-using BirdNPC = Celeste.Entities.BirdNPC;
+using Microsoft.Xna.Framework;
+using Monocle;
+using MonoMod;
+using On.Celeste;
 
-namespace Celeste.Cutscenes;
+namespace Celeste;
 
 public class CS19_FinalLaunch : CutsceneEntity
 {
-    private global::Celeste.Player player;
-    private CustomCharaBoost boost;
+    private Player player;
+
+    private CharaBoost boost;
+
     private BirdNPC bird;
+
     private float fadeToWhite;
+
     private Vector2 birdScreenPosition;
-    private AscendManagerBeyond.GiygasStreaks streaks;
-    private AscendManagerBeyond.VoidBackground voidBg;
+
+    private AscendManager.Streaks streaks;
+
     private Vector2 cameraWaveOffset;
+
     private Vector2 cameraOffset;
+
     private float timer;
+
     private Coroutine wave;
+
     private bool hasGolden;
+
     private bool hasPinkPlatinum;
+
     private bool sayDialog;
-    private TimeRateModifier timeRateModifier;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public CS19_FinalLaunch(global::Celeste.Player player, CustomCharaBoost boost, bool sayDialog = true) : base(false, false)
+    public CS19_FinalLaunch(Player player, CharaBoost boost, bool sayDialog = true)
+        : base(fadeInOnSkip: false)
     {
         this.player = player;
-        this.boost = null;
+        this.boost = boost;
         this.sayDialog = sayDialog;
-        Add(timeRateModifier = new TimeRateModifier(1f, false));
-        base.Depth = 10010;
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public CS19_FinalLaunch(global::Celeste.Player player, CustomCharaBoost Boost, bool hasGoldenStrawberry = false, bool hasPinkPlatinumBerry = false)
-    {
-        this.player = player;
-        this.boost = Boost;
-        this.sayDialog = !hasGoldenStrawberry && !hasPinkPlatinumBerry;
-        this.hasGolden = hasGoldenStrawberry;
-        this.hasPinkPlatinum = hasPinkPlatinumBerry;
-        Add(timeRateModifier = new TimeRateModifier(1f, false));
         base.Depth = 10010;
     }
 
@@ -56,25 +57,19 @@ public class CS19_FinalLaunch : CutsceneEntity
             if (follower.Entity is Strawberry { Golden: not false })
             {
                 hasGolden = true;
-                break;
             }
-            if (follower.Entity is Entities.PinkPlatinumBerry)
+            else if (follower.Entity is Entities.PinkPlatinumBerry)
             {
                 hasPinkPlatinum = true;
-                break;
             }
         }
         Add(new Coroutine(Cutscene()));
     }
-
     private IEnumerator Cutscene()
     {
-        timeRateModifier.ResetTimeRateMultiplier();
-        if (boost != null)
-        {
-            boost.Active = false;
-        }
-        yield return true;
+        Engine.TimeRate = 1f;
+        boost.Active = false;
+        yield return null;
         if (sayDialog)
         {
             yield return Textbox.Say("CH19_CHARA_LAST_BOOST");
@@ -84,33 +79,25 @@ public class CS19_FinalLaunch : CutsceneEntity
             yield return 0.152f;
         }
         cameraOffset = new Vector2(0f, -20f);
-        if (boost != null)
-        {
-            boost.Active = true;
-        }
+        boost.Active = true;
         player.EnforceLevelBounds = false;
         yield return null;
-
-        RainbowBlackholeBg rainbowBlackholeBG = Level.Background.Get<RainbowBlackholeBg>();
-
-        if (rainbowBlackholeBG != null)
+        RainbowBlackholeBG blackholeBG = Level.Background.Get<RainbowBlackholeBG>();
+        if (blackholeBG != null)
         {
-            rainbowBlackholeBG.Direction = -2.5f;
-            rainbowBlackholeBG.SnapStrength(Level, RainbowBlackholeBg.Strengths.High);
-            rainbowBlackholeBG.CenterOffset.Y = 100f;
-            rainbowBlackholeBG.OffsetOffset.Y = -50f;
+            blackholeBG.Direction = -2.5f;
+            blackholeBG.SnapStrength(Level, RainbowBlackholeBG.Strengths.High);
+            blackholeBG.CenterOffset.Y = 100f;
+            blackholeBG.OffsetOffset.Y = -50f;
         }
-
         Add(wave = new Coroutine(WaveCamera()));
         Add(new Coroutine(BirdRoutine(0.8f)));
-        Level.Add(streaks = new AscendManagerBeyond.GiygasStreaks(null));
-        Level.Add(voidBg = new AscendManagerBeyond.VoidBackground(null));
+        Level.Add(streaks = new AscendManager.Streaks(null));
         float p;
         for (p = 0f; p < 1f; p += Engine.DeltaTime / 12f)
         {
             fadeToWhite = p;
             streaks.Alpha = p;
-            voidBg.Alpha = p;
             foreach (Parallax item in Level.Foreground.GetEach<Parallax>("rainbowblackhole"))
             {
                 item.FadeAlphaMultiplier = 1f - p;
@@ -128,7 +115,7 @@ public class CS19_FinalLaunch : CutsceneEntity
         ScreenWipe.WipeColor = Color.White;
         if (!hasGolden)
         {
-            timeRateModifier.ResetTimeRateMultiplier();
+            Audio.SetMusic("event:/");
         }
         p = cameraOffset.Y;
         int to = 180;
@@ -147,58 +134,46 @@ public class CS19_FinalLaunch : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void OnEnd(Level level)
     {
-        // Handle FMOD cleanup for CustomCharaBoost
-        EventInstance sfxToCleanup = null;
-        
-        if (boost != null && boost.Ch19FinalBoostSfx != null)
+        if (WasSkipped && boost != null && boost.Ch9FinalBoostSfx != null)
         {
-            sfxToCleanup = boost.Ch19FinalBoostSfx;
+            boost.Ch9FinalBoostSfx.stop(STOP_MODE.ALLOWFADEOUT);
+            boost.Ch9FinalBoostSfx.release();
         }
-        
-        if (WasSkipped && sfxToCleanup != null)
+        string nextLevelName = "end-chapter20";
+        Player.IntroTypes nextLevelIntro = Player.IntroTypes.Transition;
+        if (hasPinkPlatinum)
         {
-            try
-            {
-                sfxToCleanup.stop(STOP_MODE.ALLOWFADEOUT);
-                sfxToCleanup.release();
-            }
-            catch (System.Exception ex)
-            {
-                Logger.Log(LogLevel.Warn, "DesoloZantas", $"FMOD cleanup error (non-critical): {ex.Message}");
-            }
+            nextLevelName = "end-chapter20";
         }
-
+        if (hasGolden)
+        {
+            nextLevelName = "end-golden";
+            nextLevelIntro = Player.IntroTypes.Jump;
+        }
+        level.CompleteArea(true, true, true);
         player.Active = true;
         player.Speed = Vector2.Zero;
         player.EnforceLevelBounds = true;
-        player.StateMachine.State = Player.StNormal;
+        player.StateMachine.State = 0;
         player.DummyFriction = true;
         player.DummyGravity = true;
         player.DummyAutoAnimate = true;
         player.ForceCameraUpdate = false;
-        timeRateModifier.ResetTimeRateMultiplier();
+        Engine.TimeRate = 1f;
         Level.OnEndOfFrame += [MethodImpl(MethodImplOptions.NoInlining)] () =>
         {
-            if (Level.Wipe != null)
-            {
-                Level.Wipe.Cancel();
-            }
-            
+            Level.TeleportTo(player, nextLevelName, nextLevelIntro);
             if (hasGolden)
             {
+                if (Level.Wipe != null)
+                {
+                    Level.Wipe.Cancel();
+                }
                 Level.SnapColorGrade("golden");
+                new FadeWipe(level, wipeIn: true).Duration = 2f;
+                ScreenWipe.WipeColor = Color.White;
+                level.CompleteArea(true, true, true);
             }
-            else if (hasPinkPlatinum)
-            {
-                Level.SnapColorGrade("pinkgameboy");
-            }
-            
-            new FadeWipe(level, wipeIn: true).Duration = 2f;
-            ScreenWipe.WipeColor = Color.White;
-            
-            // Complete the area - this is the end of Chapter 19 before the final boss in Ch20
-            // Use spotlightWipe=true for golden/platinum berries, otherwise normal completion
-            level.CompleteArea(spotlightWipe: hasGolden || hasPinkPlatinum, skipScreenWipe: false, skipCompleteScreen: false);
         };
     }
 
@@ -275,10 +250,3 @@ public class CS19_FinalLaunch : CutsceneEntity
         Draw.Rect(camera.X - 1f, camera.Y - 1f, 322f, 322f, Color.White * fadeToWhite);
     }
 }
-
-
-
-
-
-
-

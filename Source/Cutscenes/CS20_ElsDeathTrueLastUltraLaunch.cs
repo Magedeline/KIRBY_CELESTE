@@ -1,16 +1,15 @@
-using Celeste.Effects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using Celeste.Effects;
 using Celeste.Entities;
 using Celeste.Entities.SoulBoosts;
-
 // Kirby Heaven Ascend Manager for the final ascension
 using Microsoft.Xna.Framework;
 using Monocle;
 using BirdNPC = Celeste.Entities.BirdNPC;
-using System.Linq;
 
 #pragma warning disable CS0618 // Engine.TimeRate is obsolete but needed for vanilla behavior
 
@@ -115,8 +114,6 @@ namespace Celeste.Cutscenes
             if (boost != null) boost.Active = false;
             yield return null;
 
-            // Find Els and the live backdrop used by the room
-            els = Level.Entities.FindFirst<SiamoZeroFinalBoss>();
             backdrop = Level.Background.Get<ElsTrueFinalBackdrop>();
 
             if (!string.IsNullOrEmpty(dialog))

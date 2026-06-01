@@ -60,9 +60,14 @@ public class CS19_HubSecondIntro : CutsceneEntity
 
     private List<EventInstance> sfxs = new List<EventInstance>();
 
-    public CS19_HubSecondIntro(Scene scene, global::Celeste.Player player)
+    public CS19_HubSecondIntro(global::Celeste.Player player)
     {
         this.player = player;
+    }
+    
+    public override void Awake(Scene scene)
+    {
+        base.Awake(scene);
         spawn = (scene as Level).GetSpawnPoint(player.Position);
         locks = scene.Entities.FindAll<LockBlock>();
         locks.Sort((LockBlock a, LockBlock b) => (int)(a.Y - b.Y));

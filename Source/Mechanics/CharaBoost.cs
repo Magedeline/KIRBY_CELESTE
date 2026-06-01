@@ -1,37 +1,24 @@
-using Celeste.Cutscenes;
+using System;
+using System.Collections;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using FMOD.Studio;
+using Microsoft.Xna.Framework;
+using Monocle;
+using MonoMod;
+using Celeste.Entities;
+using Celeste.Cutscenes;
 
-namespace Celeste.Entities;
-[CustomEntity("MaggyHelper/CharaBoost")]
-[HotReloadable]
-public class CustomCharaBoost : Entity
+namespace Celeste;
+
+[CustomEntity(ids: "MaggyHelper/CharaBoost")]
+[Tracked]
+
+public class CharaBoost : Entity
 {
-    public static ParticleType P_Ambience = new ParticleType
-    {
-        Source = GFX.Game["particles/shard"],
-        Color = Color.Red,
-        Color2 = Color.Lerp(Color.Red, Color.White, 0.5f),
-        ColorMode = ParticleType.ColorModes.Choose,
-        FadeMode = ParticleType.FadeModes.Late,
-        LifeMin = 0.6f,
-        LifeMax = 1.2f,
-        Size = 1f,
-        SpeedMin = 2f,
-        SpeedMax = 16f,
-        DirectionRange = (float)Math.PI * 2f
-    };
+    public static ParticleType P_Ambience;
 
-    public static ParticleType P_Move = new ParticleType
-    {
-        Source = GFX.Game["particles/shard"],
-        Color = Color.Red,
-        DirectionRange = 0.6981317f,
-        SpeedMin = 10f,
-        SpeedMax = 20f,
-        SpeedMultiplier = 0.2f,
-        LifeMin = 0.6f,
-        LifeMax = 1.2f
-    };
+    public static ParticleType P_Move;
 
     private const float MoveSpeed = 320f;
 
@@ -51,9 +38,7 @@ public class CustomCharaBoost : Entity
 
     private bool finalCh19GoldenBoost;
 
-    private bool finalCh19PPBoost;
-
-    private string finalCh19Dialog;
+    private bool finalCh9Dialog;
 
     private Vector2[] nodes;
 
@@ -61,15 +46,14 @@ public class CustomCharaBoost : Entity
 
     private bool travelling;
 
-    private global::Celeste.Player holding;
+    private Player holding;
 
     private SoundSource relocateSfx;
 
-    private readonly TimeRateModifier timeRateModifier;
+    public FMOD.Studio.EventInstance Ch9FinalBoostSfx;
 
-    public FMOD.Studio.EventInstance Ch19FinalBoostSfx;
-
-    public CustomCharaBoost(Vector2[] nodes, bool lockCamera, bool canSkip = false, bool finalCh19Boost = false, bool finalCh19GoldenBoost = false, bool finalCh19PPBoost = false, string finalCh19Dialog = null)
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public CharaBoost(Vector2[] nodes, bool lockCamera, bool canSkip = false, bool finalCh19Boost = false, bool finalCh19GoldenBoost = false, bool finalCh9Dialog = false)
         : base(nodes[0])
     {
         base.Depth = -1000000;
@@ -77,17 +61,16 @@ public class CustomCharaBoost : Entity
         this.canSkip = canSkip;
         this.finalCh19Boost = finalCh19Boost;
         this.finalCh19GoldenBoost = finalCh19GoldenBoost;
-        this.finalCh19PPBoost = finalCh19PPBoost;
-        this.finalCh19Dialog = finalCh19Dialog;
+        this.finalCh9Dialog = finalCh9Dialog;
         base.Collider = new Circle(16f);
         Add(new PlayerCollider(OnPlayer));
-        Add(sprite = GFX.SpriteBank.Create("charaboost"));
+        Add(sprite = GFX.SpriteBank.Create("charaBoost"));
         Add(stretch = new Image(GFX.Game["objects/charaboost/stretch"]));
         stretch.Visible = false;
         stretch.CenterOrigin();
         Add(light = new VertexLight(Color.White, 0.7f, 12, 20));
         Add(bloom = new BloomPoint(0.5f, 12f));
-        Add(wiggler = Wiggler.Create(0.4f, 3f, (float f) =>
+        Add(wiggler = Wiggler.Create(0.4f, 3f, [MethodImpl(MethodImplOptions.NoInlining)] (float f) =>
         {
             sprite.Scale = Vector2.One * (1f + wiggler.Value * 0.4f);
         }));
@@ -95,23 +78,16 @@ public class CustomCharaBoost : Entity
         {
             Add(new CameraLocker(Level.CameraLockModes.BoostSequence, 0f, 160f));
         }
-        Add(timeRateModifier = new TimeRateModifier(1f, false));
         Add(relocateSfx = new SoundSource());
     }
 
-    public CustomCharaBoost(EntityData data, Vector2 offset)
-        : this(
-            data.NodesWithPosition(offset),
-            data.Bool("lockCamera", defaultValue: true),
-            data.Bool("canSkip", defaultValue: false),
-            data.Bool("finalCh19Boost", defaultValue: false),
-            data.Bool("finalCh19GoldenBoost", defaultValue: false),
-            data.Bool("finalCh19PPBoost", defaultValue: false),
-            data.Attr("finalCh19Dialog", "") is string d && d.Length > 0 ? d : null
-        )
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public CharaBoost(EntityData data, Vector2 offset)
+        : this(data.NodesWithPosition(offset), data.Bool("lockCamera", defaultValue: true), data.Bool("canSkip"), data.Bool("finalCh19Boost"), data.Bool("finalCh19GoldenBoost"), data.Bool("finalCh9Dialog"))
     {
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public override void Awake(Scene scene)
     {
         base.Awake(scene);
@@ -121,12 +97,14 @@ public class CustomCharaBoost : Entity
         }
     }
 
-    private void OnPlayer(global::Celeste.Player player)
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void OnPlayer(Player player)
     {
         Add(new Coroutine(BoostRoutine(player)));
     }
 
-    private IEnumerator BoostRoutine(global::Celeste.Player player)
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private IEnumerator BoostRoutine(Player player)
     {
         holding = player;
         travelling = true;
@@ -137,42 +115,27 @@ public class CustomCharaBoost : Entity
         bool finalBoost = nodeIndex >= nodes.Length;
         Level level = Scene as Level;
         bool endLevel;
-        if (finalBoost && finalCh19GoldenBoost && finalCh19PPBoost)
+        if (finalBoost && finalCh19GoldenBoost)
         {
             endLevel = true;
         }
         else
         {
-            bool hasRegularStrawberry = false;
+            bool flag = false;
             foreach (Follower follower in player.Leader.Followers)
             {
-                if (follower.Entity is Strawberry { Golden: false })
+                if (follower.Entity is Strawberry { Golden: not false })
                 {
-                    hasRegularStrawberry = true;
+                    flag = true;
                     break;
                 }
             }
-            bool hasPinkPlatinumBerry = false;
-            foreach (Follower follower in player.Leader.Followers)
-            {
-                if (follower.Entity is PinkPlatinumBerry)
-                {
-                    hasPinkPlatinumBerry = true;
-                    break;
-                }
-            }
-            endLevel = finalBoost
-                && (!finalCh19Boost || !hasRegularStrawberry)
-                && (!finalCh19PPBoost || !hasPinkPlatinumBerry);
+            endLevel = finalBoost && finalCh19Boost && !flag;
         }
         Stopwatch sw = new Stopwatch();
         sw.Start();
         if (finalCh19Boost)
         {
-            if (!string.IsNullOrEmpty(finalCh19Dialog))
-            {
-                level.Session.SetFlag(finalCh19Dialog, true);
-            }
             Audio.Play("event:/pusheen/extra_content/char/chara/booster_finalfinal_part1", Position);
         }
         else if (!finalBoost)
@@ -187,12 +150,12 @@ public class CustomCharaBoost : Entity
         {
             player.Drop();
         }
-        player.StateMachine.State = Player.StDummy;
+        player.StateMachine.State = 11;
         player.DummyAutoAnimate = false;
         player.DummyGravity = false;
-        if (player.Inventory.Dashes > 1)
+        if (player.Inventory.Dashes > 99)
         {
-            player.Dashes = 1;
+            player.Dashes = 99;
         }
         else
         {
@@ -205,13 +168,10 @@ public class CustomCharaBoost : Entity
         {
             num = -1;
         }
-        CharaDummy chara = new CharaDummy(Position, finalCh19Dialog);
+        CharaDummy chara = new CharaDummy(Position);
         Scene.Add(chara);
         player.Facing = (Facings)(-num);
-        if (chara.Sprite != null)
-        {
-            chara.Sprite.Scale.X = num;
-        }
+        chara.Sprite.Scale.X = num;
         Vector2 playerFrom = player.Position;
         Vector2 playerTo = Position + new Vector2(num * 4, -3f);
         Vector2 charaFrom = chara.Position;
@@ -234,16 +194,13 @@ public class CustomCharaBoost : Entity
         {
             Vector2 screenSpaceFocusPoint = new Vector2(Calc.Clamp(player.X - level.Camera.X, 120f, 200f), Calc.Clamp(player.Y - level.Camera.Y, 60f, 120f));
             Add(new Coroutine(level.ZoomTo(screenSpaceFocusPoint, 1.5f, 0.18f)));
-            timeRateModifier.SetTimeRateMultiplier(0.5f);
+            Engine.TimeRate = 0.5f;
         }
         else
         {
             Audio.Play("event:/char/badeline/booster_throw", Position);
         }
-        if (chara.Sprite != null)
-        {
-            chara.Sprite.Play("boost");
-        }
+        chara.Sprite.Play("boost");
         yield return 0.1f;
         if (!player.Dead)
         {
@@ -257,15 +214,15 @@ public class CustomCharaBoost : Entity
         }
         if (finalBoost && finalCh19Boost)
         {
-            Scene.Add(new CS19_FinalLaunch(player, this, finalCh19GoldenBoost, finalCh19PPBoost));
+            Scene.Add(new CS19_FinalLaunch(player, this, finalCh9Dialog));
             player.Active = false;
             chara.Active = false;
             Active = false;
-            yield return true;
+            yield return null;
             player.Active = true;
             chara.Active = true;
         }
-        Add(Alarm.Create(Alarm.AlarmMode.Oneshot, () =>
+        Add(Alarm.Create(Alarm.AlarmMode.Oneshot, [MethodImpl(MethodImplOptions.NoInlining)] () =>
         {
             if (player.Dashes < player.Inventory.Dashes)
             {
@@ -286,18 +243,18 @@ public class CustomCharaBoost : Entity
             stretch.Visible = true;
             stretch.Rotation = (to - from).Angle();
             Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.SineInOut, val, start: true);
-            tween.OnUpdate = (Tween t) =>
+            tween.OnUpdate = [MethodImpl(MethodImplOptions.NoInlining)] (Tween t) =>
             {
                 Position = Vector2.Lerp(from, to, t.Eased);
                 stretch.Scale.X = 1f + Calc.YoYo(t.Eased) * 2f;
                 stretch.Scale.Y = 1f - Calc.YoYo(t.Eased) * 0.75f;
                 if (t.Eased < 0.9f && Scene.OnInterval(0.03f))
                 {
-                    TrailManager.Add(this, global::Celeste.Player.TwoDashesHairColor, 0.5f, frozenUpdate: false, useRawDeltaTime: false);
+                    TrailManager.Add(this, Player.TwoDashesHairColor, 0.5f, false, false);
                     level.ParticlesFG.Emit(P_Move, 1, Center, Vector2.One * 4f);
                 }
             };
-            tween.OnComplete = (Tween t) =>
+            tween.OnComplete = [MethodImpl(MethodImplOptions.NoInlining)] (Tween t) =>
             {
                 if (X >= (float)level.Bounds.Right)
                 {
@@ -322,7 +279,7 @@ public class CustomCharaBoost : Entity
         {
             if (finalCh19Boost)
             {
-                Ch19FinalBoostSfx = Audio.Play("event:/pusheen/extra_content/char/chara/booster_finalfinal_part2", Position);
+                Ch9FinalBoostSfx = Audio.Play("event:/pusheen/extra_content/char/chara/booster_finalfinal_part2", Position);
             }
             Engine.FreezeTimer = 0.1f;
             yield return null;
@@ -336,11 +293,12 @@ public class CustomCharaBoost : Entity
             level.Displacement.AddBurst(Center, 0.6f, 8f, 64f, 0.5f);
             level.ResetZoom();
             player.SummitLaunch(X);
-            timeRateModifier.ResetTimeRateMultiplier();
+            Engine.TimeRate = 1f;
             Finish();
         }
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     private void Skip()
     {
         travelling = true;
@@ -354,18 +312,18 @@ public class CustomCharaBoost : Entity
         stretch.Visible = true;
         stretch.Rotation = (to - from).Angle();
         Tween tween = Tween.Create(Tween.TweenMode.Oneshot, Ease.SineInOut, val, start: true);
-        tween.OnUpdate = (Tween t) =>
+        tween.OnUpdate = [MethodImpl(MethodImplOptions.NoInlining)] (Tween t) =>
         {
             Position = Vector2.Lerp(from, to, t.Eased);
             stretch.Scale.X = 1f + Calc.YoYo(t.Eased) * 2f;
             stretch.Scale.Y = 1f - Calc.YoYo(t.Eased) * 0.75f;
             if (t.Eased < 0.9f && Scene.OnInterval(0.03f))
             {
-                TrailManager.Add(this, global::Celeste.Player.TwoDashesHairColor, 0.5f, frozenUpdate: false, useRawDeltaTime: false);
+                TrailManager.Add(this, Player.TwoDashesHairColor, 0.5f, false, false);
                 level.ParticlesFG.Emit(P_Move, 1, Center, Vector2.One * 4f);
             }
         };
-        tween.OnComplete = (Tween t) =>
+        tween.OnComplete = [MethodImpl(MethodImplOptions.NoInlining)] (Tween t) =>
         {
             if (X >= (float)level.Bounds.Right)
             {
@@ -385,6 +343,7 @@ public class CustomCharaBoost : Entity
         level.Displacement.AddBurst(base.Center, 0.4f, 8f, 32f, 0.5f);
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public void Wiggle()
     {
         wiggler.Start();
@@ -392,6 +351,7 @@ public class CustomCharaBoost : Entity
         Audio.Play("event:/game/general/crystalheart_pulse", Position);
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public override void Update()
     {
         if (sprite.Visible && base.Scene.OnInterval(0.05f))
@@ -404,7 +364,7 @@ public class CustomCharaBoost : Entity
         }
         if (!travelling)
         {
-            global::Celeste.Player entity = base.Scene.Tracker.GetEntity<global::Celeste.Player>();
+            Player entity = base.Scene.Tracker.GetEntity<Player>();
             if (entity != null)
             {
                 float num = Calc.ClampedMap((entity.Center - Position).Length(), 16f, 64f, 12f, 0f);
@@ -420,16 +380,13 @@ public class CustomCharaBoost : Entity
         base.Update();
     }
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
     private void Finish()
     {
         SceneAs<Level>().Displacement.AddBurst(base.Center, 0.5f, 24f, 96f, 0.4f);
-        SceneAs<Level>().Particles.Emit(CharaChaser.P_Vanish, 12, base.Center, Vector2.One * 6f);
+        SceneAs<Level>().Particles.Emit(BadelineOldsite.P_Vanish, 12, base.Center, Vector2.One * 6f);
         SceneAs<Level>().CameraLockMode = Level.CameraLockModes.None;
         SceneAs<Level>().CameraOffset = new Vector2(0f, -16f);
         RemoveSelf();
     }
 }
-
-
-
-

@@ -19,6 +19,8 @@ public class NPC09X_Madeline_and_Badeline_Ending : NPC
 
     private bool ch15EasterEgg;
 
+    private string flag;
+
     private Sprite badelineSprite;
 
     private Vector2 badelineOffset = new Vector2(24f, -20f); // Float to the right and above Madeline
@@ -42,13 +44,14 @@ public class NPC09X_Madeline_and_Badeline_Ending : NPC
         Maxspeed = 64f;
         
         // Badeline sprite - separate from Madeline
-        badelineSprite = GFX.SpriteBank.Create("maggy_badeline");
-        badelineSprite.Play("idle");
+        badelineSprite = GFX.SpriteBank.Create("badeline");
+        badelineSprite.Play("fallslow");
         badelineSprite.Scale.X = -1f;
         Add(badelineSprite);
         
         Add(talker = new TalkComponent(new Rectangle(-20, -8, 40, 8), new Vector2(0f, -24f), OnTalk));
         this.ch15EasterEgg = ch15EasterEgg;
+        flag = data.Attr("flag", "cs09x_maddy_and_baddy");
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -96,6 +99,7 @@ public class NPC09X_Madeline_and_Badeline_Ending : NPC
             Dialog.Language.Dialog["CH15_MADELINE_AND_BADELINE_ENDING_EASTEREGG"] = _GetDebugModeDialog("{portrait madeline normal} You've unlocked Debug Mode!");
             yield return Textbox.Say("CH15_MADELINE_AND_BADELINE_ENDING_EASTEREGG");
             talker.Enabled = false;
+            SetFlag();
         }
         else if (conversation == 0)
         {
@@ -109,6 +113,7 @@ public class NPC09X_Madeline_and_Badeline_Ending : NPC
             yield return Level.ZoomTo(Position - Level.Camera.Position + new Vector2(0f, -32f), 2f, 0.5f);
             yield return Textbox.Say("CH15_MADELINE_AND_BADELINE_ENDING_B");
             talker.Enabled = false;
+            SetFlag();
         }
         yield return Level.ZoomBack(0.5f);
         Level.EndCutscene();
@@ -139,6 +144,14 @@ public class NPC09X_Madeline_and_Badeline_Ending : NPC
             return Dialog.Get("CH15_MADELINE_AND_BADELINE_ENDING_EASTEREGG");
         }
         return vanillaDialog;
+    }
+
+    private void SetFlag()
+    {
+        if (!string.IsNullOrEmpty(flag))
+        {
+            (Scene as Level).Session.SetFlag(flag);
+        }
     }
 }
 

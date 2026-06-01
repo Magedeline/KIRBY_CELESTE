@@ -6,17 +6,17 @@ using FMOD.Studio;
 using IL.Celeste;
 using Microsoft.Xna.Framework;
 using Monocle;
-using FlingBirdIntroMod = Celeste.Entities.FlingBirdIntroMod;
+using FlingBirdIntro = Celeste.Entities.FlingBirdIntro;
 
-namespace Celeste;
+namespace Celeste.Cutscenes;
 
 public class CS19_MissTheBird : CutsceneEntity
 {
     public const string Flag = "MissTheBird";
 
-    private Player player;
+    private global::Celeste.Player player;
 
-    private FlingBirdIntroMod flingBird;
+    private FlingBirdIntro flingBird;
 
     private BirdNPC bird;
 
@@ -25,10 +25,10 @@ public class CS19_MissTheBird : CutsceneEntity
     private EventInstance crashMusicSfx;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public CS19_MissTheBird(Player player, FlingBirdIntroMod flingBird)
+    public CS19_MissTheBird(global::Celeste.Player player)
     {
         this.player = player;
-        this.flingBird = flingBird;
+        // Find the FlingBirdIntroMod in the scene
         Add(new LevelEndingHook(delegate
         {
             Audio.Stop(crashMusicSfx);
@@ -38,6 +38,8 @@ public class CS19_MissTheBird : CutsceneEntity
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void OnBegin(Level level)
     {
+        // Find the FlingBirdIntroMod in the scene
+        flingBird = Scene.Entities.FindFirst<FlingBirdIntro>();
         Add(new Coroutine(Cutscene(level)));
     }
 
@@ -46,7 +48,7 @@ public class CS19_MissTheBird : CutsceneEntity
     {
         Audio.SetMusicParam("bird_grab", 1f);
         crashMusicSfx = Audio.Play("event:/pusheen/extra_content/music/lvl19/cinematic/bird_crash_first");
-        yield return flingBird.DoGrabbingRoutine(player);
+        yield return flingBird?.DoGrabbingRoutine(player);
         bird = new BirdNPC(flingBird.Position, BirdNPC.Modes.None);
         level.Add(bird);
         flingBird.RemoveSelf();
@@ -159,7 +161,7 @@ public class CS19_MissTheBird : CutsceneEntity
     private void StartMusic()
     {
         Level.Session.Audio.Music.Event = "event:/pusheen/extra_content/music/lvl19/part03";
-        Level.Session.Audio.Ambience.Event = "event:/pusheen/extra_content/env/19_vortex";
+        Level.Session.Audio.Ambience.Event = "event:/pusheen/extra_content/env/19_voidspiral";
         Level.Session.Audio.Apply(false);
     }
 

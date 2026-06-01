@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Monocle;
 using Celeste.Entities;
 using Celeste.Mod.MaggyHelper.Bosses;
+using Celeste.Mod.MaggyHelper.Audio;
 
 namespace Celeste.Mod.MaggyHelper.Tests
 {
@@ -109,16 +110,16 @@ namespace Celeste.Mod.MaggyHelper.Tests
             LogTestCategory("AudioController");
 
             Assert("Initialize_DoesNotCrash",
-                TestDoesNotThrow(() => AudioController.Initialize()),
+                TestDoesNotThrow(() => PusheenAudioManager.Initialize()),
                 "Initialize should not throw");
 
-            Assert("OnLevelExit_DoesNotCrash",
-                TestDoesNotThrow(() => AudioController.OnLevelExit()),
-                "OnLevelExit should not throw");
+            Assert("StopAll_DoesNotCrash",
+                TestDoesNotThrow(() => PusheenAudioManager.StopAll()),
+                "StopAll should not throw");
 
-            Assert("SetCombatIntensity_ClampsToRange",
-                TestDoesNotThrow(() => AudioController.SetCombatIntensity(2.0f)),
-                "SetCombatIntensity should clamp values without crashing");
+            Assert("SetMasterVolume_ClampsToRange",
+                TestDoesNotThrow(() => PusheenAudioManager.MasterVolume = 2.0f),
+                "SetMasterVolume should clamp values without crashing");
         }
 
         #endregion

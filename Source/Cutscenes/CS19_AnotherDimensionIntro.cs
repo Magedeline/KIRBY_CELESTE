@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Celeste.Cutscenes
 {
-  public class Cs19AnotherDimensionIntro : CutsceneEntity
+  public class CS19_AnotherDimensionIntro : CutsceneEntity
   {
     public const string FLAG = "another_dimension_intro";
     private global::Celeste.Player player;
@@ -21,7 +21,7 @@ namespace Celeste.Cutscenes
     private float fade = 1f;
     private float targetX;
 
-    public Cs19AnotherDimensionIntro(global::Celeste.Player player)
+    public CS19_AnotherDimensionIntro(global::Celeste.Player player)
       : base()
     {
       this.Depth = -8500;
@@ -41,7 +41,7 @@ namespace Celeste.Cutscenes
 
     private IEnumerator cutscene(Level level)
     {
-      Cs19AnotherDimensionIntro cs10MoonIntro = this;
+      CS19_AnotherDimensionIntro cs10MoonIntro = this;
       cs10MoonIntro.player.StateMachine.State = Player.StDummy;
       cs10MoonIntro.player.Visible = false;
       cs10MoonIntro.player.Active = false;
@@ -85,7 +85,7 @@ namespace Celeste.Cutscenes
 
     private IEnumerator charaTurns()
     {
-      Cs19AnotherDimensionIntro cs10MoonIntro = this;
+      CS19_AnotherDimensionIntro cs10MoonIntro = this;
       yield return (object) 0.1f;
       if (cs10MoonIntro.chara == null || cs10MoonIntro.chara.Sprite == null)
         yield break;
@@ -98,7 +98,7 @@ namespace Celeste.Cutscenes
 
     private IEnumerable charaAppears()
     {
-      Cs19AnotherDimensionIntro cs10MoonIntro = this;
+      CS19_AnotherDimensionIntro cs10MoonIntro = this;
       cs10MoonIntro.Level.Session.Inventory.Dashes = 1;
       cs10MoonIntro.player.Dashes = 1;
       Vector2 basePos = cs10MoonIntro.player.Position;

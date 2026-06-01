@@ -44,8 +44,8 @@ public class CS_FinalRemixBerryCutscene : CutsceneEntity
     #region Fields
 
     private Player player;
-    private NpcEvent asriel;
-    private NpcEvent granny;
+    private NPC asriel;
+    private NPC granny;
     private Entity heartGem;
     private Level level;
 
@@ -193,7 +193,7 @@ public class CS_FinalRemixBerryCutscene : CutsceneEntity
     {
         // Asriel starts off-screen to the left, invisible
         Vector2 asrielPos = player.Position + new Vector2(-80f, 0f);
-        asriel = new NpcEvent(new EntityData(), asrielPos);
+        asriel = new NPC(asrielPos);
         if (GFX.SpriteBank.Has("asriel"))
         {
             asriel.Add(asriel.Sprite = GFX.SpriteBank.Create("asriel"));
@@ -205,7 +205,7 @@ public class CS_FinalRemixBerryCutscene : CutsceneEntity
 
         // Granny starts far off-screen to the right, invisible
         Vector2 grannyPos = player.Position + new Vector2(200f, 0f);
-        granny = new NpcEvent(new EntityData(), grannyPos);
+        granny = new NPC(grannyPos);
         if (GFX.SpriteBank.Has("granny"))
         {
             granny.Add(granny.Sprite = GFX.SpriteBank.Create("granny"));
@@ -565,7 +565,7 @@ public class CS_FinalRemixBerryCutscene : CutsceneEntity
         goldenGlowAlpha = 0f;
     }
 
-    private IEnumerator WalkNpcTo(NpcEvent npc, float targetX, float speed = 40f)
+    private IEnumerator WalkNpcTo(NPC npc, float targetX, float speed = 40f)
     {
         if (npc == null) yield break;
 

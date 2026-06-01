@@ -373,7 +373,7 @@ namespace Celeste.Entities.SoulBoosts
             Stopwatch sw = Stopwatch.StartNew();
             if (finalCh21Boost)
             {
-                Audio.Play("event:/pusheen/extra_content/char/madeline/finalfinalfinalultra_part1", Position);
+                Audio.Play("event:/pusheen/extra_content/char/madeline/final_launch_part1", Position);
             }
             else if (!finalBoost)
             {
@@ -529,7 +529,7 @@ namespace Celeste.Entities.SoulBoosts
             {
                 if (finalCh21Boost)
                 {
-                    Ch21FinalBoostSfx = Audio.Play("event:/pusheen/extra_content/char/madeline/finalfinalfinalultra_part2", Position);
+                    Ch21FinalBoostSfx = Audio.Play("event:/pusheen/extra_content/char/madeline/final_launch_part2", Position);
                 }
                 Engine.FreezeTimer = 0.1f;
                 yield return true;

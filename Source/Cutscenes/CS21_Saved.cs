@@ -11,13 +11,13 @@ namespace Celeste.Cutscenes;
 /// <summary>
 /// CS20_Saved cutscene - triggered when talking to NPCs after being saved
 /// </summary>
-public class CS20_Saved : CutsceneEntity
+public class CS21_Saved : CutsceneEntity
 {
     private Player player;
     private EventInstance snapshot;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public CS20_Saved(Player player)
+    public CS21_Saved(Player player)
         : base(fadeInOnSkip: false)
     {
         this.player = player;
@@ -94,35 +94,35 @@ public class CS20_Saved : CutsceneEntity
 /// and Asriel releases the souls to break the 4th wall barrier.
 /// Followed by CH20_GOODBYE and CH20_DECADES_LATER.
 /// </summary>
-public class CS20_RestorationAndFarewell : CutsceneEntity
+public class CS21_RestorationAndFarewell : CutsceneEntity
 {
     private Player player;
     
     // Main characters
     private Npc20_Madeline madeline;
-    private NpcEvent badeline;
+    private NPC badeline;
     private Npc20_Asriel asriel;
     private Npc20_Granny granny;
-    private NpcEvent titanKing;
-    private NpcEvent kirby;
+    private NPC titanKing;
+    private NPC kirby;
     
     // Undertale/Deltarune characters
-    private NpcEvent toriel;
-    private NpcEvent asgore;
-    private NpcEvent theo;
-    private NpcEvent sans;
-    private NpcEvent undyne;
-    private NpcEvent papyrus;
-    private NpcEvent alphys;
-    private NpcEvent suzy;
-    private NpcEvent berdly;
-    private NpcEvent noelle;
-    private NpcEvent chara;
-    private NpcEvent flowey;
+    private NPC toriel;
+    private NPC asgore;
+    private NPC theo;
+    private NPC sans;
+    private NPC undyne;
+    private NPC papyrus;
+    private NPC alphys;
+    private NPC suzy;
+    private NPC berdly;
+    private NPC noelle;
+    private NPC chara;
+    private NPC flowey;
     
     // Kirby's parents
-    private NpcEvent stellar;
-    private NpcEvent voidDreamer;
+    private NPC stellar;
+    private NPC voidDreamer;
     
     private EventInstance snapshot;
     private float fade;
@@ -131,7 +131,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
     private EventInstance entrySfx;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public CS20_RestorationAndFarewell(Player player)
+    public CS21_RestorationAndFarewell(Player player)
         : base(fadeInOnSkip: false)
     {
         this.player = player;
@@ -319,22 +319,40 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
         yield return null;
     }
 
-    private NpcEvent CreateNPC(string name, Vector2 position, string spriteBank)
+    private NPC CreateNPC(string name, Vector2 position, string spriteBank)
     {
-        var npc = new NpcEvent(new EntityData(), position);
+        var npc = new NPC(position);
         npc.Add(npc.Sprite = GFX.SpriteBank.Create(spriteBank));
         npc.Sprite.Play("idle");
         Scene.Add(npc);
         return npc;
     }
 
-    private void SetupNpcSprite(NpcEvent npc, string spriteBank)
+    private void SetupNpcSprite(NPC npc, string spriteBank)
     {
         npc.Add(npc.Sprite = GFX.SpriteBank.Create(spriteBank));
         npc.Sprite.Play("idle");
         npc.IdleAnim = "idle";
         npc.MoveAnim = "walk";
         npc.Maxspeed = 40f;
+    }
+
+    private void SetupNpcSprite(Npc20_Madeline npc, string spriteBank)
+    {
+        npc.Add(npc.Sprite = GFX.SpriteBank.Create(spriteBank));
+        npc.Sprite.Play("idle");
+    }
+
+    private void SetupNpcSprite(Npc20_Asriel npc, string spriteBank)
+    {
+        npc.Add(npc.Sprite = GFX.SpriteBank.Create(spriteBank));
+        npc.Sprite.Play("idle");
+    }
+
+    private void SetupNpcSprite(Npc20_Granny npc, string spriteBank)
+    {
+        npc.Add(npc.Sprite = GFX.SpriteBank.Create(spriteBank));
+        npc.Sprite.Play("idle");
     }
 
     #region Trigger 0-13: CH20_RESTORATION_AND_FAREWELL
@@ -658,7 +676,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
 
     #region Helper Methods
 
-    private IEnumerator WalkNpcTo(NpcEvent npc, float targetX)
+    private IEnumerator WalkNpcTo(NPC npc, float targetX)
     {
         if (npc == null) yield break;
         
@@ -701,7 +719,7 @@ public class CS20_RestorationAndFarewell : CutsceneEntity
         yield return npc.MoveTo(targetX);
     }
 
-    private IEnumerator RunNpcTo(NpcEvent npc, float targetX)
+    private IEnumerator RunNpcTo(NPC npc, float targetX)
     {
         if (npc == null) yield break;
         

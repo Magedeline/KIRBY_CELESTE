@@ -124,11 +124,19 @@ namespace Celeste.Entities
             this.spikesLeft = this.CollideCheck<Spikes>(this.Position - Vector2.UnitX);
             this.spikesRight = this.CollideCheck<Spikes>(this.Position + Vector2.UnitX);
 
-            // --- ROOM "lvl_j-mid" LOGIC EXAMPLE ---
-            // If you want to check if the generator is in room "lvl_j-mid":
-            if ((scene as Level)?.Session?.Level == "lvl_j-mid")
+            // --- ROOM "j-mid" LOGIC EXAMPLE ---
+            // If you want to check if the generator is in room "j-mid":
+            if ((scene as Level)?.Session?.Level == "j-mid")
             {
                 this.health = 5;
+
+                // Teleport from boss-19fake to center-01
+                Player player = (scene as Level)?.Tracker.GetEntity<Player>();
+                if (player != null)
+                {
+                    Add(new Coroutine(TeleportToRoom(player, "j-mid", false)));
+                    return;
+                }
             }
 
             // Keep blackhole visuals in sync when entering/re-entering rooms.
@@ -136,7 +144,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Recomputes generator break progression and applies it to all RainbowBlackholeBg backdrops.
+        /// Recomputes generator break progression and applies it to all RainbowBlackholeBG backdrops.
         /// </summary>
         public static void RefreshBlackholeFromGeneratorProgress(Level level)
         {
@@ -174,13 +182,13 @@ namespace Celeste.Entities
 
             foreach (Backdrop backdrop in level.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBg blackholeBg)
+                if (backdrop is RainbowBlackholeBG blackholeBg)
                     blackholeBg.SetGeneratorBreakProgress(progress);
             }
 
             foreach (Backdrop backdrop in level.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBg blackholeBg)
+                if (backdrop is RainbowBlackholeBG blackholeBg)
                     blackholeBg.SetGeneratorBreakProgress(progress);
             }
         }
@@ -521,6 +529,77 @@ namespace Celeste.Entities
             }
 
             return true;
+        }
+
+        private IEnumerator TeleportToRoom(Player player, string targetRoom, bool lastHit)
+        {
+            Level level = Scene as Level;
+            if (level == null || player == null)
+                yield break;
+
+            // Attract player to center
+            if (!player.Dead)
+                player.StartAttract(Center + Vector2.UnitY * 4f);
+
+            float timer = 0.15f;
+            while (!player.Dead && !player.AtAttractTarget)
+            {
+                yield return null;
+                timer -= Engine.DeltaTime;
+            }
+
+            if (timer > 0f)
+                yield return timer;
+
+            // Screen effects
+            CelesteGame.Freeze(0.1f);
+            level.Shake();
+            yield return 0.05f;
+
+            yield return 0.2f;
+
+            // Perform the room transition
+            level.OnEndOfFrame += () =>
+            {
+                Vector2 levelOffset = level.LevelOffset;
+                Facings facing = player.Facing;
+
+                level.Remove(player);
+                level.UnloadLevel();
+
+                level.Session.Level = targetRoom;
+                level.Session.RespawnPoint = level.GetSpawnPoint(new Vector2(level.Bounds.Left, level.Bounds.Top));
+                level.Session.FirstLevel = false;
+
+                level.LoadLevel(Player.IntroTypes.Transition);
+
+                // Calculate center position of the new room
+                Vector2 roomCenter = new Vector2(
+                    level.Bounds.Left + level.Bounds.Width / 2f,
+                    level.Bounds.Top + level.Bounds.Height / 2f
+                );
+
+                level.Add(player);
+                player.Position = roomCenter;
+                player.Facing = facing;
+                player.Hair.MoveHairBy(level.LevelOffset - levelOffset);
+
+                // Center camera on player
+                level.Camera.Position = new Vector2(
+                    roomCenter.X - level.Camera.Viewport.Width / 2f,
+                    roomCenter.Y - level.Camera.Viewport.Height / 2f
+                );
+
+                if (level.Wipe != null)
+                {
+                    level.Wipe.Cancel();
+                }
+                level.Flash(Color.White);
+                level.Shake();
+
+                // Play teleport sound
+                Audio.Play("event:/game/06_reflection/badeline_disappear");
+            };
         }
 
         public static void Load()

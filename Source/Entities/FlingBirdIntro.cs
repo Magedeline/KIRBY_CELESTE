@@ -1,15 +1,14 @@
+using System.Collections;
 using System.Runtime.CompilerServices;
 using Celeste.Cutscenes;
-using IL.Celeste;
-using On.Celeste;
 
 namespace Celeste.Entities
 {
-    [CustomEntity(new string[] { "MaggyHelper/FlingBirdIntroMod" })]
-    [Tracked(true)]
+    [CustomEntity("MaggyHelper/FlingBirdIntro")]
+    [Tracked(false)]
     [HotReloadable]
-    public class FlingBirdIntroMod : Entity
-{
+    public class FlingBirdIntro : Entity
+    {
     public Vector2 BirdEndPosition;
 
     public Sprite Sprite;
@@ -17,8 +16,6 @@ namespace Celeste.Entities
     public SoundEmitter CrashSfxEmitter;
 
     private Vector2[] nodes;
-
-    private LevelGlitchTrigger glitchTrigger;
 
     private bool startedRoutine;
 
@@ -35,7 +32,7 @@ namespace Celeste.Entities
     private bool inCutscene;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public FlingBirdIntroMod(Vector2 position, Vector2[] nodes, bool crashes)
+    public FlingBirdIntro(Vector2 position, Vector2[] nodes, bool crashes)
         : base(position)
     {
         this.crashes = crashes;
@@ -57,7 +54,7 @@ namespace Celeste.Entities
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public FlingBirdIntroMod(EntityData data, Vector2 levelOffset)
+    public FlingBirdIntro(EntityData data, Vector2 levelOffset)
         : this(data.Position + levelOffset, data.NodesOffset(levelOffset), data.Bool("crashes"))
     {
     }
@@ -101,7 +98,7 @@ namespace Celeste.Entities
     [MethodImpl(MethodImplOptions.NoInlining)]
     private IEnumerator FlyTo(Vector2 to)
     {
-        Add(new SoundSource().Play("event:/pusheen/extra_content/game/19_spaces/flappybird"));
+        Add(new SoundSource().Play("event:/new_content/game/10_farewell/bird_flappyscene_entry"));
         Sprite.Play("fly");
         Vector2 from = Position;
         for (float p = 0f; p < 1f; p += Engine.DeltaTime * 0.3f)
@@ -131,10 +128,9 @@ namespace Celeste.Entities
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private void OnPlayer(global::Celeste.Player player)
+    private void OnPlayer(Player player)
     {
-        // Add null checks for player and scene
-        if (player == null || player.Dead || startedRoutine || base.Scene == null)
+        if (player.Dead || startedRoutine)
         {
             return;
         }
@@ -143,39 +139,25 @@ namespace Celeste.Entities
             flyToRoutine.RemoveSelf();
         }
         startedRoutine = true;
-            // Avoid hard locks here; let cutscenes manage minimal state safely
-            base.Depth = player.Depth - 5;
-            
-            // Add null check for Sprite
-            if (Sprite != null)
-            {
-                Sprite.Play("hoverStressed");
-                Sprite.Scale.X = 1f;
-            }
-            
-            if (fakeRightWall != null)
-            {
-                fakeRightWall.RemoveSelf();
-                fakeRightWall = null;
-            }
-            if (!crashes)
-            {
-                base.Scene.Add(new CS19_MissTheBird(player, this));
-                return;
-            }
-            
-            // Add null check for Scene.Tracker before accessing
-            if (base.Scene.Tracker != null)
-            {
-                TapeBlockManager entity = base.Scene.Tracker.GetEntity<TapeBlockManager>();
-                if (entity != null)
-                {
-                    entity.StopBlocks();
-                    entity.Finish();
-                }
-            }
-            base.Scene.Add(new CS19_KillTheBird(player, this));
+        player.Speed = Vector2.Zero;
+        base.Depth = player.Depth - 5;
+        Sprite.Play("hoverStressed");
+        Sprite.Scale.X = 1f;
+        fakeRightWall.RemoveSelf();
+        fakeRightWall = null;
+        if (!crashes)
+        {
+            base.Scene.Add(new CS19_MissTheBird(player));
+            return;
         }
+        TapeBlockManager entity = base.Scene.Tracker.GetEntity<TapeBlockManager>();
+        if (entity != null)
+        {
+            entity.StopBlocks();
+            entity.Finish();
+        }
+        base.Scene.Add(new CS19_MissTheBird(player));
+    }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public override void Update()
@@ -196,19 +178,19 @@ namespace Celeste.Entities
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public IEnumerator DoGrabbingRoutine(CelestePlayer player)
+    public IEnumerator DoGrabbingRoutine(Player player)
     {
         Level level = Scene as Level;
         inCutscene = true;
         if (!crashes)
         {
-            CrashSfxEmitter = SoundEmitter.Play("event:/pusheen/extra_content/game/19_spaces/flappybird", this);
+            CrashSfxEmitter = SoundEmitter.Play("event:/new_content/game/10_farewell/bird_flappyscene", this);
         }
         else
         {
-            CrashSfxEmitter = SoundEmitter.Play("event:/pusheen/extra_content/game/19_spaces/killscene_start", this);
+            CrashSfxEmitter = SoundEmitter.Play("event:/new_content/game/10_farewell/bird_crashscene_start", this);
         }
-        player.StateMachine.State = Player.StDummy;
+        player.StateMachine.State = 11;
         player.DummyGravity = false;
         player.DummyAutoAnimate = false;
         player.ForceCameraUpdate = true;
@@ -287,16 +269,8 @@ namespace Celeste.Entities
         level.Shake();
         Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
         level.Flash(Color.White);
-        Glitch.Value = 0.7f;
         emitParticles = false;
         inCutscene = false;
-        yield return null;
-        for (float t = 0f; t < 1f; t += Engine.DeltaTime / 0.4f)
-        {
-            Glitch.Value = 0.7f * (1f - Ease.CubeIn(t));
-            yield return null;
-        }
-        Glitch.Value = 0f;
     }
     }
 }

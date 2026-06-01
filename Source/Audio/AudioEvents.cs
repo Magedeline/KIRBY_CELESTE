@@ -222,4 +222,154 @@ namespace Celeste.Mod.MaggyHelper.Audio
             public const string Credits = "event:/music/menu/credits";
         }
     }
+
+    /// <summary>
+    /// FMOD audio event paths for Pusheen character sound effects
+    /// </summary>
+    public static class PusheenCharacterSfx
+    {
+        public const string Appear = "event:/Pusheen/char/pusheen/appear";
+        public const string Disappear = "event:/Pusheen/char/pusheen/disappear";
+        public const string Footstep = "event:/Pusheen/char/pusheen/footstep";
+        public const string Jump = "event:/Pusheen/char/pusheen/jump";
+        public const string Landing = "event:/Pusheen/char/pusheen/landing";
+        public const string DashLeft = "event:/Pusheen/char/pusheen/dash_left";
+        public const string DashRight = "event:/Pusheen/char/pusheen/dash_right";
+        public const string Death = "event:/Pusheen/char/pusheen/death";
+        public const string Revive = "event:/Pusheen/char/pusheen/revive";
+        public const string Grab = "event:/Pusheen/char/pusheen/grab";
+        public const string GrabLetgo = "event:/Pusheen/char/pusheen/grab_letgo";
+        public const string Wallslide = "event:/Pusheen/char/pusheen/wallslide";
+        public const string Duck = "event:/Pusheen/char/pusheen/duck";
+        public const string Stand = "event:/Pusheen/char/pusheen/stand";
+        public const string Idle = "event:/Pusheen/char/pusheen/idle";
+        public const string Hurt = "event:/Pusheen/char/pusheen/hurt";
+        public const string Powerup = "event:/Pusheen/char/pusheen/powerup";
+        public const string Celebrate = "event:/Pusheen/char/pusheen/celebrate";
+    }
+
+    /// <summary>
+    /// FMOD audio event paths for Pusheen environment sound effects
+    /// </summary>
+    public static class PusheenEnvironmentSfx
+    {
+        public const string Ambient = "event:/Pusheen/env/pusheen/ambient";
+        public const string Wind = "event:/Pusheen/env/pusheen/wind";
+        public const string Rain = "event:/Pusheen/env/pusheen/rain";
+        public const string Thunder = "event:/Pusheen/env/pusheen/thunder";
+        public const string Water = "event:/Pusheen/env/pusheen/water";
+        public const string Fire = "event:/Pusheen/env/pusheen/fire";
+        public const string Ice = "event:/Pusheen/env/pusheen/ice";
+        public const string Electric = "event:/Pusheen/env/pusheen/electric";
+    }
+
+    /// <summary>
+    /// FMOD audio event paths for Pusheen gameplay sound effects
+    /// </summary>
+    public static class PusheenGameplaySfx
+    {
+        public const string Spring = "event:/Pusheen/game/pusheen/spring";
+        public const string StrawberryGet = "event:/Pusheen/game/pusheen/strawberry_get";
+        public const string KeyGet = "event:/Pusheen/game/pusheen/key_get";
+        public const string CassetteGet = "event:/Pusheen/game/pusheen/cassette_get";
+        public const string HeartGet = "event:/Pusheen/game/pusheen/heart_get";
+        public const string DiamondTouch = "event:/Pusheen/game/pusheen/diamond_touch";
+        public const string RefillGet = "event:/Pusheen/game/pusheen/refill_get";
+        public const string FeatherGet = "event:/Pusheen/game/pusheen/feather_get";
+        public const string BoosterActivate = "event:/Pusheen/game/pusheen/booster_activate";
+        public const string CassetteActivate = "event:/Pusheen/game/pusheen/cassette_activate";
+        public const string SwitchActivate = "event:/Pusheen/game/pusheen/switch_activate";
+        public const string DoorOpen = "event:/Pusheen/game/pusheen/door_open";
+        public const string DoorClose = "event:/Pusheen/game/pusheen/door_close";
+        public const string CheckpointTouch = "event:/Pusheen/game/pusheen/checkpoint_touch";
+        public const string BerrySecret = "event:/Pusheen/game/pusheen/berry_secret";
+        public const string BerryWing = "event:/Pusheen/game/pusheen/berry_wing";
+        public const string FinalBossHit = "event:/Pusheen/game/pusheen/final_boss_hit";
+        public const string FinalBossDefeat = "event:/Pusheen/game/pusheen/final_boss_defeat";
+    }
+
+    /// <summary>
+    /// FMOD audio event paths for Pusheen UI sound effects
+    /// </summary>
+    public static class PusheenUiSfx
+    {
+        public const string ButtonSelect = "event:/Pusheen/ui/pusheen/button_select";
+        public const string ButtonBack = "event:/Pusheen/ui/pusheen/button_back";
+        public const string ButtonInvalid = "event:/Pusheen/ui/pusheen/button_invalid";
+        public const string Pause = "event:/Pusheen/ui/pusheen/pause";
+        public const string Unpause = "event:/Pusheen/ui/pusheen/unpause";
+        public const string SavefileSelect = "event:/Pusheen/ui/pusheen/savefile_select";
+        public const string WhooshIn = "event:/Pusheen/ui/pusheen/whoosh_in";
+        public const string WhooshOut = "event:/Pusheen/ui/pusheen/whoosh_out";
+        public const string DeathCounter = "event:/Pusheen/ui/pusheen/death_counter";
+        public const string StrawberryCounter = "event:/Pusheen/ui/pusheen/strawberry_counter";
+        public const string HeartCounter = "event:/Pusheen/ui/pusheen/heart_counter";
+        public const string UnlockSequence = "event:/Pusheen/ui/pusheen/unlock_sequence";
+    }
+
+    /// <summary>
+    /// FMOD audio event paths for Pusheen music
+    /// </summary>
+    public static class PusheenMusic
+    {
+        public const string MainTheme = "event:/Pusheen/music/pusheen/main_theme";
+        public const string ChaseTheme = "event:/Pusheen/music/pusheen/chase_theme";
+        public const string BossTheme = "event:/Pusheen/music/pusheen/boss_theme";
+        public const string CreditsTheme = "event:/Pusheen/music/pusheen/credits_theme";
+        public const string MenuTheme = "event:/Pusheen/music/pusheen/menu_theme";
+        public const string CassetteTheme = "event:/Pusheen/music/pusheen/cassette_theme";
+        public const string SecretTheme = "event:/Pusheen/music/pusheen/secret_theme";
+        public const string CalmTheme = "event:/Pusheen/music/pusheen/calm_theme";
+        public const string EnergeticTheme = "event:/Pusheen/music/pusheen/energetic_theme";
+        public const string DreamTheme = "event:/Pusheen/music/pusheen/dream_theme";
+    }
+
+    /// <summary>
+    /// FMOD audio event paths for Pusheen dialogue/voice lines
+    /// </summary>
+    public static class PusheenDialogue
+    {
+        public const string Greeting = "event:/Pusheen/dialogue/pusheen/greeting";
+        public const string Goodbye = "event:/Pusheen/dialogue/pusheen/goodbye";
+        public const string Excitement = "event:/Pusheen/dialogue/pusheen/excitement";
+        public const string Sadness = "event:/Pusheen/dialogue/pusheen/sadness";
+        public const string Anger = "event:/Pusheen/dialogue/pusheen/anger";
+        public const string Surprise = "event:/Pusheen/dialogue/pusheen/surprise";
+        public const string Laughter = "event:/Pusheen/dialogue/pusheen/laughter";
+        public const string Thinking = "event:/Pusheen/dialogue/pusheen/thinking";
+        public const string Question = "event:/Pusheen/dialogue/pusheen/question";
+        public const string Answer = "event:/Pusheen/dialogue/pusheen/answer";
+    }
+
+    /// <summary>
+    /// FMOD VCA paths for Pusheen audio control
+    /// </summary>
+    public static class PusheenVca
+    {
+        public const string Master = "vca:/Pusheen/master";
+        public const string Sfx = "vca:/Pusheen/sfx";
+        public const string Music = "vca:/Pusheen/music";
+        public const string Dialogue = "vca:/Pusheen/dialogue";
+        public const string Ambient = "vca:/Pusheen/ambient";
+        public const string Ui = "vca:/Pusheen/ui";
+        public const string Character = "vca:/Pusheen/character";
+        public const string Environment = "vca:/Pusheen/environment";
+        public const string Gameplay = "vca:/Pusheen/gameplay";
+    }
+
+    /// <summary>
+    /// FMOD Bus paths for Pusheen audio routing
+    /// </summary>
+    public static class PusheenBus
+    {
+        public const string Master = "bus:/Pusheen/master";
+        public const string Sfx = "bus:/Pusheen/sfx";
+        public const string Music = "bus:/Pusheen/music";
+        public const string Dialogue = "bus:/Pusheen/dialogue";
+        public const string Ambient = "bus:/Pusheen/ambient";
+        public const string Ui = "bus:/Pusheen/ui";
+        public const string Character = "bus:/Pusheen/character";
+        public const string Environment = "bus:/Pusheen/environment";
+        public const string Gameplay = "bus:/Pusheen/gameplay";
+    }
 }

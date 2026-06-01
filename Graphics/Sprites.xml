@@ -1684,7 +1684,7 @@
       <Loop id="angry" path="angry" delay="0.04" />
       <Anim id="boost" path="boost" delay="0.05"/>
   
-      <Loop id="pretendDead" path="sleep" delay="0" frames="23" />
+      <Loop id="pretendDead" path="sleep" delay="0" frames="00" />
       <Loop id="spin" path="spin" delay="0.1" />
       <Loop id="hug" path="hug" delay="0.08"/>
       

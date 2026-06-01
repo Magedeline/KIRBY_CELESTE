@@ -13,7 +13,7 @@ charaBoost.placements = {
         finalCh19Boost = false,
         finalCh19GoldenBoost = false,
         finalCh19PPBoost = false,
-        finalCh19Dialog = ""
+        finalCh19Dialog = false
     }
 }
 

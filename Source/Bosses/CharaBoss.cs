@@ -327,6 +327,11 @@ namespace Celeste.Entities {
                     level.Session.Audio.Music.Event = "event:/pusheen/music/lvl8/chara_glitch";
                     level.Session.Audio.Apply(false);
                 }
+                else if (startHit && level.Session.Audio.Music.Event != "event:/pusheen/music/lvl8/chara_core")
+                {
+                    level.Session.Audio.Music.Event = "event:/pusheen/music/lvl8/chara_core";
+                    level.Session.Audio.Apply(false);
+                }
                 else if (startHit && level.Session.Audio.Music.Event != "event:/pusheen/music/lvl8/chara_glitch")
                 {
                     level.Session.Audio.Music.Event = "event:/pusheen/music/lvl8/chara_glitch";

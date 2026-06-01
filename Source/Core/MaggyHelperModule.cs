@@ -1,12 +1,13 @@
 using System;
 using System.Reflection;
 using global::Celeste.Mod.MaggyHelper.BossesExample;
+using global::Celeste.Mod.MaggyHelper.Audio;
 using Celeste.Cutscenes;
 using Celeste.Entities;
 using Monocle;
 using MonoMod.RuntimeDetour;
 using static Celeste.Mod.Logger;
-using Celeste.Mod.MaggyHelper.AudioHandlers;
+using static Celeste.Mod.MaggyHelper.Audio.PusheenAudioManager;
 
 namespace Celeste.Mod.MaggyHelper
 {
@@ -255,9 +256,10 @@ namespace Celeste.Mod.MaggyHelper
             // Initialize mod integrations
             InitializeModIntegrations();
 
-            // Initialize D-Side completion music handler
-            DSideCompletionMusicHandler.InitializeHooks();
+            // Initialize audio event path overrides from Audio/audio_ext.yaml
+            global::Celeste.Mod.MaggyHelper.Audio.AudioExt.Initialize(Instance.Metadata.PathDirectory);
 
+            // Initialize D-Side completion music handler
             // Initialize Deathlink integration
             global::Celeste.DeathlinkIntegration.Initialize();
 
@@ -280,8 +282,13 @@ namespace Celeste.Mod.MaggyHelper
             // Register in-game test runner
             global::Celeste.Mod.MaggyHelper.Tests.MaggyHelperTestRunner.RegisterConsoleCommand();
 
+            // Initialize Pusheen audio system
+            PusheenAudioManager.Initialize();
+
             // Register performance profiler commands
             global::Celeste.Mod.MaggyHelper.PerformanceProfiler.RegisterConsoleCommands();
+
+            // Pusheen audio commands are registered via [Command] attributes below
         }
 
         private static void OnLevelExit(Level level, LevelExit exit, LevelExit.Mode mode, Session session, HiresSnow snow)
@@ -290,7 +297,358 @@ namespace Celeste.Mod.MaggyHelper
             global::Celeste.Effects.LightningEffects.ClearAll();
             global::Celeste.Effects.ElementalEffectsManager.StopAllEffects();
             global::Celeste.Entities.EnemyBossManager.Reset();
-            global::Celeste.Mod.MaggyHelper.AudioController.OnLevelExit();
+        }
+
+        // ── Pusheen Audio Console Commands ───────────────────────────────────────
+
+        [Command("pusheen_char", "Play Pusheen character sounds. Usage: pusheen_char <sound> [x] [y]")]
+        private static void Cmd_PusheenChar(string sound, float x = 0, float y = 0)
+        {
+            if (string.IsNullOrEmpty(sound))
+            {
+                Engine.Commands?.Log("Usage: pusheen_char <sound> [x] [y]");
+                Engine.Commands?.Log("Sounds: jump, land, footstep, dash, death, hurt, celebrate");
+                return;
+            }
+
+            Vector2? position = null;
+            if (x != 0 || y != 0)
+            {
+                position = new Vector2(x, y);
+            }
+            else if (Engine.Scene is Level level && level.Tracker.GetEntity<Player>() is Player player)
+            {
+                position = player.Position;
+            }
+
+            switch (sound.ToLower())
+            {
+                case "jump":
+                    PusheenAudioManager.Character.Jump(position);
+                    Engine.Commands?.Log("Playing Pusheen jump sound");
+                    break;
+                case "land":
+                    PusheenAudioManager.Character.Land(position);
+                    Engine.Commands?.Log("Playing Pusheen landing sound");
+                    break;
+                case "footstep":
+                    PusheenAudioManager.Character.Footstep(position);
+                    Engine.Commands?.Log("Playing Pusheen footstep sound");
+                    break;
+                case "dash":
+                    PusheenAudioManager.Character.Dash(position);
+                    Engine.Commands?.Log("Playing Pusheen dash sound");
+                    break;
+                case "death":
+                    PusheenAudioManager.Character.Death(position);
+                    Engine.Commands?.Log("Playing Pusheen death sound");
+                    break;
+                case "hurt":
+                    PusheenAudioManager.Character.Hurt(position);
+                    Engine.Commands?.Log("Playing Pusheen hurt sound");
+                    break;
+                case "celebrate":
+                    PusheenAudioManager.Character.Celebrate(position);
+                    Engine.Commands?.Log("Playing Pusheen celebrate sound");
+                    break;
+                default:
+                    Engine.Commands?.Log($"Unknown sound: {sound}");
+                    break;
+            }
+        }
+
+        [Command("pusheen_game", "Play Pusheen gameplay sounds. Usage: pusheen_game <sound> [x] [y]")]
+        private static void Cmd_PusheenGame(string sound, float x = 0, float y = 0)
+        {
+            if (string.IsNullOrEmpty(sound))
+            {
+                Engine.Commands?.Log("Usage: pusheen_game <sound> [x] [y]");
+                Engine.Commands?.Log("Sounds: strawberry, key, heart, refill, feather, spring, checkpoint");
+                return;
+            }
+
+            Vector2? position = null;
+            if (x != 0 || y != 0)
+            {
+                position = new Vector2(x, y);
+            }
+            else if (Engine.Scene is Level level && level.Tracker.GetEntity<Player>() is Player player)
+            {
+                position = player.Position;
+            }
+
+            switch (sound.ToLower())
+            {
+                case "strawberry":
+                    PusheenAudioManager.Gameplay.StrawberryGet(position);
+                    Engine.Commands?.Log("Playing Pusheen strawberry get sound");
+                    break;
+                case "key":
+                    PusheenAudioManager.Gameplay.KeyGet(position);
+                    Engine.Commands?.Log("Playing Pusheen key get sound");
+                    break;
+                case "heart":
+                    PusheenAudioManager.Gameplay.HeartGet(position);
+                    Engine.Commands?.Log("Playing Pusheen heart get sound");
+                    break;
+                case "refill":
+                    PusheenAudioManager.Gameplay.RefillGet(position);
+                    Engine.Commands?.Log("Playing Pusheen refill get sound");
+                    break;
+                case "feather":
+                    PusheenAudioManager.Gameplay.FeatherGet(position);
+                    Engine.Commands?.Log("Playing Pusheen feather get sound");
+                    break;
+                case "spring":
+                    PusheenAudioManager.Gameplay.Spring(position);
+                    Engine.Commands?.Log("Playing Pusheen spring sound");
+                    break;
+                case "checkpoint":
+                    PusheenAudioManager.Gameplay.CheckpointTouch(position);
+                    Engine.Commands?.Log("Playing Pusheen checkpoint sound");
+                    break;
+                default:
+                    Engine.Commands?.Log($"Unknown sound: {sound}");
+                    break;
+            }
+        }
+
+        [Command("pusheen_ui", "Play Pusheen UI sounds. Usage: pusheen_ui <sound>")]
+        private static void Cmd_PusheenUI(string sound)
+        {
+            if (string.IsNullOrEmpty(sound))
+            {
+                Engine.Commands?.Log("Usage: pusheen_ui <sound>");
+                Engine.Commands?.Log("Sounds: select, back, invalid, pause, unpause, whoosh_in, whoosh_out");
+                return;
+            }
+
+            switch (sound.ToLower())
+            {
+                case "select":
+                    PusheenAudioManager.UI.ButtonSelect();
+                    Engine.Commands?.Log("Playing Pusheen button select sound");
+                    break;
+                case "back":
+                    PusheenAudioManager.UI.ButtonBack();
+                    Engine.Commands?.Log("Playing Pusheen button back sound");
+                    break;
+                case "invalid":
+                    PusheenAudioManager.UI.ButtonInvalid();
+                    Engine.Commands?.Log("Playing Pusheen button invalid sound");
+                    break;
+                case "pause":
+                    PusheenAudioManager.UI.Pause();
+                    Engine.Commands?.Log("Playing Pusheen pause sound");
+                    break;
+                case "unpause":
+                    PusheenAudioManager.UI.Unpause();
+                    Engine.Commands?.Log("Playing Pusheen unpause sound");
+                    break;
+                case "whoosh_in":
+                    PusheenAudioManager.UI.WhooshIn();
+                    Engine.Commands?.Log("Playing Pusheen whoosh in sound");
+                    break;
+                case "whoosh_out":
+                    PusheenAudioManager.UI.WhooshOut();
+                    Engine.Commands?.Log("Playing Pusheen whoosh out sound");
+                    break;
+                default:
+                    Engine.Commands?.Log($"Unknown sound: {sound}");
+                    break;
+            }
+        }
+
+        [Command("pusheen_music", "Play Pusheen music tracks. Usage: pusheen_music <track>")]
+        private static void Cmd_PusheenMusic(string track)
+        {
+            if (string.IsNullOrEmpty(track))
+            {
+                Engine.Commands?.Log("Usage: pusheen_music <track>");
+                Engine.Commands?.Log("Tracks: main, chase, boss, credits, menu, cassette, secret, calm, energetic, dream");
+                return;
+            }
+
+            switch (track.ToLower())
+            {
+                case "main":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.MainTheme);
+                    Engine.Commands?.Log("Playing Pusheen main theme");
+                    break;
+                case "chase":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.ChaseTheme);
+                    Engine.Commands?.Log("Playing Pusheen chase theme");
+                    break;
+                case "boss":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.BossTheme);
+                    Engine.Commands?.Log("Playing Pusheen boss theme");
+                    break;
+                case "credits":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.CreditsTheme);
+                    Engine.Commands?.Log("Playing Pusheen credits theme");
+                    break;
+                case "menu":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.MenuTheme);
+                    Engine.Commands?.Log("Playing Pusheen menu theme");
+                    break;
+                case "cassette":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.CassetteTheme);
+                    Engine.Commands?.Log("Playing Pusheen cassette theme");
+                    break;
+                case "secret":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.SecretTheme);
+                    Engine.Commands?.Log("Playing Pusheen secret theme");
+                    break;
+                case "calm":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.CalmTheme);
+                    Engine.Commands?.Log("Playing Pusheen calm theme");
+                    break;
+                case "energetic":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.EnergeticTheme);
+                    Engine.Commands?.Log("Playing Pusheen energetic theme");
+                    break;
+                case "dream":
+                    PusheenAudioManager.PlayMusic(PusheenMusic.DreamTheme);
+                    Engine.Commands?.Log("Playing Pusheen dream theme");
+                    break;
+                default:
+                    Engine.Commands?.Log($"Unknown track: {track}");
+                    break;
+            }
+        }
+
+        [Command("pusheen_dialogue", "Play Pusheen dialogue lines. Usage: pusheen_dialogue <line>")]
+        private static void Cmd_PusheenDialogue(string line)
+        {
+            if (string.IsNullOrEmpty(line))
+            {
+                Engine.Commands?.Log("Usage: pusheen_dialogue <line>");
+                Engine.Commands?.Log("Lines: greeting, goodbye, excitement, sadness, anger, surprise, laughter, thinking, question, answer");
+                return;
+            }
+
+            switch (line.ToLower())
+            {
+                case "greeting":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Greeting);
+                    Engine.Commands?.Log("Playing Pusheen greeting");
+                    break;
+                case "goodbye":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Goodbye);
+                    Engine.Commands?.Log("Playing Pusheen goodbye");
+                    break;
+                case "excitement":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Excitement);
+                    Engine.Commands?.Log("Playing Pusheen excitement");
+                    break;
+                case "sadness":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Sadness);
+                    Engine.Commands?.Log("Playing Pusheen sadness");
+                    break;
+                case "anger":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Anger);
+                    Engine.Commands?.Log("Playing Pusheen anger");
+                    break;
+                case "surprise":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Surprise);
+                    Engine.Commands?.Log("Playing Pusheen surprise");
+                    break;
+                case "laughter":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Laughter);
+                    Engine.Commands?.Log("Playing Pusheen laughter");
+                    break;
+                case "thinking":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Thinking);
+                    Engine.Commands?.Log("Playing Pusheen thinking");
+                    break;
+                case "question":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Question);
+                    Engine.Commands?.Log("Playing Pusheen question");
+                    break;
+                case "answer":
+                    PusheenAudioManager.PlayDialogue(PusheenDialogue.Answer);
+                    Engine.Commands?.Log("Playing Pusheen answer");
+                    break;
+                default:
+                    Engine.Commands?.Log($"Unknown line: {line}");
+                    break;
+            }
+        }
+
+        [Command("pusheen_volume", "Set Pusheen audio volume. Usage: pusheen_volume <category> <volume>")]
+        private static void Cmd_PusheenVolume(string category, float volume)
+        {
+            if (string.IsNullOrEmpty(category))
+            {
+                Engine.Commands?.Log("Usage: pusheen_volume <category> <volume>");
+                Engine.Commands?.Log("Categories: master, sfx, music, dialogue");
+                Engine.Commands?.Log("Volume: 0.0 to 1.0");
+                Engine.Commands?.Log("Current volumes:");
+                Engine.Commands?.Log($"  Master: {PusheenAudioManager.MasterVolume:F2}");
+                Engine.Commands?.Log($"  SFX: {PusheenAudioManager.SfxVolume:F2}");
+                Engine.Commands?.Log($"  Music: {PusheenAudioManager.MusicVolume:F2}");
+                Engine.Commands?.Log($"  Dialogue: {PusheenAudioManager.DialogueVolume:F2}");
+                return;
+            }
+
+            volume = MathHelper.Clamp(volume, 0f, 1f);
+
+            switch (category.ToLower())
+            {
+                case "master":
+                    PusheenAudioManager.MasterVolume = volume;
+                    Engine.Commands?.Log($"Set master volume to {volume:F2}");
+                    break;
+                case "sfx":
+                    PusheenAudioManager.SfxVolume = volume;
+                    Engine.Commands?.Log($"Set SFX volume to {volume:F2}");
+                    break;
+                case "music":
+                    PusheenAudioManager.MusicVolume = volume;
+                    Engine.Commands?.Log($"Set music volume to {volume:F2}");
+                    break;
+                case "dialogue":
+                    PusheenAudioManager.DialogueVolume = volume;
+                    Engine.Commands?.Log($"Set dialogue volume to {volume:F2}");
+                    break;
+                default:
+                    Engine.Commands?.Log($"Unknown category: {category}");
+                    break;
+            }
+        }
+
+        [Command("pusheen_stop", "Stop Pusheen audio. Usage: pusheen_stop [category]")]
+        private static void Cmd_PusheenStop(string category = null)
+        {
+            if (string.IsNullOrEmpty(category))
+            {
+                PusheenAudioManager.StopAll();
+                Engine.Commands?.Log("Stopped all Pusheen audio");
+            }
+            else
+            {
+                PusheenAudioManager.StopCategory(category);
+                Engine.Commands?.Log($"Stopped Pusheen audio category: {category}");
+            }
+        }
+
+        [Command("pusheen_status", "Show Pusheen audio system status")]
+        private static void Cmd_PusheenStatus()
+        {
+            Engine.Commands?.Log("=== Pusheen Audio System Status ===");
+            Engine.Commands?.Log($"Master Volume: {PusheenAudioManager.MasterVolume:F2}");
+            Engine.Commands?.Log($"SFX Volume: {PusheenAudioManager.SfxVolume:F2}");
+            Engine.Commands?.Log($"Music Volume: {PusheenAudioManager.MusicVolume:F2}");
+            Engine.Commands?.Log($"Dialogue Volume: {PusheenAudioManager.DialogueVolume:F2}");
+            Engine.Commands?.Log("=== Console Commands ===");
+            Engine.Commands?.Log("pusheen_char <sound> [x] [y] - Play character sounds");
+            Engine.Commands?.Log("pusheen_game <sound> [x] [y] - Play gameplay sounds");
+            Engine.Commands?.Log("pusheen_ui <sound> - Play UI sounds");
+            Engine.Commands?.Log("pusheen_music <track> - Play music tracks");
+            Engine.Commands?.Log("pusheen_dialogue <line> - Play dialogue lines");
+            Engine.Commands?.Log("pusheen_volume <category> <volume> - Set volume (0.0-1.0)");
+            Engine.Commands?.Log("pusheen_stop [category] - Stop audio");
+            Engine.Commands?.Log("pusheen_status - Show this status");
         }
 
         // Named handler for Everest.Events.Level.OnLoadLevel so Unload() can
@@ -301,15 +659,11 @@ namespace Celeste.Mod.MaggyHelper
             if (level.Tracker.GetEntity<global::Celeste.Mod.MaggyHelper.HotReload.HotReloadController>() == null)
                 level.Add(new global::Celeste.Mod.MaggyHelper.HotReload.HotReloadController());
 
-            // Initialize audio controller for this level
-            global::Celeste.Mod.MaggyHelper.AudioController.Initialize();
-            global::Celeste.Mod.MaggyHelper.AudioController.OnLevelLoad(level);
-
             // Add debug room warp menu when DeveloperBypass or DebugMode is enabled
             var settings = Settings;
             if ((settings?.DeveloperBypass ?? false) || (settings?.DebugMode ?? false))
             {
-                if (level.Tracker.GetEntity<global::Celeste.UI.DebugRoomWarpMenu>() == null)
+                if (level.Entities.FindFirst<global::Celeste.UI.DebugRoomWarpMenu>() == null)
                     level.Add(new global::Celeste.UI.DebugRoomWarpMenu());
             }
         }
@@ -381,7 +735,9 @@ namespace Celeste.Mod.MaggyHelper
             UnloadCheatMode();
 
             // Unhook D-Side completion music handler
-            DSideCompletionMusicHandler.UnloadHooks();
+
+            // Dispose Pusheen audio system
+            PusheenAudioManager.Dispose();
         }
 
         // =====================================================================

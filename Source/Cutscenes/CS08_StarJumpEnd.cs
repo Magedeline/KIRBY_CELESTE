@@ -11,7 +11,7 @@ namespace Celeste.Cutscenes
 
         private bool waiting = true;
         private bool shaking;
-        private NPC starJumpController;
+        private Entities.NPC starJumpController;
         private global::Celeste.Player player;
         private Bonfire bonfire;
         private CharaDummy chara;
@@ -33,7 +33,7 @@ namespace Celeste.Cutscenes
         private HeartGemRumbler rumbler = new HeartGemRumbler();
         private int tentacleIndex;
 
-        public CS08_StarJumpEnd(NPC starJumpController, global::Celeste.Player player, Vector2 playerStart, Vector2 cameraStart)
+        public CS08_StarJumpEnd(Entities.NPC starJumpController, global::Celeste.Player player, Vector2 playerStart, Vector2 cameraStart)
             : base(true, false)
         {
             base.Depth = 10100;
@@ -232,7 +232,7 @@ namespace Celeste.Cutscenes
             this.player.Facing = Facings.Left;
             if (this.starJumpController != null)
             {
-                NPC npc = this.starJumpController;
+                Entities.NPC npc = this.starJumpController;
                 npc.Position.X = npc.Position.X - 24f;
             }
             foreach (ReflectionTentacles tentacle in this.tentacles)

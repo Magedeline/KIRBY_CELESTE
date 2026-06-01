@@ -17697,42 +17697,99 @@ don't forget...
 when I have your determination I will reshape this universe
 and reset everything into a new world.
 
-CH20_PENUMBRA_PHASTASM_INTRO=
-[ELS left normal]
-my shell... has been broken, you little shithead just only reveal my true idenity.
-behold I gave you the absoloute of INFINITE...
-the one, and only.
-{trigger 0 truefinalboss revealed}
+CH21_ELS_TERMINA_BOSS_END=
+[els right normal]
+Impossible!
+This Cannot be happening
+[MADELINE left angry]
+It's over els this world will live on
+but the darkness will fade away
+[els right normal]
+he he he
+[BADELINE left angryalt]
+what so funny of you laughing?
+[els right normal]
+Look like the unvierse is starting to erased itself.
+[MADELINE left surprised]
+wait WHAT!
+{trigger 0 tileset and decals is starting to erased}
+[KIRBY right angry]
+Oh brother you got to be kidding me!
+[KIRBY left sad]
+we need to get out of this dimension
+if we stay here we will also get erased
+[GRANNY right normal]
+Not without my help
+{trigger 1 bird, soul goner, and rest of the allies came}
+[els left normal]
+Impossible?!
+how did you get that fast?!
+[MAGOLOR right annoyed]
+because that what we came here for
+to not only get them out
+but to get you out as well
+[els right normal]
+but... why!?
+why you being so kind to me?
+[CHARA right normal]
+because since you have been castropic
+there always a second chances to become greater
+[els right normal]
+I...
+I understand
+I'll hold them off while you all go
+they are not like it...
+[MADELINE right surprised]
+els! BUT!...
+[els right normal]
+Go, I will have to deal with them myself.
+[KIRBY right determined]
+No I will stand with you and hold off as well
+[ASRIEL right normal]
+If there any chacne of I little power i have left
+Then I'll give to them all.
+[els right normal]
+Try not to keep up Asriel...
 
-PENUMBRA PHASTASM.
-
-{trigger 1 instant transation black}
-[ELS left normal]
-as I always said, in our little perfect world
-no one will choose or make choices of who they are.
-
-{trigger 2 els evil laugh}
-
-CH20_LAST_BIG_ROOM=
-[Madeline right together]
-This is it kirby, we need to go through this big chamber and finish els
+CH21_LAST_BIG_ROOM=
+[els right normal]
+This is it kirby, our final escape we need to get to the last powerchamber
 
 [KIRBY left determined]
-Right behind you madeline, Lets Finish This once and for all
+I'm On it, Lets Finish This once and for all
 
-CH20_MADELINE_LAST_BOOST=
-[MADELINE right normal]
-now or never kirby!
+CH21_ELS_LAST_BOOST=
+[els right normal]
+tell your parent to forgive me!
 
-CH20_RESTORATION_AND_FAREWELL=
-[none left]
+CH21_RESTORATION_AND_FAREWELL=
 {trigger 0 maddy baddy and everyone else walk in left}
-[KIRBY left normal]
-Madeline There you are!
 [MADELINE left surprised]
-wait did we just defeat els?
+Wait...
+I just realized something.
+[BADELINE right normal]
+What is it?
+[MADELINE left sadder]
+Els...
+He saved us.
+[KIRBY left surprised]
+Huh? What do you mean?
+[MADELINE left sad]
+The terrible darkness of multiple zero...
+The void that was consuming everything.
+He held it back so we could escape.
+He gave us a second chance...
+even after everything he did.
+[BADELINE right scoff]
+...
+He really did, didn't he?
+[MADELINE left normal]
+I hope he finds peace too.
+Wherever he is now.
+[KIRBY left determined]
+Yeah... me too.
 [Granny left normal]
-I belived you finally pay it off and I own you too my grand daughter.
+To be Clear all that matter is you finally pay it off and I own you too my grand daughter.
 {trigger 1 granny and titan king walk in right}
 [THEO right wtf]
 What the... Granny?!
@@ -17756,10 +17813,10 @@ Well uhh I got alot of explaining to so uh I gave him a little life for you all 
 [ASRIEL left sad]
 I... I remember everything now...
 {trigger 4 pan to badeline and madeline look at right}
-[badeline right angryalt]
+[badeline left angryalt]
 Wow what a baby...
 {trigger 5 madeline and badeline look at left}
-[badeline left normal]
+[badeline right normal]
 but either in way at least you're back to us.
 [stellar left none]
 Kirby is that you?
@@ -17835,7 +17892,7 @@ yeah you punk rocker I wouldn't be able to be here if it wasn't for kirby and yo
 [papyrus right blush]
 nhhheeey heh heh! you did great asriel I would honesntly say that you put a great potiential for kirby to be a great hero!
 
-[sans right dudewtfalt]
+[sans right normal]
 heh... you did good, kid. real good, and don't lose that determination of yours, just keep that in mind when your in the afterlife.
 
 [suzy right sastified]
@@ -17859,7 +17916,7 @@ actaully thats is even better dad then I rather than going back to the flower, I
 
 {trigger 3 chara walk in left and look at asriel}
 
-[chara left laughing]
+[chara left normal]
 asriel I glad you finally remember who you are, your my best friend after all.
 from the last reality, to the present, to the future, I will always be here for you.
 and I hope that the real player would understand that you are a good person and you deserve to be happy, and I hope that you will find your own happiness in the afterlife.
@@ -17875,7 +17932,7 @@ and goodbye everyone please never forget us
 
 [flowey right normal]
 uhg what happen?
-the last time has happen to me is I was consued by the void, and now I am back again?
+the last time has happen to me is I was consumed by the void, and now I am back again?
 wait...
 ... I am a flower again!? oh come on!
 

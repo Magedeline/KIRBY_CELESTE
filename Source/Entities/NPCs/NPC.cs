@@ -9,9 +9,9 @@ using Monocle;
 
 namespace Celeste.Entities
 {
-    [CustomEntity(ids:"DesoloZantas/NPC_Event,MaggyHelper/NPC_Event")]
+    [CustomEntity(ids:"DesoloZantas/NPC,MaggyHelper/NPC")]
     [Tracked(true)]
-    public partial class NpcEvent : Entity
+    public partial class NPC : Entity
     {
         private const string DefaultSpriteDirectory = "characters/theo/";
 
@@ -37,25 +37,36 @@ namespace Celeste.Entities
         private bool configuredInteractionRunning;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public NpcEvent(EntityData data, Vector2 offset) : base(data.Position + offset)
+        public NPC(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
             DialogKey = data.Attr("dialogKey", string.Empty);
             FlagName = data.Attr("flagName", string.Empty);
             EventId = data.Attr("eventId", string.Empty);
 
             InitializeBaseComponents();
-            SetSpriteDirectory(ResolveSpriteDirectory(data.Attr("spriteId", string.Empty)));
+            string spriteId = ResolveSpriteId(data.Attr("spriteId", string.Empty));
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create(spriteId));
+            Sprite.CenterOrigin();
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public NpcEvent(Vector2 position) : base(position)
+        public NPC(Vector2 position) : base(position)
         {
             DialogKey = string.Empty;
             FlagName = string.Empty;
             EventId = string.Empty;
 
             InitializeBaseComponents();
-            SetSpriteDirectory(DefaultSpriteDirectory);
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("theo"));
+            Sprite.CenterOrigin();
         }
 
         private void InitializeBaseComponents()
@@ -66,16 +77,6 @@ namespace Celeste.Entities
             Depth = 1000;
         }
 
-        protected void SetSpriteDirectory(string spriteDirectory)
-        {
-            if (Sprite != null)
-            {
-                Remove(Sprite);
-            }
-
-            Add(Sprite = new Sprite(GFX.Game, spriteDirectory));
-            Sprite.CenterOrigin();
-        }
 
         protected bool TryAddCutscene(CutsceneEntity cutscene)
         {
@@ -111,7 +112,7 @@ namespace Celeste.Entities
             }
             catch (Exception ex)
             {
-                Logger.Log(LogLevel.Error, nameof(NpcEvent), $"Failed to run eventId '{EventId}' for {GetType().Name}: {ex}");
+                Logger.Log(LogLevel.Error, nameof(NPC), $"Failed to run eventId '{EventId}' for {GetType().Name}: {ex}");
                 return false;
             }
         }
@@ -206,41 +207,40 @@ namespace Celeste.Entities
             }
         }
 
-        private static string ResolveSpriteDirectory(string spriteId)
+        private static string ResolveSpriteId(string spriteId)
         {
             if (string.IsNullOrWhiteSpace(spriteId))
             {
-                return DefaultSpriteDirectory;
+                return "theo";
             }
 
             return spriteId switch
             {
-                "theo" => "characters/theo/",
-                "chara" => "characters/chara/",
-                "kirby" => "characters/kirby/",
-                "ralsei" => "characters/ralsei/",
-                "madeline" => "characters/madeline/",
-                "badeline" => "characters/badeline/",
-                "maggy" => "characters/maggy/",
-                "magolor" => "characters/magolor/",
-                "magalor" => "characters/magolor/",
-                "toriel" => "characters/toriel/",
-                "asriel" => "characters/asriel/",
-                "oshiro" => "characters/oshiro/",
-                "granny" => "characters/granny/",
-                "meta_knight" => "characters/metaknight/",
-                "metaknight" => "characters/metaknight/",
-                "roxus" => "characters/roxus/",
-                "temmie" => "characters/temmie/",
-                "axis" => "characters/axis/",
-                "els" => "characters/els/",
-                "digital_guide" => "characters/digitalguide/",
-                "digitalguide" => "characters/digitalguide/",
-                "phone" => "characters/phone/",
-                "titan_council_member" => "characters/titancouncil/",
-                "titancouncil" => "characters/titancouncil/",
-                _ when spriteId.Contains("/") => spriteId.EndsWith("/") ? spriteId : $"{spriteId}/",
-                _ => $"characters/{spriteId.TrimEnd('/')}/"
+                "theo" => "theo",
+                "chara" => "chara",
+                "kirby" => "kirby",
+                "ralsei" => "ralsei",
+                "madeline" => "madeline",
+                "badeline" => "badeline",
+                "maggy" => "maggy",
+                "magolor" => "magolor",
+                "magalor" => "magolor",
+                "toriel" => "toriel",
+                "asriel" => "asriel",
+                "oshiro" => "oshiro",
+                "granny" => "granny",
+                "meta_knight" => "metaknight",
+                "metaknight" => "metaknight",
+                "roxus" => "roxus",
+                "temmie" => "temmie",
+                "axis" => "axis",
+                "els" => "els",
+                "digital_guide" => "digitalguide",
+                "digitalguide" => "digitalguide",
+                "phone" => "phone",
+                "titan_council_member" => "titancouncil",
+                "titancouncil" => "titancouncil",
+                _ => spriteId
             };
         }
 
@@ -428,121 +428,181 @@ namespace Celeste.Entities
     
     [CustomEntity("DesoloZantas/NPC_Theo")]
     [Tracked(true)]
-    public partial class Npc_Theo : NpcEvent
+    public partial class Npc_Theo : NPC
     {
         public Npc_Theo(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/theo/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("theo"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_Chara")]
     [Tracked(true)]
-    public partial class Npc_Chara : NpcEvent
+    public partial class Npc_Chara : NPC
     {
         public Npc_Chara(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/chara/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("chara"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_Kirby")]
     [Tracked(true)]
-    public partial class Npc_Kirby : NpcEvent
+    public partial class Npc_Kirby : NPC
     {
         public Npc_Kirby(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/kirby/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("kirby"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_Ralsei")]
     [Tracked(true)]
-    public partial class Npc_Ralsei : NpcEvent
+    public partial class Npc_Ralsei : NPC
     {
         public Npc_Ralsei(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/ralsei/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("ralsei"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_MetaKnight")]
     [Tracked(true)]
-    public partial class Npc_MetaKnight : NpcEvent
+    public partial class Npc_MetaKnight : NPC
     {
         public Npc_MetaKnight(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/metaknight/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("metaknight"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_DigitalGuide")]
     [Tracked(true)]
-    public partial class Npc_DigitalGuide : NpcEvent
+    public partial class Npc_DigitalGuide : NPC
     {
         public Npc_DigitalGuide(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/digitalguide/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("digitalguide"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_Phone")]
     [Tracked(true)]
-    public partial class Npc_Phone : NpcEvent
+    public partial class Npc_Phone : NPC
     {
         public Npc_Phone(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/phone/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("phone"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_Roxus")]
     [Tracked(true)]
-    public partial class Npc_Roxus : NpcEvent
+    public partial class Npc_Roxus : NPC
     {
         public Npc_Roxus(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/roxus/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("roxus"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_Temmie")]
     [Tracked(true)]
-    public partial class Npc_Temmie : NpcEvent
+    public partial class Npc_Temmie : NPC
     {
         public Npc_Temmie(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/temmie/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("temmie"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_Axis")]
     [Tracked(true)]
-    public partial class Npc_Axis : NpcEvent
+    public partial class Npc_Axis : NPC
     {
         public Npc_Axis(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/axis/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("axis"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_Els")]
     [Tracked(true)]
-    public partial class Npc_Els : NpcEvent
+    public partial class Npc_Els : NPC
     {
         public Npc_Els(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/els/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("els"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC_TitanCouncilMember")]
     [Tracked(true)]
-    public partial class Npc_TitanCouncilMember : NpcEvent
+    public partial class Npc_TitanCouncilMember : NPC
     {
         public Npc_TitanCouncilMember(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/titancouncil/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("titancouncil"));
+            Sprite.CenterOrigin();
         }
     }
 
@@ -550,11 +610,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC00_Theo")]
     [Tracked(true)]
-    public partial class Npc00_Theo : NpcEvent
+    public partial class Npc00_Theo : NPC
     {
         public Npc00_Theo(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/theo/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("theo"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -564,61 +629,91 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC01_Maggy")]
     [Tracked(true)]
-    public partial class Npc01_Maggy : NpcEvent
+    public partial class Npc01_Maggy : NPC
     {
         public Npc01_Maggy(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/maggy/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("maggy"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC02_Maggy")]
     [Tracked(true)]
-    public partial class Npc02_Maggy : NpcEvent
+    public partial class Npc02_Maggy : NPC
     {
         public Npc02_Maggy(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/maggy/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("maggy"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC03_Maggy")]
     [Tracked(true)]
-    public partial class Npc03_Maggy : NpcEvent
+    public partial class Npc03_Maggy : NPC
     {
         public Npc03_Maggy(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/maggy/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("maggy"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC03_Theo")]
     [Tracked(true)]
-    public partial class Npc03_Theo : NpcEvent
+    public partial class Npc03_Theo : NPC
     {
         public Npc03_Theo(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/theo/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("theo"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC05_Magolor_Vents")]
     [Tracked(true)]
-    public partial class Npc05_Magolor_Vents : NpcEvent
+    public partial class Npc05_Magolor_Vents : NPC
     {
         public Npc05_Magolor_Vents(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/magolor/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("magolor"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC05_MagolorEscape")]
     [Tracked(true)]
-    public partial class Npc05_Magolor_Escape : NpcEvent
+    public partial class Npc05_Magolor_Escape : NPC
     {
         public Npc05_Magolor_Escape(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/magolor/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("magolor"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -632,17 +727,22 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC05_Oshiro_Breakdown")]
     [Tracked(true)]
-    public partial class Npc05_Oshiro_Breakdown : NpcEvent
+    public partial class Npc05_Oshiro_Breakdown : NPC
     {
         public Npc05_Oshiro_Breakdown(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/oshiro/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("oshiro"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC05_Oshiro_Clutter")]
     [Tracked(true)]
-    public partial class Npc05_Oshiro_Clutter : NpcEvent
+    public partial class Npc05_Oshiro_Clutter : NPC
     {
         private int index;
         #pragma warning disable CS0649
@@ -651,7 +751,12 @@ namespace Celeste.Entities
 
         public Npc05_Oshiro_Clutter(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/oshiro/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("oshiro"));
+            Sprite.CenterOrigin();
             this.index = data.Int("index", 0);
         }
         protected override void OnTalk(global::Celeste.Player player)
@@ -662,11 +767,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC05_Oshiro_Hallway1")]
     [Tracked(true)]
-    public partial class Npc05_Oshiro_Hallway1 : NpcEvent
+    public partial class Npc05_Oshiro_Hallway1 : NPC
     {
         public Npc05_Oshiro_Hallway1(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/oshiro/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("oshiro"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -680,11 +790,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC05_Oshiro_Hallway2")]
     [Tracked(true)]
-    public partial class Npc05_Oshiro_Hallway2 : NpcEvent
+    public partial class Npc05_Oshiro_Hallway2 : NPC
     {
         public Npc05_Oshiro_Hallway2(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/oshiro/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("oshiro"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -698,11 +813,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC05_Oshiro_Lobby")]
     [Tracked(true)]
-    public partial class Npc05_Oshiro_Lobby : NpcEvent
+    public partial class Npc05_Oshiro_Lobby : NPC
     {
         public Npc05_Oshiro_Lobby(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/oshiro/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("oshiro"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -716,11 +836,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC05_Oshiro_Rooftop")]
     [Tracked(true)]
-    public partial class Npc05_Oshiro_Rooftop : NpcEvent
+    public partial class Npc05_Oshiro_Rooftop : NPC
     {
         public Npc05_Oshiro_Rooftop(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/oshiro/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("oshiro"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -734,11 +859,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC05_Oshiro_Suite")]
     [Tracked(true)]
-    public partial class Npc05_Oshiro_Suite : NpcEvent
+    public partial class Npc05_Oshiro_Suite : NPC
     {
         public Npc05_Oshiro_Suite(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/oshiro/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("oshiro"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -752,11 +882,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC06_Magolor")]
     [Tracked(true)]
-    public partial class Npc06_Magolor : NpcEvent
+    public partial class Npc06_Magolor : NPC
     {
         public Npc06_Magolor(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/magolor/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("magolor"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -771,21 +906,31 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC06_Theo")]
     [Tracked(true)]
-    public partial class Npc06_Theo : NpcEvent
+    public partial class Npc06_Theo : NPC
     {
         public Npc06_Theo(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/theo/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("theo"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC07_Chara")]
     [Tracked(true)]
-    public partial class Npc07_Chara : NpcEvent
+    public partial class Npc07_Chara : NPC
     {
         public Npc07_Chara(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/chara/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("chara"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -795,11 +940,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC07_Maddy_Mirror")]
     [Tracked(true)]
-    public partial class Npc07_Maddy_Mirror : NpcEvent
+    public partial class Npc07_Maddy_Mirror : NPC
     {
         public Npc07_Maddy_Mirror(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/theoCrystal/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("theo_crystal"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -809,11 +959,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC08_Chara_Crying")]
     [Tracked(true)]
-    public partial class Npc08_Chara_Crying : NpcEvent
+    public partial class Npc08_Chara_Crying : NPC
     {
         public Npc08_Chara_Crying(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/chara/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("chara"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -827,11 +982,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC08_Maddy_and_Theo_Ending")]
     [Tracked(true)]
-    public partial class Npc08_Maddy_and_Theo_Ending : NpcEvent
+    public partial class Npc08_Maddy_and_Theo_Ending : NPC
     {
         public Npc08_Maddy_and_Theo_Ending(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/madeline/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("player"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -845,11 +1005,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC08_Madeline_Plateau")]
     [Tracked(true)]
-    public partial class Npc08_Madeline_Plateau : NpcEvent
+    public partial class Npc08_Madeline_Plateau : NPC
     {
         public Npc08_Madeline_Plateau(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/madeline/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("player"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -864,11 +1029,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC08_Maggy_Ending")]
     [Tracked(true)]
-    public partial class Npc08_Maggy_Ending : NpcEvent
+    public partial class Npc08_Maggy_Ending : NPC
     {
         public Npc08_Maggy_Ending(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/maggy/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("maggy"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -880,11 +1050,16 @@ namespace Celeste.Entities
         }
     }
     
-    public partial class Npc08_Theo_Ending : NpcEvent
+    public partial class Npc08_Theo_Ending : NPC
     {
         public Npc08_Theo_Ending(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/theo/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("theo"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -898,11 +1073,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC17_Kirby")]
     [Tracked(true)]
-    public partial class Npc17_Kirby : NpcEvent
+    public partial class Npc17_Kirby : NPC
     {
         public Npc17_Kirby(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/kirby/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("kirby"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -912,11 +1092,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC17_Oshiro")]
     [Tracked(true)]
-    public partial class Npc17_Oshiro : NpcEvent
+    public partial class Npc17_Oshiro : NPC
     {
         public Npc17_Oshiro(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/oshiro/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("oshiro"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -926,11 +1111,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC17_Ralsei")]
     [Tracked(true)]
-    public partial class Npc17_Ralsei : NpcEvent
+    public partial class Npc17_Ralsei : NPC
     {
         public Npc17_Ralsei(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/ralsei/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("ralsei"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -940,11 +1130,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC17_Theo")]
     [Tracked(true)]
-    public partial class Npc17_Theo : NpcEvent
+    public partial class Npc17_Theo : NPC
     {
         public Npc17_Theo(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/theo/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("theo"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -954,11 +1149,16 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC17_Toriel")]
     [Tracked(true)]
-    public partial class Npc17_Toriel : NpcEvent
+    public partial class Npc17_Toriel : NPC
     {
         public Npc17_Toriel(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/toriel/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("toriel"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
@@ -968,120 +1168,148 @@ namespace Celeste.Entities
 
     [CustomEntity("DesoloZantas/NPC18_Toriel_Inside")]
     [Tracked(true)]
-    public partial class Npc18_Toriel_Inside : NpcEvent
+    public partial class Npc18_Toriel_Inside : NPC
     {
         public Npc18_Toriel_Inside(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/toriel/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("toriel"));
+            Sprite.CenterOrigin();
         }
         
     }
 
     [CustomEntity("DesoloZantas/NPC18_Toriel_Outside")]
     [Tracked(true)]
-    public partial class Npc18_Toriel_Outside : NpcEvent
+    public partial class Npc18_Toriel_Outside : NPC
     {
         public Npc18_Toriel_Outside(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/toriel/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("toriel"));
+            Sprite.CenterOrigin();
         }
     }
 
     [CustomEntity("DesoloZantas/NPC19_Gravestone")]
     [Tracked(true)]
-    public partial class Npc19_Gravestone : NpcEvent
+    public partial class Npc19_Gravestone : NPC
     {
         public Npc19_Gravestone(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/gravestone/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("gravestone"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
-            var gravestone = Scene.Tracker.GetEntity<NPC19_Gravestone>();
-            if (gravestone != null)
-            {
-                TryAddCutscene(new CS19_Gravestone(player, gravestone, Position));
-            }
+            // This class is a partial wrapper, don't use it directly
+            // The actual NPC19_Gravestone entity should be used instead
         }
     }
 
     [CustomEntity("DesoloZantas/NPC19_Maggy_Loop")]
     [Tracked(true)]
-    public partial class Npc19_Maggy_Loop : NpcEvent
+    public partial class Npc19_Maggy_Loop : NPC
     {
         public Npc19_Maggy_Loop(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/maggy/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("maggy"));
+            Sprite.CenterOrigin();
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
-            CharaDummy charaDummy = Level.Tracker.GetEntity<CharaDummy>();
-            if (charaDummy != null)
-            {
-                TryAddCutscene(new Cs19TrapinLoop(player, charaDummy));
-            }
+            TryAddCutscene(new CS19_TrapinLoop(player));
         }
     }
 
     [CustomEntity("DesoloZantas/NPC20_Asriel")]
     [Tracked(true)]
-    public partial class Npc20_Asriel : NpcEvent
+    public partial class Npc20_Asriel : NPC
     {
         public Npc20_Asriel(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/asriel/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("asriel"));
+            Sprite.CenterOrigin();
         }
 
-        internal IEnumerator MoveTo(float v1, float v2, bool v3)
+        internal IEnumerator MoveTo(float targetX, float targetY, bool waitForCompletion)
         {
             yield return new WaitForSeconds(0.5f);
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
-            TryAddCutscene(new CS20_Saved(player));
+            TryAddCutscene(new CS21_Saved(player));
         }
     }
 
     [CustomEntity("DesoloZantas/NPC20_Granny")]
     [Tracked(true)]
-    public partial class Npc20_Granny : NpcEvent
+    public partial class Npc20_Granny : NPC
     {
         public Npc20_Granny(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/granny/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("granny"));
+            Sprite.CenterOrigin();
         }
 
-        internal IEnumerator MoveTo(float v)
+        internal IEnumerator MoveTo(float targetX)
         {
             yield return new WaitForSeconds(0.5f);
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
-            TryAddCutscene(new CS20_Saved(player));
+            TryAddCutscene(new CS21_Saved(player));
         }
     }
 
     [CustomEntity("DesoloZantas/NPC20_Madeline")]
     [Tracked(true)]
-    public partial class Npc20_Madeline : NpcEvent
+    public partial class Npc20_Madeline : NPC
     {
         public Npc20_Madeline(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            SetSpriteDirectory("characters/madeline/");
+            if (Sprite != null)
+            {
+                Remove(Sprite);
+            }
+            Add(Sprite = GFX.SpriteBank.Create("player"));
+            Sprite.CenterOrigin();
         }
 
-        internal IEnumerator MoveTo(float v)
+        internal IEnumerator MoveTo(float targetX)
         {
             yield return new WaitForSeconds(0.5f);
         }
         protected override void OnTalk(global::Celeste.Player player)
         {
-            TryAddCutscene(new CS20_Saved(player));
+            TryAddCutscene(new CS21_Saved(player));
         }
     }
     [CustomEntity("DesoloZantas/NPCEventInteract")]
     [Tracked(true)]
-    public class NPCEventInteract : NpcEvent
+    public class NPCEventInteract : NPC
     {
         public NPCEventInteract(EntityData data, Vector2 offset) : base(data, offset)
         {
