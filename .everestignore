@@ -5,3 +5,4 @@
 # Github workflow file if you're using GitHub actions for publishing.
 Source/
 MaggyHelper.zip
+.git/

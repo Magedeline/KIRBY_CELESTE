@@ -24,6 +24,16 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Fetch latest Everest stripped libs
+        shell: pwsh
+        run: |
+          $ver = (Invoke-RestMethod "https://everestapi.github.io/modupdater.txt").Trim()
+          Write-Host "Latest Everest: $ver"
+          $url = "https://github.com/EverestAPI/Everest/releases/download/$ver/lib-stripped.zip"
+          Invoke-WebRequest $url -OutFile lib-stripped.zip
+          Expand-Archive lib-stripped.zip -DestinationPath lib-stripped -Force
+          Remove-Item lib-stripped.zip
+
       - name: Restore
         run: dotnet restore MaggyHelper.sln
 

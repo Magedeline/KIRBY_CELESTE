@@ -20,6 +20,34 @@ public class CharaBoost : Entity
 
     public static ParticleType P_Move;
 
+    static CharaBoost()
+    {
+        P_Ambience = new ParticleType
+        {
+            Source = GFX.Game["particles/shard"],
+            Color = Calc.HexToColor("b01eff"),
+            Color2 = Calc.HexToColor("ae8aff"),
+            ColorMode = ParticleType.ColorModes.Blink,
+            FadeMode = ParticleType.FadeModes.Late,
+            LifeMin = 0.4f,
+            LifeMax = 0.8f,
+            Size = 0.8f,
+            SizeRange = 0.2f,
+            Direction = (float)Math.PI / 2f,
+            DirectionRange = (float)Math.PI / 4f,
+            SpeedMin = 10f,
+            SpeedMax = 20f
+        };
+
+        P_Move = new ParticleType(P_Ambience)
+        {
+            SpeedMin = 40f,
+            SpeedMax = 80f,
+            LifeMin = 0.2f,
+            LifeMax = 0.4f
+        };
+    }
+
     private const float MoveSpeed = 320f;
 
     private Sprite sprite;

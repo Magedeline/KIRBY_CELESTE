@@ -190,7 +190,7 @@
   <Tileset id="v" copy="z" path="finallevels" sound="12" />
   <Tileset id="y" copy="z" path="scificorrupt" sound="20" />
   <Tileset id="q" copy="z" path="scififullycorrupt" sound="20" />
-  <Tileset id="N" copy="z" path="hopesanddreams" sound="24" />
+  <Tileset id="N" copy="z" path="hopesanddreams" sound="32" />
   <Tileset id="O" copy="z" path="void" sound="14" />
   <Tileset id="P" copy="z" path="pinkgrass" sound="14" />
   <Tileset id="S" copy="z" path="tesseract" sound="14" />

@@ -151,6 +151,9 @@ PFakeShine = new ParticleType
             this.IsAstral = data.Bool("astral", false);
             this.endLevelOnCollect = data.Bool(nameof(endLevelOnCollect), false);
             this.entityId = new EntityID(data.Level.Name, data.ID);
+            this.sevenbirdFlyby = data.Bool("sevenbirdFlyby", false);
+            this.unlockDside = data.Bool("unlockDside", false);
+            this.customSfx = data.Attr("customSfx", "");
         }
 
         public override void Awake(Scene scene) {
@@ -343,9 +346,9 @@ this.endCutscene();
             AreaKey area = level.Session.Area;
           string poemId = AreaData.Get(level).Mode[(int)area.Mode].PoemID;
             bool completeArea = !this.IsFake && (this.endLevelOnCollect || area.Mode != AreaMode.Normal || area.ID == 19);
+            bool isCrystalHeartVariant = this.sevenbirdFlyby || !string.IsNullOrEmpty(this.customSfx) || this.unlockDside;
             if (this.IsFake) {
            level.StartCutscene(this.SkipFakeHeartCutscene, true, false, true);
-           // Remove all birds from the scene to prevent interference with the fake heart cutscene (birdgoners)
            foreach (BirdNPC existingBird in level.Entities.FindAll<BirdNPC>()) {
                existingBird.RemoveSelf();
            }
@@ -368,7 +371,9 @@ foreach (Follower follower in player.Leader.Followers) {
             }
  }
      string text = "event:/game/general/crystalheart_blue_get";
-          if (this.IsAstral) {
+          if (!string.IsNullOrEmpty(this.customSfx)) {
+                text = this.customSfx;
+            } else if (this.IsAstral) {
                 text = "event:/pusheen/game/general/crystalheart_astral_void_get";
             } else if (this.IsFake) {
                 text = "event:/pusheen/extra_content/game/19_spaces/fakeheart_get";
@@ -428,16 +433,24 @@ foreach (Follower follower in player.Leader.Followers) {
                 level.TimerStopped = true;
                 level.RegisterAreaComplete();
             }
+            if (isCrystalHeartVariant) {
+                level.TimerStopped = true;
+                level.RegisterAreaComplete();
+            }
    string text2 = null;
             if (!string.IsNullOrEmpty(poemId)) {
              text2 = Dialog.Clean("soul_" + poemId, null);
      }
-     this.poem = new Poem(text2, (int)(this.IsAstral ? ((AreaMode)4) : (this.IsFake ? ((AreaMode)3) : area.Mode)), (area.Mode == AreaMode.CSide || area.Mode == (AreaMode)3 || this.IsAstral || this.IsFake) ? 1f : 0.6f);
+     this.poem = new Poem(text2, (int)(this.IsAstral ? ((AreaMode)4) : (this.IsFake ? ((AreaMode)3) : area.Mode)), (area.Mode == AreaMode.CSide || area.Mode == (AreaMode)3 || this.IsAstral || this.IsFake || isCrystalHeartVariant) ? 1f : 0.6f);
       this.poem.Alpha = 0f;
          Scene.Add(this.poem);
  for (float t = 0f; t < 1f; t += Engine.RawDeltaTime) {
   this.poem.Alpha = Ease.CubeOut(t);
             yield return null;
+        }
+        // Sevenbird flyby effect for crystal heart variants
+        if (this.sevenbirdFlyby) {
+            yield return SevenbirdFlybyRoutine();
         }
   if (this.IsFake) {
   yield return this.doFakeRoutineWithBird(player);
@@ -446,7 +459,33 @@ foreach (Follower follower in player.Leader.Followers) {
  yield return null;
     }
    this.sfx.Source.Param("end", 1f);
-         if (!completeArea) {
+
+            // Check for D-side unlock condition (18_core_cside) for crystal heart variants
+            bool shouldUnlockDside = this.unlockDside && area.ID == 18 && area.Mode == AreaMode.CSide;
+            // Check for all crystal hearts collected
+            bool allCrystalHeartsCollected = this.CheckAllCrystalHeartsCollected();
+
+            if (allCrystalHeartsCollected && isCrystalHeartVariant) {
+                // Show ultra completion postcard
+                level.FormationBackdrop.Display = false;
+                for (float t = 0f; t < 1f; t += Engine.RawDeltaTime * 2f) {
+                    this.poem.Alpha = Ease.CubeIn(1f - t);
+                    yield return null;
+                }
+                player.Depth = 0;
+                this.endCutscene();
+                yield return ShowUltraPostcard(level);
+            } else if (shouldUnlockDside) {
+                // Show D-side unlock postcard
+                level.FormationBackdrop.Display = false;
+                for (float t = 0f; t < 1f; t += Engine.RawDeltaTime * 2f) {
+                    this.poem.Alpha = Ease.CubeIn(1f - t);
+                    yield return null;
+                }
+                player.Depth = 0;
+                this.endCutscene();
+                yield return ShowDsidePostcard(level);
+            } else if (!completeArea && !isCrystalHeartVariant) {
      level.FormationBackdrop.Display = false;
   for (float t = 0f; t < 1f; t += Engine.RawDeltaTime * 2f) {
 this.poem.Alpha = Ease.CubeIn(1f - t);
@@ -799,6 +838,176 @@ Level level = Scene as Level;
         private HoldableCollider holdableCollider;
         private EntityID entityId;
     private InvisibleBarrier fakeRightWall;
+
+        // Crystal Heart variant fields
+        private bool sevenbirdFlyby;
+        private bool unlockDside;
+        private string customSfx;
+
+        // Sevenbird flyby routine for crystal heart variants
+        private IEnumerator SevenbirdFlybyRoutine()
+        {
+            Level level = SceneAs<Level>();
+            if (level == null) yield break;
+
+            Vector2 cameraPosition = level.Camera.Position;
+
+            // Create seven birds that fly across the screen
+            for (int i = 0; i < FakeBirdGonerSpriteIds.Length; i++)
+            {
+                Vector2 start = cameraPosition + new Vector2(-20f - i * 16f, 60f + i * 14f);
+                FakeBirdGoner bird = new FakeBirdGoner(FakeBirdGonerSpriteIds[i], start);
+                this.fakeBirdGoners.Add(bird);
+                level.Add(bird);
+            }
+
+            // Animate birds flying across
+            for (float p = 0f; p < 1f; p += Engine.RawDeltaTime / 1.5f)
+            {
+                for (int i = 0; i < this.fakeBirdGoners.Count; i++)
+                {
+                    FakeBirdGoner bird = this.fakeBirdGoners[i];
+                    Vector2 start = cameraPosition + new Vector2(-20f - i * 16f, 60f + i * 14f);
+                    Vector2 end = cameraPosition + new Vector2(340f + i * 10f, 40f + i * 10f);
+                    float birdProgress = Math.Clamp((p - i * 0.04f) / 0.65f, 0f, 1f);
+                    float eased = Ease.CubeInOut(birdProgress);
+                    bird.Position = start + (end - start) * eased + Vector2.UnitY * (float)Math.Sin((double)(birdProgress * 8f + i)) * 8f;
+
+                    if (birdProgress > 0f && level.OnRawInterval(0.2f))
+                    {
+                        TrailManager.Add(bird, Calc.HexToColor("639bff"), 1f, true, true);
+                    }
+                }
+                yield return null;
+            }
+
+            ClearFakeBirdGoners();
+            yield return 0.3f;
+        }
+
+        private bool CheckAllCrystalHeartsCollected()
+        {
+            var saveData = MaggyHelperModule.SaveData;
+            if (saveData == null) return false;
+
+            int collectedCount = 0;
+            for (int areaId = 1; areaId <= 21; areaId++)
+            {
+                for (int mode = 0; mode <= 3; mode++)
+                {
+                    string heartId = $"crystalheart_{areaId}_{mode}_";
+                    for (int id = 0; id < 100; id++)
+                    {
+                        if (saveData.HasCollectedHeartGem(heartId + id))
+                        {
+                            collectedCount++;
+                            break;
+                        }
+                    }
+                }
+            }
+            return collectedCount >= 18;
+        }
+
+        private IEnumerator ShowDsidePostcard(Level level)
+        {
+            var scene = new Scene();
+            var snow = new HiresSnow();
+            scene.Add(snow);
+
+            var entity = new Entity();
+            entity.Add(new Coroutine(DsidePostcardRoutine(scene)));
+            scene.Add(entity);
+
+            Engine.Scene = scene;
+            yield return null;
+        }
+
+        private IEnumerator DsidePostcardRoutine(Scene scene)
+        {
+            yield return 0.5f;
+
+            string dialogText = Dialog.Get("POSTCARD_DSIDE_CRYSTAL_UNLOCK");
+            if (string.IsNullOrEmpty(dialogText))
+                dialogText = "D-Side Unlocked!\nPink Platinum Berries now available.";
+
+            var postcard = new PostcardMaggy(dialogText,
+                "event:/pusheen/ui/main/postcard_dsides_in",
+                "event:/pusheen/ui/main/postcard_dsides_out");
+
+            if (GFX.Gui.Has("postcards/dside_crystal_unlock"))
+                postcard.Postcard = GFX.Gui["postcards/dside_crystal_unlock"];
+            else if (GFX.Gui.Has("postcards/dside_unlock"))
+                postcard.Postcard = GFX.Gui["postcards/dside_unlock"];
+
+            scene.Add(postcard);
+            yield return postcard.DisplayRoutine();
+
+            yield return 0.5f;
+            Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete, new HiresSnow());
+        }
+
+        private IEnumerator ShowUltraPostcard(Level level)
+        {
+            var scene = new Scene();
+            var snow = new HiresSnow();
+            scene.Add(snow);
+
+            var entity = new Entity();
+            entity.Add(new Coroutine(UltraPostcardRoutine(scene)));
+            scene.Add(entity);
+
+            Engine.Scene = scene;
+            yield return null;
+        }
+
+        private IEnumerator UltraPostcardRoutine(Scene scene)
+        {
+            yield return 0.5f;
+
+            string dialogText = Dialog.Get("POSTCARD_ULTRA_VARIANT_UNLOCK");
+            if (string.IsNullOrEmpty(dialogText))
+                dialogText = "All Crystal Hearts Collected!\nThe ultimate challenge awaits.";
+
+            var postcard = new PostcardMaggy(dialogText,
+                "event:/pusheen/extra_content/ui/postcard_desolo_variants_in",
+                "event:/pusheen/extra_content/ui/postcard_desolo_variants_out");
+
+            if (GFX.Gui.Has("postcards/ultra_variant_unlock"))
+                postcard.Postcard = GFX.Gui["postcards/ultra_variant_unlock"];
+            else if (GFX.Gui.Has("Maggy/postcard"))
+                postcard.Postcard = GFX.Gui["Maggy/postcard"];
+
+            scene.Add(postcard);
+
+            if (!string.IsNullOrEmpty(PostcardUnlockSystem.UltraVariantConfig.UnlockMusic))
+                Audio.SetMusic(PostcardUnlockSystem.UltraVariantConfig.UnlockMusic);
+
+            yield return postcard.DisplayRoutine();
+
+            MaggyHelperModule.SaveData?.UnlockAchievement("ultra_crystal_hearts_postcard_shown");
+
+            yield return 0.5f;
+            Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete, new HiresSnow());
+        }
+
+        // Sevenbird inner class for crystal heart flyby (kept for compatibility)
+        private sealed class Sevenbird : Entity
+        {
+            public Sevenbird(string spriteId, Vector2 position) : base(position)
+            {
+                Depth = -2000100;
+                Tag = Tags.FrozenUpdate;
+
+                Sprite sprite = GFX.SpriteBank.Create(spriteId);
+                sprite.Play("fly", false, false);
+                sprite.UseRawDeltaTime = true;
+                sprite.Scale.X = 1f;
+                Add(sprite);
+                Add(new VertexLight(Color.White, 0.5f, 8, 32));
+                Add(new BloomPoint(0.5f, 12f));
+            }
+        }
 
         public void OnCollect()
         {

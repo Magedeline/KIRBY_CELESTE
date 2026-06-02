@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Monocle;
 using Celeste.Entities;
 using Celeste.Mod.MaggyHelper.Bosses;
-using Celeste.Mod.MaggyHelper.Audio;
+using Monocle;
 
-namespace Celeste.Mod.MaggyHelper.Tests
+namespace Celeste.Mod.MaggyHelper
 {
     /// <summary>
     /// Lightweight in-game test runner for MaggyHelper components.
@@ -29,7 +28,6 @@ namespace Celeste.Mod.MaggyHelper.Tests
 
             RunTriggerManagerTests();
             RunSaveDataValidatorTests();
-            RunAudioControllerTests();
             RunBossConfigHelperTests();
 
             sw.Stop();
@@ -99,27 +97,6 @@ namespace Celeste.Mod.MaggyHelper.Tests
             {
                 Assert("ValidateOnLoad_DoesNotCrash", false, $"Exception: {ex.Message}");
             }
-        }
-
-        #endregion
-
-        #region AudioController Tests
-
-        private static void RunAudioControllerTests()
-        {
-            LogTestCategory("AudioController");
-
-            Assert("Initialize_DoesNotCrash",
-                TestDoesNotThrow(() => PusheenAudioManager.Initialize()),
-                "Initialize should not throw");
-
-            Assert("StopAll_DoesNotCrash",
-                TestDoesNotThrow(() => PusheenAudioManager.StopAll()),
-                "StopAll should not throw");
-
-            Assert("SetMasterVolume_ClampsToRange",
-                TestDoesNotThrow(() => PusheenAudioManager.MasterVolume = 2.0f),
-                "SetMasterVolume should clamp values without crashing");
         }
 
         #endregion

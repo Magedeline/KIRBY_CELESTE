@@ -36,41 +36,41 @@ public static class OverworldMusicManager
     /// <summary>C-Side summit completion music</summary>
     public const string MUSIC_COMPLETE_CSIDE_SUMMIT = "event:/pusheen/music/menu/complete_cside_summit";
 
-    /// <summary>D-Side and DX-Side completion music</summary>
-    public const string MUSIC_COMPLETE_DSIDE_VOID = "event:/pusheen/music/menu/complete_dside_void";
+    /// <summary>D-Side and DX-Side completion music (uses DX-side event which exists)</summary>
+    public const string MUSIC_COMPLETE_DSIDE_VOID = "event:/pusheen/music/menu/complete_dxside";
 
     /// <summary>Credits music</summary>
     public const string MUSIC_CREDIT = "event:/pusheen/music/menu/credit";
 
-    /// <summary>Dodge credits music</summary>
-    public const string MUSIC_DODGE_CREDIT = "event:/pusheen/music/menu/dodge_credit";
+    /// <summary>Dodge credits music (fallback to credits)</summary>
+    public const string MUSIC_DODGE_CREDIT = "event:/pusheen/music/menu/credits";
 
-    /// <summary>Game over screen</summary>
-    public const string MUSIC_GAMEOVER = "event:/pusheen/music/menu/gameover";
+    /// <summary>Game over screen (fallback to vanilla complete_area)</summary>
+    public const string MUSIC_GAMEOVER = "event:/music/menu/complete_area";
 
-    /// <summary>Game over slow version</summary>
-    public const string MUSIC_GAMEOVER_SLOW = "event:/pusheen/music/menu/gameover_slow";
+    /// <summary>Game over slow version (fallback to vanilla complete_area)</summary>
+    public const string MUSIC_GAMEOVER_SLOW = "event:/music/menu/complete_area";
 
-    /// <summary>Goodnight / end of session music</summary>
-    public const string MUSIC_GOODNIGHT = "event:/pusheen/music/menu/goodnight";
+    /// <summary>Goodnight / end of session music (fallback to credits)</summary>
+    public const string MUSIC_GOODNIGHT = "event:/pusheen/music/menu/credits";
 
-    /// <summary>Last push / final chapters menu music</summary>
-    public const string MUSIC_LAST_PUSH = "event:/pusheen/music/menu/last_push";
+    /// <summary>Last push / final chapters menu music (fallback to credits)</summary>
+    public const string MUSIC_LAST_PUSH = "event:/pusheen/music/menu/credits";
 
-    /// <summary>Respite / save point music</summary>
-    public const string MUSIC_RESPITE = "event:/pusheen/music/menu/respite";
+    /// <summary>Respite / save point music (fallback to level_select)</summary>
+    public const string MUSIC_RESPITE = "event:/pusheen/music/menu/level_select";
 
-    /// <summary>Trailer music</summary>
-    public const string MUSIC_TRAILER = "event:/pusheen/music/menu/trailer";
+    /// <summary>Trailer music (fallback to credits)</summary>
+    public const string MUSIC_TRAILER = "event:/pusheen/music/menu/credits";
 
-    /// <summary>True legend / all-clear music</summary>
-    public const string MUSIC_TRUE_LEGEND = "event:/pusheen/music/menu/true_legend";
+    /// <summary>True legend / all-clear music (fallback to complete_summit)</summary>
+    public const string MUSIC_TRUE_LEGEND = "event:/pusheen/music/menu/complete_summit";
 
-    /// <summary>Candy parade music</summary>
-    public const string MUSIC_CANDY = "event:/pusheen/music/menu/candy";
+    /// <summary>Candy parade music (fallback to complete_area)</summary>
+    public const string MUSIC_CANDY = "event:/pusheen/music/menu/complete_area";
 
-    /// <summary>Cast screen music</summary>
-    public const string MUSIC_CAST = "event:/pusheen/music/menu/cast";
+    /// <summary>Cast screen music (fallback to credits)</summary>
+    public const string MUSIC_CAST = "event:/pusheen/music/menu/credits";
 
     // ── Vanilla → Custom mapping ─────────────────────────────────────────
 
