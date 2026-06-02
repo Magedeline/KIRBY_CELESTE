@@ -267,9 +267,6 @@ namespace Celeste.Mod.MaggyHelper
             // Sub-chapter system: host 5–20 collab maps under a single checkpoint
             global::Celeste.SubChapterManager.Load();
 
-            // Validate and auto-repair save data on load
-            global::Celeste.Mod.MaggyHelper.SaveDataValidator.ValidateOnLoad();
-
             // Register save data debugging console commands
             global::Celeste.Mod.MaggyHelper.SaveDataValidator.RegisterConsoleCommands();
 
@@ -323,6 +320,13 @@ namespace Celeste.Mod.MaggyHelper
                     self.Add(new PCGQuickMenu());
                 }
             }
+        }
+
+        public override void LoadSaveData(int index)
+        {
+            base.LoadSaveData(index);
+            global::Celeste.Mod.MaggyHelper.SaveDataValidator.ResetValidationState();
+            global::Celeste.Mod.MaggyHelper.SaveDataValidator.ValidateOnLoad();
         }
 
         public override void Unload()

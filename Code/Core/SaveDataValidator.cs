@@ -32,6 +32,12 @@ namespace Celeste.Mod.MaggyHelper
 
             Logger.Log(LogLevel.Info, "MaggyHelper/SaveValidator", "Starting save data validation...");
 
+            if (MaggyHelperModule.Instance == null)
+            {
+                Logger.Log(LogLevel.Warn, "MaggyHelper/SaveValidator", "MaggyHelperModule not yet initialized; skipping validation");
+                return;
+            }
+
             var saveData = MaggyHelperModule.SaveData;
             if (saveData == null)
             {
