@@ -6,7 +6,7 @@ return {
     name = "MaggyHelper/RalseiBoost",
     depth = -1000000,
     nodeLineRenderType = "line",
-    texture = "objects/Maggy/DesoloZantas/ralseiboost/idle00",
+    texture = "objects/ralseiboost/idle00",
     nodeLimits = {0, -1},
     fieldInformation = {
         ambientParticle1 = {
@@ -59,6 +59,3 @@ return {
         }
     }
 }
-
-
-

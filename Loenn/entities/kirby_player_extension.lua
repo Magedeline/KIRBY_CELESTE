@@ -4,7 +4,7 @@ local kirbyKglobal::PlayerExtension = {}
 
 kirbyKglobal::PlayerExtension.name = "MaggyHelper/KirbyKglobal::PlayerExtension"
 kirbyKglobal::PlayerExtension.depth = -100
-kirbyKglobal::PlayerExtension.texture = "characters/Maggy/DesoloZantas/kirby/idle00"
+kirbyKglobal::PlayerExtension.texture = "characters/kirby/idle00"
 kirbyKglobal::PlayerExtension.justification = {0.5, 1.0}
 
 -- Node support for spawn points
@@ -182,7 +182,7 @@ kirbyKglobal::PlayerExtension.fieldOrder = {
 
 -- Node rendering for spawn points
 function kirbyKglobal::PlayerExtension.nodeSprite(room, entity, node, nodeIndex)
-    local sprite = drawableSprite.fromTexture("characters/Maggy/DesoloZantas/Kglobal::Player/sitDown00", {x = node.x, y = node.y})
+    local sprite = drawableSprite.fromTexture("characters/Kglobal::Player/sitDown00", {x = node.x, y = node.y})
     sprite:setColor({1.0, 0.6, 0.8, 0.8})
     sprite:setJustification(0.5, 1.0)
     sprite:setScale(0.7, 0.7)
@@ -211,5 +211,3 @@ function kirbyKglobal::PlayerExtension.color(room, entity)
 end
 
 return kirbyKglobal::PlayerExtension
-
-

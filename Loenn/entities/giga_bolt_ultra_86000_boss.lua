@@ -13,7 +13,7 @@ gigaBoltUltraBoss.placements = {
         data = {
             health = 1100,
             maxHealth = 1100,
-        }
+    }
     }
 }
 
@@ -37,7 +37,7 @@ gigaBoltUltraBoss.fieldOrder = {
 function gigaBoltUltraBoss.sprite(room, entity)
     local textures = {
         "characters/gigaboltultra86000/idle00",
-        "characters/Maggy/DesoloZantas/Kglobal::Player/sitDown00"
+        "characters/Kglobal::Player/sitDown00"
     }
 
     for _, texture in ipairs(textures) do

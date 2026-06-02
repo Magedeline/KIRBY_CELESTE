@@ -14,31 +14,43 @@ BloomStrength: 1.0
 
 Modes:
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl0/intro
-      Ambience: event:/desolo_zantas/env/00_prologue
+      Music: event:/pusheen/music/lvl0/intro
+      Ambience: event:/pusheen/env/00_prologue
     Inventory: Default
     HeartIsEnd: false
     SeekerSlowdown: false
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl0/intro
-      Ambience: event:/desolo_zantas/env/00_prologue
+      Music: event:/pusheen/music/lvl0/intro
+      Ambience: event:/pusheen/env/00_prologue
     Inventory: Default
     HeartIsEnd: true
     SeekerSlowdown: false
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl0/intro
-      Ambience: event:/desolo_zantas/env/00_prologue
+      Music: event:/pusheen/music/lvl0/intro
+      Ambience: event:/pusheen/env/00_prologue
     Inventory: Default
     HeartIsEnd: true
     SeekerSlowdown: false
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl0/intro
-      Ambience: event:/desolo_zantas/env/00_prologue
+      Music: event:/pusheen/music/lvl0/intro
+      Ambience: event:/pusheen/env/00_prologue
     Inventory: Default
     HeartIsEnd: true
     SeekerSlowdown: false
-
-Mountain:
+  - AudioState:
+      Music: event:/pusheen/music/DSide/00_prologue
+      Ambience: event:/pusheen/env/00_main
+    Inventory: Default
+    HeartIsEnd: true
+    SeekerSlowdown: false
+  - AudioState:
+      Music: event:/pusheen/music/DXSide/00_prologue
+      Ambience: event:/pusheen/env/00_main
+    Inventory: Default
+    HeartIsEnd: true
+    SeekerSlowdown: false
+    MountainModelDirectory: Mountain/Maggy/ASide
+    MountainTextureDirectory: Maggy/ASide
     Idle:
         Position: [-0.658, 2.872, 7.876]
         Target: [-0.658, 2.572, 6.876]

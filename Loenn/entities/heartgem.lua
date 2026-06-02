@@ -14,6 +14,15 @@ heartGem.fieldInformation = {
     },
     endLevelOnCollect = {
         fieldType = "boolean"
+    },
+    sevenbirdFlyby = {
+        fieldType = "boolean"
+    },
+    unlockDside = {
+        fieldType = "boolean"
+    },
+    customSfx = {
+        fieldType = "string"
     }
 }
 
@@ -23,7 +32,10 @@ heartGem.placements = {
         data = {
             fake = false,
             removeCameraTriggers = false,
-            endLevelOnCollect = false
+            endLevelOnCollect = false,
+            sevenbirdFlyby = false,
+            unlockDside = false,
+            customSfx = ""
         }
     },
     {
@@ -31,7 +43,10 @@ heartGem.placements = {
         data = {
             fake = true,
             removeCameraTriggers = false,
-            endLevelOnCollect = false
+            endLevelOnCollect = false,
+            sevenbirdFlyby = false,
+            unlockDside = false,
+            customSfx = ""
         }
     },
     {
@@ -39,7 +54,10 @@ heartGem.placements = {
         data = {
             fake = false,
             removeCameraTriggers = true,
-            endLevelOnCollect = false
+            endLevelOnCollect = false,
+            sevenbirdFlyby = false,
+            unlockDside = false,
+            customSfx = ""
         }
     },
     {
@@ -47,7 +65,54 @@ heartGem.placements = {
         data = {
             fake = false,
             removeCameraTriggers = false,
-            endLevelOnCollect = true
+            endLevelOnCollect = true,
+            sevenbirdFlyby = false,
+            unlockDside = false,
+            customSfx = ""
+        }
+    },
+    {
+        name = "crystal_sevenbird",
+        data = {
+            fake = false,
+            removeCameraTriggers = false,
+            endLevelOnCollect = false,
+            sevenbirdFlyby = true,
+            unlockDside = false,
+            customSfx = ""
+        }
+    },
+    {
+        name = "crystal_pink_custom",
+        data = {
+            fake = false,
+            removeCameraTriggers = false,
+            endLevelOnCollect = false,
+            sevenbirdFlyby = true,
+            unlockDside = false,
+            customSfx = "event:/pusheen/game/general/pink_crystalheart_get"
+        }
+    },
+    {
+        name = "crystal_rainbow_custom",
+        data = {
+            fake = false,
+            removeCameraTriggers = false,
+            endLevelOnCollect = false,
+            sevenbirdFlyby = true,
+            unlockDside = false,
+            customSfx = "event:/pusheen/game/general/rainbow_crystalheart_get"
+        }
+    },
+    {
+        name = "crystal_unlock_dside",
+        data = {
+            fake = false,
+            removeCameraTriggers = false,
+            endLevelOnCollect = false,
+            sevenbirdFlyby = true,
+            unlockDside = true,
+            customSfx = "event:/pusheen/game/general/pink_crystalheart_get"
         }
     }
 }

@@ -22,3 +22,13 @@ loenn-mcp/
 !.github/
 !.github/**
 MaggyHelper.zip
+DesoloZantas_Code.zip
+DesoloZantas_Audio.zip
+DesoloZantas_MapsDialog.zip
+.env
+
+# Build logs
+build*.txt
+*.log
+DesoloZantas_Audio.zip
+DesoloZantas_MapsDialog.zip

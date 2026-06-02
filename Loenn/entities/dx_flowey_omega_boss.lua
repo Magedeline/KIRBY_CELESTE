@@ -86,10 +86,9 @@ dxFloweyOmega.fieldOrder = {
 }
 
 function dxFloweyOmega.sprite(room, entity)
-    local sprite = drawableSprite.fromTexture("characters/dx_flowey_omega/Maggy/DesoloZantas/flowey/idle00", entity)
+    local sprite = drawableSprite.fromTexture("characters/dx_flowey_omega/flowey/idle00", entity)
     sprite:setJustification(0.5, 1.0)
     return sprite
 end
 
 return dxFloweyOmega
-

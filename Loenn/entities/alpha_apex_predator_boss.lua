@@ -13,7 +13,7 @@ alphaApexPredatorBoss.placements = {
         data = {
             health = 1600,
             maxHealth = 1600,
-        }
+    }
     }
 }
 
@@ -36,9 +36,9 @@ alphaApexPredatorBoss.fieldOrder = {
 
 function alphaApexPredatorBoss.sprite(room, entity)
     local textures = {
-        "characters/Maggy/DesoloZantas/monsters/predator00",
+        "characters/monsters/predator00",
         "characters/Enemies/monsters/predator00",
-        "characters/Maggy/DesoloZantas/Kglobal::Player/sitDown00"
+        "characters/Kglobal::Player/sitDown00"
     }
 
     for _, texture in ipairs(textures) do
@@ -57,4 +57,3 @@ function alphaApexPredatorBoss.selection(room, entity)
 end
 
 return alphaApexPredatorBoss
-

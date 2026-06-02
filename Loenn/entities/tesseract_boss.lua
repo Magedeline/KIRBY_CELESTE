@@ -13,7 +13,7 @@ tesseractBoss.placements = {
         data = {
             health = 1350,
             maxHealth = 1350,
-        }
+    }
     }
 }
 
@@ -38,7 +38,7 @@ function tesseractBoss.sprite(room, entity)
     local textures = {
         "objects/tesseract_temple/dashButton00",
         "objects/tesseract_temple/dashButtonMirror00",
-        "characters/Maggy/DesoloZantas/Kglobal::Player/sitDown00"
+        "characters/Kglobal::Player/sitDown00"
     }
 
     for _, texture in ipairs(textures) do

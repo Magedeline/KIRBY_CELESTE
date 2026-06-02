@@ -1,13 +1,13 @@
 local drawableSprite = require("structs.drawable_sprite")
 
 local soulColors = {
-    {1.0, 0.0, 0.0, 1.0},   -- Red - Determination
-    {1.0, 0.5, 0.0, 1.0},   -- Orange - Bravery
-    {1.0, 1.0, 0.0, 1.0},   -- Yellow - Justice
-    {0.0, 1.0, 0.0, 1.0},   -- Green - Kindness
-    {0.0, 1.0, 1.0, 1.0},   -- Cyan - Patience
-    {0.0, 0.0, 1.0, 1.0},   -- Blue - Integrity
-    {1.0, 0.0, 1.0, 1.0}    -- Purple - Perseverance
+    {1.0, 0.0, 0.0, 1.0},     -- Red - Determination (ff0000)
+    {1.0, 0.502, 0.0, 1.0},   -- Orange - Bravery (ff8000)
+    {1.0, 1.0, 0.0, 1.0},     -- Yellow - Justice (ffff00)
+    {0.0, 1.0, 0.0, 1.0},     -- Green - Kindness (00ff00)
+    {0.0, 1.0, 1.0, 1.0},     -- Cyan - Patience (00ffff)
+    {0.0, 0.0, 1.0, 1.0},     -- Blue - Integrity (0000ff)
+    {1.0, 0.0, 1.0, 1.0}      -- Purple - Perseverance (ff00ff)
 }
 
 local sevenSoulBoost = {}
@@ -26,7 +26,7 @@ sevenSoulBoost.fieldInformation = {
         fieldType = "integer",
         minimumValue = 1
     },
-    finalCh20Dialog = {
+    finalCh21Dialog = {
         fieldType = "string"
     }
 }
@@ -58,7 +58,7 @@ sevenSoulBoost.placements = {
             dashCount = 10,
             finalCh21Boost = false,
             finalCh21GoldenBoost = false,
-            finalCh210Dialog = ""
+            finalCh21Dialog = ""
         }
     },
     {
@@ -113,21 +113,22 @@ function sevenSoulBoost.sprite(room, entity)
     local sprites = {}
     local x, y = entity.x, entity.y
     
-    -- Main sprite in center
-    local mainSprite = drawableSprite.fromTexture("objects/sevensoulboost/idle00", entity)
+    -- Main sprite in center (matches C#: characters/soul/soul/vessel_soulA)
+    local mainSprite = drawableSprite.fromTexture("characters/soul/soul/vessel_soulA00", entity)
     mainSprite:setJustification(0.5, 0.5)
     table.insert(sprites, mainSprite)
     
-    -- Draw 7 souls orbiting around
+    -- Draw 7 souls orbiting around (matches C#: vessel_soulA through vessel_soulG)
     local radius = 20
-    for i = 0, 6 do
-        local angle = (i / 7) * math.pi * 2
+    local soulSuffixes = {"A", "B", "C", "D", "E", "F", "G"}
+    for i = 1, 7 do
+        local angle = ((i - 1) / 7) * math.pi * 2
         local offsetX = math.cos(angle) * radius
         local offsetY = math.sin(angle) * radius
         
-        local soulSprite = drawableSprite.fromTexture("objects/sevensoulboost/soul/vessel_soul0" .. i, entity)
+        local soulSprite = drawableSprite.fromTexture("characters/soul/soul/vessel_soul" .. soulSuffixes[i] .. "00", entity)
         soulSprite:setJustification(0.5, 0.5)
-        soulSprite:setColor(soulColors[i + 1])
+        soulSprite:setColor(soulColors[i])
         soulSprite:addPosition(offsetX, offsetY)
         table.insert(sprites, soulSprite)
     end
@@ -139,7 +140,7 @@ end
 function sevenSoulBoost.nodeSprite(room, entity, node, nodeIndex)
     local sprites = {}
     
-    local mainSprite = drawableSprite.fromTexture("objects/sevensoulboost/idle00", node)
+    local mainSprite = drawableSprite.fromTexture("characters/soul/soul/vessel_soulA00", node)
     mainSprite:setJustification(0.5, 0.5)
     mainSprite:setColor({1.0, 1.0, 1.0, 0.5})
     table.insert(sprites, mainSprite)

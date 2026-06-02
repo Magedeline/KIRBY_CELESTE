@@ -162,7 +162,7 @@ function floweyPortrait.sprite(room, entity)
     local portraitType = entity.portraitType or "glitchyfreak"
     local glitchIntensity = entity.glitchIntensity or 5.0
     
-    local spritePath = "characters/Maggy/DesoloZantas/flowey/portraits/"
+    local spritePath = "characters/flowey/portraits/"
     
     if portraitType == "glitchyfreak" then
         spritePath = spritePath .. "flowey_glitchy_freak"
@@ -257,4 +257,3 @@ function floweyPortrait.nodeLimits()
 end
 
 return floweyPortrait
-

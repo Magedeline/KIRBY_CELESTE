@@ -1,36 +1,27 @@
-local npc19_gravestone = {}
-
-npc19_gravestone.name = "MaggyHelper/NPC19_Gravestone"
-npc19_gravestone.depth = 0
-npc19_gravestone.justification = {0.5, 1.0}
-npc19_gravestone.texture = "characters/Maggy/DesoloZantas/gravestones/maddygrave00"
-
-npc19_gravestone.placements = {
-    {
-        name = "NPC19_Gravestone",
-        data = {
-            dialogKey = "CH19_GRAVESTONE",
-            flagName = "maddy_gravestone",
-            spriteId = "maddygrave00"
+local npc19_gravestone = {
+    name = "DesoloZantas/NPC19_Gravestone",
+    depth = 1000,
+    texture = "characters/gravestones/maddydead00",
+    nodeLimits = {1, 1},
+    nodeLineRenderType = "line",
+    fieldInformation = {},
+    placements = {
+        {
+            name = "NPC19 Gravestone (Chara Boost)",
+            data = {}
         }
     }
 }
 
-npc19_gravestone.fieldInformation = {
-    dialogKey = {
-        fieldType = "string"
-    },
-    flagName = {
-        fieldType = "string"
-    },
-    spriteId = {
-        fieldType = "string",
-        editable = true,
-        options = {
-            "maddygrave00",
-        }
-    }
-}
+function npc19_gravestone.nodeTexture(room, entity, node, index)
+    return "objects/charaboost/idle00"
+end
+
+function npc19_gravestone.nodeRender(room, entity, node, index)
+    local x, y = node.x, node.y
+    local sprite = drawableSprite.fromTexture("objects/charaboost/idle00", {x = x, y = y})
+    sprite:setColor({0.8, 0.8, 1.0, 0.6})
+    return sprite
+end
 
 return npc19_gravestone
-

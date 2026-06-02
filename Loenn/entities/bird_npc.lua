@@ -8,13 +8,13 @@ birdNpcMod.nodeLimits = {0, -1}
 
 -- Bird type to sprite path mapping
 local birdTypeTextures = {
-    Default = "characters/Maggy/DesoloZantas/bird/crow00",
-    Clover = "characters/Maggy/DesoloZantas/birdgoner/clover/crow00",
-    Cody = "characters/Maggy/DesoloZantas/birdgoner/cody/crow00",
-    Emily = "characters/Maggy/DesoloZantas/birdgoner/emily/crow00",
-    Odin = "characters/Maggy/DesoloZantas/birdgoner/odin/crow00",
-    Robin = "characters/birdgoner/Maggy/DesoloZantas/robin/crow00",
-    Sabel = "characters/birdgoner/Maggy/DesoloZantas/sabel/crow00"
+    Default = "characters/bird/crow00",
+    Clover = "characters/birdgoner/clover/crow00",
+    Cody = "characters/birdgoner/cody/crow00",
+    Emily = "characters/birdgoner/emily/crow00",
+    Odin = "characters/birdgoner/odin/crow00",
+    Robin = "characters/birdgoner/robin/crow00",
+    Sabel = "characters/birdgoner/sabel/crow00"
 }
 
 function birdNpcMod.texture(room, entity)

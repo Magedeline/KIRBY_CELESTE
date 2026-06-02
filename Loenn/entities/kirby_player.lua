@@ -2,7 +2,7 @@ local kirbyKglobal::global::Celeste.Player= {}
 
 kirbyKglobal::Player.name = "MaggyHelper/KirbyKglobal::Player"
 kirbyKglobal::Player.depth = -1000000
-kirbyKglobal::Player.texture = "characters/Maggy/DesoloZantas/kirby/idle00"
+kirbyKglobal::Player.texture = "characters/kirby/idle00"
 kirbyKglobal::Player.justification = {0.5, 1.0}
 
 -- Simple spawn marker entity

@@ -2,7 +2,7 @@ local kirbyKglobal::PlayerCore = {}
 
 kirbyKglobal::PlayerCore.name = "MaggyHelper/KirbyKglobal::PlayerCore"
 kirbyKglobal::PlayerCore.depth = -100
-kirbyKglobal::PlayerCore.texture = "characters/Maggy/DesoloZantas/kirby/idle00"
+kirbyKglobal::PlayerCore.texture = "characters/kirby/idle00"
 kirbyKglobal::PlayerCore.justification = {0.5, 1.0}
 
 kirbyKglobal::PlayerCore.nodeLineRenderType = "line"
@@ -60,4 +60,3 @@ kirbyKglobal::PlayerCore.fieldOrder = {
 }
 
 return kirbyKglobal::PlayerCore
-

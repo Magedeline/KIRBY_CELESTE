@@ -13,7 +13,7 @@ galactaKnightBoss.placements = {
         data = {
             health = 1700,
             maxHealth = 1700,
-        }
+    }
     }
 }
 
@@ -36,8 +36,8 @@ galactaKnightBoss.fieldOrder = {
 
 function galactaKnightBoss.sprite(room, entity)
     local textures = {
-        "Gui/Maggy/DesoloZantas/kirby/powers/knight",
-        "characters/Maggy/DesoloZantas/Kglobal::Player/sitDown00"
+        "gui/kirby/powers/knight",
+        "characters/Kglobal::Player/sitDown00"
     }
 
     for _, texture in ipairs(textures) do
@@ -56,4 +56,3 @@ function galactaKnightBoss.selection(room, entity)
 end
 
 return galactaKnightBoss
-

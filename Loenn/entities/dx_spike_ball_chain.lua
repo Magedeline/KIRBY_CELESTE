@@ -64,10 +64,9 @@ dxSpikeBallChain.fieldInformation = {
 dxSpikeBallChain.fieldOrder = { "x", "y", "chainLength", "swingSpeed", "ballRadius", "swingAngle" }
 
 function dxSpikeBallChain.sprite(room, entity)
-    local sprite = drawableSprite.fromTexture("Maggy/DesoloZantas/danger/spikeball00", entity)
+    local sprite = drawableSprite.fromTexture("danger/spikeball00", entity)
     sprite:setColor({0.5, 0.0, 0.5, 1.0})
     return sprite
 end
 
 return dxSpikeBallChain
-

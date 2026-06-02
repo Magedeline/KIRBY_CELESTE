@@ -1876,36 +1876,6 @@ entities.MaggyHelper/BadelineDummy.attributes.description.playAnimationOnSpawn=
 entities.MaggyHelper/BadelineDummy.attributes.name.scale=Scale
 entities.MaggyHelper/BadelineDummy.attributes.description.scale=
 
-# -- Beyond Summit Cloud --
-entities.MaggyHelper/BeyondSummitCloud.placements.name.BeyondSummitCloud=Beyond Summit Cloud
-entities.MaggyHelper/BeyondSummitCloud.placements.description.BeyondSummitCloud=
-entities.MaggyHelper/BeyondSummitCloud.attributes.name.ambience=Ambience
-entities.MaggyHelper/BeyondSummitCloud.attributes.description.ambience=
-entities.MaggyHelper/BeyondSummitCloud.attributes.name.cutscene=Cutscene
-entities.MaggyHelper/BeyondSummitCloud.attributes.description.cutscene=
-entities.MaggyHelper/BeyondSummitCloud.attributes.name.dark=Dark
-entities.MaggyHelper/BeyondSummitCloud.attributes.description.dark=
-entities.MaggyHelper/BeyondSummitCloud.attributes.name.index=Index
-entities.MaggyHelper/BeyondSummitCloud.attributes.description.index=
-entities.MaggyHelper/BeyondSummitCloud.attributes.name.intro_launch=Intro Launch
-entities.MaggyHelper/BeyondSummitCloud.attributes.description.intro_launch=
-
-# -- Beyond Summit Cloud Entity --
-entities.MaggyHelper/BeyondSummitCloudEntity.placements.name.BeyondSummitCloud (Light)=Beyond Summit Cloud Entity (Beyond Summit Cloud (Light))
-entities.MaggyHelper/BeyondSummitCloudEntity.placements.description.BeyondSummitCloud (Light)=
-entities.MaggyHelper/BeyondSummitCloudEntity.placements.name.BeyondSummitCloud (Dark)=Beyond Summit Cloud Entity (Beyond Summit Cloud (Dark))
-entities.MaggyHelper/BeyondSummitCloudEntity.placements.description.BeyondSummitCloud (Dark)=
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.color=Color
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.color=
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.dark=Dark
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.dark=
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.highlightColor=Highlight Color
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.highlightColor=
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.particleCount=Particle Count
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.particleCount=
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.speedMultiplier=Speed Multiplier
-entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.speedMultiplier=
-
 # -- Beyond Summit Gem --
 entities.MaggyHelper/BeyondSummitGem.placements.name.BeyondSummitGem (=Beyond Summit Gem (Beyond Summit Gem ()
 entities.MaggyHelper/BeyondSummitGem.placements.description.BeyondSummitGem (=
@@ -1919,6 +1889,22 @@ entities.MaggyHelper/BeyondSummitGemManager.placements.name.BeyondSummitGemManag
 entities.MaggyHelper/BeyondSummitGemManager.placements.description.BeyondSummitGemManager=
 entities.MaggyHelper/BeyondSummitGemManager.attributes.name.flag=Flag
 entities.MaggyHelper/BeyondSummitGemManager.attributes.description.flag=
+
+# -- Beyond Summit Cloud Entity --
+entities.MaggyHelper/BeyondSummitCloudEntity.placements.name.BeyondSummitCloud=Beyond Summit Cloud (Light)
+entities.MaggyHelper/BeyondSummitCloudEntity.placements.description.BeyondSummitCloud=Decorative cloud entity for beyond-summit areas. Light variant.
+entities.MaggyHelper/BeyondSummitCloudEntity.placements.name.BeyondSummitCloud_dark=Beyond Summit Cloud (Dark)
+entities.MaggyHelper/BeyondSummitCloudEntity.placements.description.BeyondSummitCloud_dark=Decorative cloud entity for beyond-summit areas. Dark variant.
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.dark=Dark
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.dark=If true, uses dark color palette.
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.particleCount=Particle Count
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.particleCount=Number of cloud particles to spawn.
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.speedMultiplier=Speed Multiplier
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.speedMultiplier=Multiplier applied to particle drift speed.
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.color=Color
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.color=Primary cloud color (hex).
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.name.highlightColor=Highlight Color
+entities.MaggyHelper/BeyondSummitCloudEntity.attributes.description.highlightColor=Secondary highlight color (hex).
 
 # -- Bird NPC --
 entities.MaggyHelper/BirdNPC.placements.name.sleeping=Bird NPC (Sleeping)
@@ -8745,3 +8731,27 @@ entities.MaggyHelper/VoidPortal.attributes.name.destinationId=Destination ID
 entities.MaggyHelper/VoidPortal.attributes.description.destinationId=ID of destination portal.
 entities.MaggyHelper/VoidPortal.attributes.name.isFinalPortal=Is Final Portal
 entities.MaggyHelper/VoidPortal.attributes.description.isFinalPortal=Whether this leads to final boss arena.
+
+# -- AscendManagerBeyond Entity --
+entities.MaggyHelper/AscendManagerBeyond.placements.name.AscendManagerBeyond=Ascend Manager (Normal)
+entities.MaggyHelper/AscendManagerBeyond.placements.description.AscendManagerBeyond=Handles Chapter 9-style launch sequences. Triggers cutscenes and transitions.
+entities.MaggyHelper/AscendManagerBeyond.placements.name.AscendManagerBeyond_dark=Ascend Manager (Dark)
+entities.MaggyHelper/AscendManagerBeyond.placements.description.AscendManagerBeyond_dark=Dark variant with black background and modified effects.
+entities.MaggyHelper/AscendManagerBeyond.placements.name.AscendManagerBeyond_ch19_ending=Ascend Manager (CH19 Ending)
+entities.MaggyHelper/AscendManagerBeyond.placements.description.AscendManagerBeyond_ch19_ending=Special ending variant with Giygas effects and void background.
+entities.MaggyHelper/AscendManagerBeyond.attributes.name.width=Width
+entities.MaggyHelper/AscendManagerBeyond.attributes.description.width=Width of the trigger area.
+entities.MaggyHelper/AscendManagerBeyond.attributes.name.height=Height
+entities.MaggyHelper/AscendManagerBeyond.attributes.description.height=Height of the trigger area.
+entities.MaggyHelper/AscendManagerBeyond.attributes.name.index=Index
+entities.MaggyHelper/AscendManagerBeyond.attributes.description.index=Sequence index (0-9). Controls swap flags and screen wipe types.
+entities.MaggyHelper/AscendManagerBeyond.attributes.name.cutscene=Cutscene ID
+entities.MaggyHelper/AscendManagerBeyond.attributes.description.cutscene=Optional cutscene to play during ascent (e.g., CS07_Ascend).
+entities.MaggyHelper/AscendManagerBeyond.attributes.name.intro_launch=Intro Launch
+entities.MaggyHelper/AscendManagerBeyond.attributes.description.intro_launch=If true, starts immediately with fade snap and longer initial delay.
+entities.MaggyHelper/AscendManagerBeyond.attributes.name.dark=Dark Mode
+entities.MaggyHelper/AscendManagerBeyond.attributes.description.dark=If true, uses black background and dark visual effects.
+entities.MaggyHelper/AscendManagerBeyond.attributes.name.arrivial=Arrival Mode
+entities.MaggyHelper/AscendManagerBeyond.attributes.description.arrivial=If true with empty cutscene, uses Giygas streaks and void background (CH19 ending).
+entities.MaggyHelper/AscendManagerBeyond.attributes.name.ambience=Ambience Event
+entities.MaggyHelper/AscendManagerBeyond.attributes.description.ambience=Ambience audio event path. Use "null" to silence, empty to keep current.

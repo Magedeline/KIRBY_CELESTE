@@ -14,31 +14,41 @@ BloomStrength: 1.0
 
 Modes:
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl17/main
-      Ambience: event:/desolo_zantas/env/00_main
+      Music: event:/pusheen/music/lvl17/main
+      Ambience: event:/pusheen/env/00_main
     Inventory: Default
     HeartIsEnd: false
     SeekerSlowdown: false
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl17/main
-      Ambience: event:/desolo_zantas/env/00_main
+      Music: event:/pusheen/music/lvl17/main
+      Ambience: event:/pusheen/env/00_main
     Inventory: Default
     HeartIsEnd: true
     SeekerSlowdown: false
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl17/main
-      Ambience: event:/desolo_zantas/env/00_main
+      Music: event:/pusheen/music/lvl17/main
+      Ambience: event:/pusheen/env/00_main
     Inventory: Default
     HeartIsEnd: true
     SeekerSlowdown: false
   - AudioState:
-      Music: event:/desolo_zantas/music/lvl17/main
-      Ambience: event:/desolo_zantas/env/00_main
+      Music: event:/pusheen/music/lvl17/main
+      Ambience: event:/pusheen/env/00_main
     Inventory: Default
     HeartIsEnd: true
     SeekerSlowdown: false
-
-Mountain:
+  - AudioState:
+      Music: event:/pusheen/music/DSide/17_epilogue
+      Ambience: event:/pusheen/env/17_main
+    Inventory: Default
+    HeartIsEnd: true
+    SeekerSlowdown: false
+  - AudioState:
+      Music: event:/pusheen/music/DXSide/17_epilogue
+      Ambience: event:/pusheen/env/17_main
+    Inventory: Default
+    HeartIsEnd: true
+    SeekerSlowdown: false
     Idle:
         Position: [0.000, 13.000, 22.000]
         Target: [0.000, 12.000, 20.000]

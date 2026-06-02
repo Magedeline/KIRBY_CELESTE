@@ -3,7 +3,7 @@ local drawableSprite = require("structs.drawable_sprite")
 
 kirbyActorKglobal::Player.name = "MaggyHelper/KirbyActorKglobal::Player"
 kirbyActorKglobal::Player.depth = 0
-kirbyActorKglobal::Player.texture = "characters/Maggy/DesoloZantas/kirby/idle00"
+kirbyActorKglobal::Player.texture = "characters/kirby/idle00"
 kirbyActorKglobal::Player.justification = {0.5, 1.0}
 
 kirbyActorKglobal::Player.placements = {
@@ -76,7 +76,7 @@ function kirbyActorKglobal::Player.sprite(room, entity)
     local sprites = {}
 
     -- Main actor preview sprite.
-    local kirbySprite = drawableSprite.fromTexture("characters/Maggy/DesoloZantas/kirby/idle00", entity)
+    local kirbySprite = drawableSprite.fromTexture("characters/kirby/idle00", entity)
     kirbySprite:setJustification(0.5, 1.0)
     kirbySprite:setScale(scaleX, 1.0)
     table.insert(sprites, kirbySprite)
@@ -91,7 +91,7 @@ function kirbyActorKglobal::Player.sprite(room, entity)
 
     -- Show sweat state at a glance in Loenn.
     if showSweat then
-        local sweatSprite = drawableSprite.fromTexture("characters/kirby/Maggy/DesoloZantas/sweat/idle00", entity)
+        local sweatSprite = drawableSprite.fromTexture("characters/kirby/sweat/idle00", entity)
         sweatSprite:setJustification(0.5, 1.0)
         sweatSprite:setScale(scaleX, 1.0)
         sweatSprite:setColor({1.0, 1.0, 1.0, 0.75})
@@ -102,4 +102,3 @@ function kirbyActorKglobal::Player.sprite(room, entity)
 end
 
 return kirbyActorKglobal::Player
-

@@ -153,7 +153,7 @@ function madelineTentacle.sprite(room, entity)
     local tentacleType = entity.tentacleType or "appear"
     local growthStage = entity.growthStage or 1
     
-    local spritePath = "characters/Maggy/DesoloZantas/madeline/tentacles/"
+    local spritePath = "characters/madeline/tentacles/"
     
     if tentacleType == "appear" then
         spritePath = spritePath .. "tentacle_appear_01"

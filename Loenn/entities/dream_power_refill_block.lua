@@ -13,13 +13,13 @@ local kirbyPowers = {
     "TripleSwap", "TimeCrash", "Umbrella", "Mirror", "Recycler",
     "Mini", "InfernoLight", "GrandHammer", "MechanizeRanger",
     "FrostMind", "UltraSword", "Knight",
-}
+    }
 
 return {
     name      = "MaggyHelper/DreamPowerRefillBlock",
     depth     = -100,
     -- Use the vanilla refill sprite as the editor stand-in.
-    texture        = "objects/Maggy/DesoloZantas/refill/idle00",
+    texture        = "objects/refill/idle00",
     justification  = {0.5, 0.5},
     color          = {1.0, 0.41, 0.71, 1.0},   -- pink tint in editor
     fieldInformation = {
@@ -33,7 +33,7 @@ return {
             fieldType = "string",
             options   = kirbyPowers,
             editable  = false,
-        },
+    },
     },
     fieldOrder = {
         "x", "y",
@@ -46,7 +46,7 @@ return {
                 oneUse     = false,
                 refillDash = true,
                 grantPower = "None",
-            }
+    }
         },
         {
             name = "Dream Power Refill (one-use)",
@@ -54,8 +54,7 @@ return {
                 oneUse     = true,
                 refillDash = true,
                 grantPower = "None",
-            }
+    }
         }
     }
 }
-

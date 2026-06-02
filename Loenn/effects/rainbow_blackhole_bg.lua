@@ -1,6 +1,6 @@
 local rainbow_blackhole_bg = {}
 
-rainbow_blackhole_bg.name = "MaggyHelper/RainbowBlackholeBg"
+rainbow_blackhole_bg.name = "MaggyHelper/RainbowBlackholeBG"
 rainbow_blackhole_bg.canForeground = false
 rainbow_blackhole_bg.canBackground = true
 

@@ -9,7 +9,7 @@ local asrielAngelBoss = {}
 
 asrielAngelBoss.name = "MaggyHelper/AsrielAngelOfDeathBoss"
 asrielAngelBoss.depth = -100000
-asrielAngelBoss.texture = "characters/asrielangelofdeathboss/face/00"
+asrielAngelBoss.texture = "bosses/angelofdeath/simple00"
 asrielAngelBoss.justification = {0.5, 0.5}
 asrielAngelBoss.nodeLimits = {0, 4}
 asrielAngelBoss.nodeLineRenderType = "line"
@@ -25,10 +25,10 @@ asrielAngelBoss.placements = {
             enableFlashback = true,
             enableFinalBeam = true,
             -- Music tracks
-            musicBurnInDespair = "event:/desolo_zantas/final_content/music/lvl20/burn_in_despair",
-            musicHisTheme01 = "event:/desolo_zantas/final_content/music/lvl20/his_theme01",
-            musicHisTheme02 = "event:/desolo_zantas/final_content/music/lvl20/his_theme02",
-            musicKirbyVsAsriel = "event:/desolo_zantas/final_content/music/lvl20/kirby_vs_asriel_fight_02",
+            musicBurnInDespair = "event:/pusheen/extra_content/music/lvl20/burn_in_despair",
+            musicHisTheme01 = "event:/pusheen/extra_content/music/lvl20/his_theme01",
+            musicHisTheme02 = "event:/pusheen/extra_content/music/lvl20/his_theme02",
+            musicKirbyVsAsriel = "event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_02",
             -- Phase configuration
             barrierWidth = 400,
             barrierHeight = 300,
@@ -49,10 +49,10 @@ asrielAngelBoss.placements = {
             enableLostSouls = true,
             enableFlashback = true,
             enableFinalBeam = true,
-            musicBurnInDespair = "event:/desolo_zantas/final_content/music/lvl20/burn_in_despair",
-            musicHisTheme01 = "event:/desolo_zantas/final_content/music/lvl20/his_theme01",
-            musicHisTheme02 = "event:/desolo_zantas/final_content/music/lvl20/his_theme02",
-            musicKirbyVsAsriel = "event:/desolo_zantas/final_content/music/lvl20/kirby_vs_asriel_fight_02",
+            musicBurnInDespair = "event:/pusheen/extra_content/music/lvl20/burn_in_despair",
+            musicHisTheme01 = "event:/pusheen/extra_content/music/lvl20/his_theme01",
+            musicHisTheme02 = "event:/pusheen/extra_content/music/lvl20/his_theme02",
+            musicKirbyVsAsriel = "event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_02",
             barrierWidth = 350,
             barrierHeight = 280,
             riseSpeed = 2.0,
@@ -71,10 +71,10 @@ asrielAngelBoss.placements = {
             enableLostSouls = false,
             enableFlashback = true,
             enableFinalBeam = false,
-            musicBurnInDespair = "event:/desolo_zantas/final_content/music/lvl20/burn_in_despair",
-            musicHisTheme01 = "event:/desolo_zantas/final_content/music/lvl20/his_theme01",
-            musicHisTheme02 = "event:/desolo_zantas/final_content/music/lvl20/his_theme02",
-            musicKirbyVsAsriel = "event:/desolo_zantas/final_content/music/lvl20/kirby_vs_asriel_fight_02",
+            musicBurnInDespair = "event:/pusheen/extra_content/music/lvl20/burn_in_despair",
+            musicHisTheme01 = "event:/pusheen/extra_content/music/lvl20/his_theme01",
+            musicHisTheme02 = "event:/pusheen/extra_content/music/lvl20/his_theme02",
+            musicKirbyVsAsriel = "event:/pusheen/extra_content/music/lvl20/kirby_vs_asriel_fight_02",
             barrierWidth = 400,
             barrierHeight = 300,
             riseSpeed = 3.0,
@@ -90,59 +90,88 @@ asrielAngelBoss.fieldInformation = {
     health = {
         fieldType = "integer",
         minimumValue = 1,
-        maximumValue = 10000
+        maximumValue = 10000,
+        description = "Boss current health (2500 default)"
     },
     maxHealth = {
         fieldType = "integer",
         minimumValue = 1,
-        maximumValue = 10000
+        maximumValue = 10000,
+        description = "Boss maximum health (2500 default)"
+    },
+    enableBarrier = {
+        fieldType = "boolean",
+        description = "Enable Undertale-style barrier that traps the player"
+    },
+    enableLostSouls = {
+        fieldType = "boolean",
+        description = "Enable lost souls salvation mechanic (saving souls weakens Asriel)"
+    },
+    enableFlashback = {
+        fieldType = "boolean",
+        description = "Enable flashback sequence where Asriel remembers his identity"
+    },
+    enableFinalBeam = {
+        fieldType = "boolean",
+        description = "Enable final beam attack sequence (Els possessing Asriel)"
     },
     barrierWidth = {
         fieldType = "integer",
         minimumValue = 100,
-        maximumValue = 1000
+        maximumValue = 1000,
+        description = "Width of the Undertale-style barrier"
     },
     barrierHeight = {
         fieldType = "integer",
         minimumValue = 100,
-        maximumValue = 800
+        maximumValue = 800,
+        description = "Height of the Undertale-style barrier"
     },
     riseSpeed = {
         fieldType = "number",
         minimumValue = 0.5,
-        maximumValue = 10.0
+        maximumValue = 10.0,
+        description = "Speed at which boss rises from below screen (seconds)"
     },
     musicBurnInDespair = {
         fieldType = "string",
-        editable = true
+        editable = true,
+        description = "FMOD event path for 'Burn in Despair' music phase"
     },
     musicHisTheme01 = {
         fieldType = "string",
-        editable = true
+        editable = true,
+        description = "FMOD event path for hopeful 'His Theme' phase"
     },
     musicHisTheme02 = {
         fieldType = "string",
-        editable = true
+        editable = true,
+        description = "FMOD event path for emotional 'His Theme' climax"
     },
     musicKirbyVsAsriel = {
         fieldType = "string",
-        editable = true
+        editable = true,
+        description = "FMOD event path for intense final battle music"
     },
     dialogPhase1 = {
         fieldType = "string",
-        editable = true
+        editable = true,
+        description = "Dialog key for Phase 1 (boss rise/kill sequence)"
     },
     dialogStruggle = {
         fieldType = "string",
-        editable = true
+        editable = true,
+        description = "Dialog key for struggle phase (player trapped, calling for help)"
     },
     dialogVoidAnswer = {
         fieldType = "string",
-        editable = true
+        editable = true,
+        description = "Dialog key when Astral Birth Void answers the call"
     },
     dialogFlashback = {
         fieldType = "string",
-        editable = true
+        editable = true,
+        description = "Dialog key for flashback trigger (calling 'Azzy')"
     }
 }
 
@@ -211,7 +240,7 @@ function asrielAngelBoss.sprite(room, entity)
     
     -- If no sprites loaded, use fallback
     if #sprites == 0 then
-        local fallback = drawableSprite.fromTexture("characters/Maggy/DesoloZantas/asriel/idle00", entity)
+        local fallback = drawableSprite.fromTexture("characters/asriel/idle00", entity)
         if fallback then
             fallback:setJustification(0.5, 1.0)
             table.insert(sprites, fallback)
@@ -227,4 +256,3 @@ function asrielAngelBoss.selection(room, entity)
 end
 
 return asrielAngelBoss
-

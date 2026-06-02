@@ -2,7 +2,7 @@ local popstarBerry = {}
 
 popstarBerry.name = "MaggyHelper/PopstarBerry"
 popstarBerry.depth = -100
-popstarBerry.texture = "collectables/maggy/popstarberry/Maggy/DesoloZantas/spin/000"
+popstarBerry.texture = "collectables/popstarberry/spin/000"
 
 popstarBerry.fieldInformation = {
     collectSound = {
