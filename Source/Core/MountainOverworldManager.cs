@@ -72,13 +72,12 @@ public static class MountainOverworldManager
 
     private static void OnOverworldSetNormalMusic(On.Celeste.Overworld.orig_SetNormalMusic orig, Overworld self)
     {
+        orig(self);
+
         if (IsViewingOurChapters())
         {
             Audio.SetMusic(OverworldMusicManager.MUSIC_LEVEL_SELECT);
-            return;
         }
-
-        orig(self);
     }
 
     // ── Utility ──────────────────────────────────────────────────────────
