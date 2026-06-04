@@ -194,12 +194,46 @@ public static class AreaMapData
 
         // â”€â”€ Chapter 4: Chronicles of Destiny â”€â”€
         // Image 8: position=(-14.620, 3.606, 19.135) target=(-13.134, 4.115, 17.897)
-        RegisterStandardChapter(4, "thelegend", "04_Legend",
-            "areas/legend", 0,
-            idle:   (new Vector3(-14.620f,  3.606f, 20.735f), new Vector3(-13.134f,  4.115f, 19.497f)),
-            select: (new Vector3(-14.620f,  3.606f, 19.135f), new Vector3(-13.134f,  4.115f, 17.897f)),
-            zoom:   (new Vector3(-14.253f,  3.244f, 18.129f), new Vector3(-12.767f,  3.753f, 16.891f)),
-            cursor:  new Vector3(-13.134f,  4.115f, 17.897f));
+        Register(new ChapterDef
+        {
+            Number = 4,
+            Name = “thelegend”,
+            SID = AreaModeExtender.BuildASideSID(“04_Legend”),
+            Icon = “areas/legend”,
+            IsInterlude = false,
+            HasBSide = true,
+            HasCSide = true,
+            HasDSide = true,
+            HasDXSide = false,
+            MusicEvents = new[]
+            {
+                “event:/music/4-thelegend/main”,
+                “event:/music/4-thelegend/main”,
+                “event:/music/4-thelegend/main”,
+                “event:/music/pusheen/DSide/04_legend”,
+                “event:/music/4-thelegend/main”,
+            },
+            AmbienceEvents = new[]
+            {
+                GetStandardAmbienceEvent(4),
+                GetStandardAmbienceEvent(4),
+                GetStandardAmbienceEvent(4),
+                GetStandardAmbienceEvent(4),
+                GetStandardAmbienceEvent(4),
+            },
+            CassetteSong = “event:/music/4-thelegend/main”,
+            MountainState = 0,
+            MountainData = new MountainCameraData
+            {
+                IdlePos = new Vector3(-14.620f,  3.606f, 20.735f),
+                IdleTarget = new Vector3(-13.134f,  4.115f, 19.497f),
+                SelectPos = new Vector3(-14.620f,  3.606f, 19.135f),
+                SelectTarget = new Vector3(-13.134f,  4.115f, 17.897f),
+                ZoomPos = new Vector3(-14.253f,  3.244f, 18.129f),
+                ZoomTarget = new Vector3(-12.767f,  3.753f, 16.891f),
+                Cursor = new Vector3(-13.134f,  4.115f, 17.897f)
+            }
+        });
 
         // â”€â”€ Chapter 5: Fractured Memories â”€â”€
         // Image 10: position=(-4.473, 7.158, 5.463) target=(-3.630, 6.660, 3.719)
