@@ -33,22 +33,22 @@ namespace Celeste.Triggers
             var level = SceneAs<Level>();
             if (level != null)
             {
-                // Map our strength enum to RainbowBlackholeBG.Strengths
-                RainbowBlackholeBG.Strengths backdropStrength = Strength switch
+                // Map our strength enum to RainbowBlackholeBg.Strengths
+                RainbowBlackholeBg.Strengths backdropStrength = Strength switch
                 {
-                    BlackholeStrength.None => RainbowBlackholeBG.Strengths.Mild,
-                    BlackholeStrength.Weak => RainbowBlackholeBG.Strengths.Mild,
-                    BlackholeStrength.Medium => RainbowBlackholeBG.Strengths.Medium,
-                    BlackholeStrength.Strong => RainbowBlackholeBG.Strengths.High,
-                    BlackholeStrength.Wild => RainbowBlackholeBG.Strengths.Wild,
-                    BlackholeStrength.Maximum => RainbowBlackholeBG.Strengths.Insane,
-                    _ => RainbowBlackholeBG.Strengths.Medium
+                    BlackholeStrength.None => RainbowBlackholeBg.Strengths.Mild,
+                    BlackholeStrength.Weak => RainbowBlackholeBg.Strengths.Mild,
+                    BlackholeStrength.Medium => RainbowBlackholeBg.Strengths.Medium,
+                    BlackholeStrength.Strong => RainbowBlackholeBg.Strengths.High,
+                    BlackholeStrength.Wild => RainbowBlackholeBg.Strengths.Wild,
+                    BlackholeStrength.Maximum => RainbowBlackholeBg.Strengths.Insane,
+                    _ => RainbowBlackholeBg.Strengths.Medium
                 };
 
-                // Update any RainbowBlackholeBG in the level
+                // Update any RainbowBlackholeBg in the level
                 foreach (var backdrop in level.Background.Backdrops)
                 {
-                    if (backdrop is RainbowBlackholeBG blackholeBg)
+                    if (backdrop is RainbowBlackholeBg blackholeBg)
                     {
                         blackholeBg.SetStrength(backdropStrength);
                     }
@@ -57,7 +57,7 @@ namespace Celeste.Triggers
                 // Also check foreground backdrops
                 foreach (var backdrop in level.Foreground.Backdrops)
                 {
-                    if (backdrop is RainbowBlackholeBG blackholeBg)
+                    if (backdrop is RainbowBlackholeBg blackholeBg)
                     {
                         blackholeBg.SetStrength(backdropStrength);
                     }

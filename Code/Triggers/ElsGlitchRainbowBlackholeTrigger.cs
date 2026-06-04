@@ -132,22 +132,22 @@ namespace Celeste.Triggers
         {
             if (level == null) return;
 
-            RainbowBlackholeBG.Strengths backdropStrength = blackholeStrength switch
+            RainbowBlackholeBg.Strengths backdropStrength = blackholeStrength switch
             {
-                BlackholeStrength.Mild => RainbowBlackholeBG.Strengths.Mild,
-                BlackholeStrength.Medium => RainbowBlackholeBG.Strengths.Medium,
-                BlackholeStrength.High => RainbowBlackholeBG.Strengths.High,
-                BlackholeStrength.Wild => RainbowBlackholeBG.Strengths.Wild,
-                BlackholeStrength.RainbowChaos => RainbowBlackholeBG.Strengths.Insane,
-                BlackholeStrength.Cosmic => RainbowBlackholeBG.Strengths.Insane,
-                _ => RainbowBlackholeBG.Strengths.Insane,
+                BlackholeStrength.Mild => RainbowBlackholeBg.Strengths.Mild,
+                BlackholeStrength.Medium => RainbowBlackholeBg.Strengths.Medium,
+                BlackholeStrength.High => RainbowBlackholeBg.Strengths.High,
+                BlackholeStrength.Wild => RainbowBlackholeBg.Strengths.Wild,
+                BlackholeStrength.RainbowChaos => RainbowBlackholeBg.Strengths.Insane,
+                BlackholeStrength.Cosmic => RainbowBlackholeBg.Strengths.Insane,
+                _ => RainbowBlackholeBg.Strengths.Insane,
             };
             bool setRainbowMode = blackholeStrength == BlackholeStrength.RainbowChaos || blackholeStrength == BlackholeStrength.Cosmic;
 
-            // Find and update all RainbowBlackholeBG instances
+            // Find and update all RainbowBlackholeBg instances
             foreach (var backdrop in level.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.RainbowMode = setRainbowMode;
                     rainbowBg.NextStrength(level, backdropStrength);
@@ -157,7 +157,7 @@ namespace Celeste.Triggers
 
             foreach (var backdrop in level.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.RainbowMode = setRainbowMode;
                     rainbowBg.NextStrength(level, backdropStrength);
@@ -221,7 +221,7 @@ namespace Celeste.Triggers
 
             foreach (Backdrop backdrop in scene.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.Visible = on;
                 }
@@ -229,7 +229,7 @@ namespace Celeste.Triggers
 
             foreach (Backdrop backdrop in scene.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.Visible = on;
                 }
@@ -243,7 +243,7 @@ namespace Celeste.Triggers
 
             foreach (Backdrop backdrop in scene.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.Alpha = max ? Math.Max(rainbowBg.Alpha, alpha) : alpha;
                 }
@@ -251,7 +251,7 @@ namespace Celeste.Triggers
 
             foreach (Backdrop backdrop in scene.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.Alpha = max ? Math.Max(rainbowBg.Alpha, alpha) : alpha;
                 }

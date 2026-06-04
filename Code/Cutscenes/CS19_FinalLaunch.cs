@@ -82,11 +82,11 @@ public class CS19_FinalLaunch : CutsceneEntity
         boost.Active = true;
         player.EnforceLevelBounds = false;
         yield return null;
-        RainbowBlackholeBG blackholeBG = Level.Background.Get<RainbowBlackholeBG>();
+        RainbowBlackholeBg blackholeBG = Level.Background.Get<RainbowBlackholeBg>();
         if (blackholeBG != null)
         {
             blackholeBG.Direction = -2.5f;
-            blackholeBG.SnapStrength(Level, RainbowBlackholeBG.Strengths.High);
+            blackholeBG.SnapStrength(Level, RainbowBlackholeBg.Strengths.High);
             blackholeBG.CenterOffset.Y = 100f;
             blackholeBG.OffsetOffset.Y = -50f;
         }

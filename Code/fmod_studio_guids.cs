@@ -2212,5 +2212,89 @@ namespace FSPRO
         public static readonly Guid ui = new Guid(0xf0efde81, 0x92ec, 0x4f1a, 0x8b, 0x48, 0x81, 0x5f, 0x4d, 0x8a, 0x32, 0x55);
     }
 
+    public static class GuidLookup
+    {
+        private static Dictionary<Guid, string> _guidToEventName;
+        private static Dictionary<Guid, string> _guidToEventPath;
+
+        public static string GetEventName(Guid guid)
+        {
+            InitializeMap();
+
+            // First try to get the full path from metadata if available
+            if (_guidToEventPath.TryGetValue(guid, out var fullPath))
+            {
+                return $"event:/{fullPath}";
+            }
+
+            // Fall back to field name conversion
+            if (_guidToEventName.TryGetValue(guid, out var name))
+            {
+                return $"event:/{ConvertNameToEventPath(name)}";
+            }
+
+            return $"event:/{guid}";
+        }
+
+        public static string CleanBankPath(string bankPath)
+        {
+            if (string.IsNullOrEmpty(bankPath))
+                return bankPath;
+
+            // Remove "bank:/mods/" prefix and just keep the bank name
+            if (bankPath.StartsWith("bank:/mods/", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return "bank:/" + bankPath.Substring("bank:/mods/".Length);
+            }
+
+            // Also handle "bank:/" prefix if it exists
+            if (bankPath.StartsWith("bank:/", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return bankPath;
+            }
+
+            return bankPath;
+        }
+
+        private static string ConvertNameToEventPath(string fieldName)
+        {
+            // Convert C# field name (e.g., "char_badeline_appear") to FMOD event path
+            // Most follow pattern: category/subcategory/event or category/event
+            // Just replace underscores with forward slashes
+            return fieldName.Replace('_', '/');
+        }
+
+        private static void InitializeMap()
+        {
+            if (_guidToEventName != null) return;
+
+            _guidToEventName = new Dictionary<Guid, string>();
+            _guidToEventPath = new Dictionary<Guid, string>();
+
+            var eventType = typeof(Event);
+            var fields = eventType.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+
+            foreach (var field in fields)
+            {
+                if (field.FieldType == typeof(Guid))
+                {
+                    var guidValue = (Guid)field.GetValue(null);
+                    _guidToEventName[guidValue] = field.Name;
+                }
+            }
+
+            // Load full event paths from metadata (will be populated by a separate tool)
+            LoadEventPathsFromMetadata();
+        }
+
+        private static void LoadEventPathsFromMetadata()
+        {
+            // This dictionary will be populated with full FMOD event paths extracted from metadata
+            // Format: GUID -> "Master/category/subcategory/eventname" (without "Audio X" suffixes)
+            // For now, this serves as a fallback mechanism - full paths can be generated
+            // from the FMOD project's metadata/event and metadata/eventfolder files
+        }
+    }
+
 }
 

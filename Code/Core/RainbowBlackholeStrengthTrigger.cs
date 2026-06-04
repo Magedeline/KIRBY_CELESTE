@@ -6,7 +6,7 @@ namespace Celeste;
     [HotReloadable]
 public class RainbowBlackholeStrengthTrigger : Trigger
 {
-    private RainbowBlackholeBG.Strengths strength;
+    private RainbowBlackholeBg.Strengths strength;
 
     private bool rainbowMode;
 
@@ -14,7 +14,7 @@ public class RainbowBlackholeStrengthTrigger : Trigger
     public RainbowBlackholeStrengthTrigger(EntityData data, Vector2 offset)
         : base(data, offset)
     {
-        strength = data.Enum("strength", RainbowBlackholeBG.Strengths.Mild);
+        strength = data.Enum("strength", RainbowBlackholeBg.Strengths.Mild);
         rainbowMode = data.Bool("rainbowMode", false);
     }
 
@@ -22,7 +22,7 @@ public class RainbowBlackholeStrengthTrigger : Trigger
     public override void OnEnter(Player player)
     {
         base.OnEnter(player);
-        RainbowBlackholeBG bg = (base.Scene as Level).Background.Get<RainbowBlackholeBG>();
+        RainbowBlackholeBg bg = (base.Scene as Level).Background.Get<RainbowBlackholeBg>();
         if (bg != null)
         {
             bg.RainbowMode = rainbowMode;

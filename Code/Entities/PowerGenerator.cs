@@ -144,7 +144,7 @@ namespace Celeste.Entities
         }
 
         /// <summary>
-        /// Recomputes generator break progression and applies it to all RainbowBlackholeBG backdrops.
+        /// Recomputes generator break progression and applies it to all RainbowBlackholeBg backdrops.
         /// </summary>
         public static void RefreshBlackholeFromGeneratorProgress(Level level)
         {
@@ -182,13 +182,13 @@ namespace Celeste.Entities
 
             foreach (Backdrop backdrop in level.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG blackholeBg)
+                if (backdrop is RainbowBlackholeBg blackholeBg)
                     blackholeBg.SetGeneratorBreakProgress(progress);
             }
 
             foreach (Backdrop backdrop in level.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG blackholeBg)
+                if (backdrop is RainbowBlackholeBg blackholeBg)
                     blackholeBg.SetGeneratorBreakProgress(progress);
             }
         }

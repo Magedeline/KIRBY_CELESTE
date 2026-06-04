@@ -152,7 +152,7 @@ namespace Celeste.Triggers
             // Find and enable rainbow backdrops
             foreach (var backdrop in level.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.Visible = true;
                     rainbowBg.Alpha = rainbowStrength;
@@ -161,7 +161,7 @@ namespace Celeste.Triggers
 
             foreach (var backdrop in level.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.Visible = true;
                     rainbowBg.Alpha = rainbowStrength;
@@ -179,7 +179,7 @@ namespace Celeste.Triggers
             // Find and disable rainbow backdrops
             foreach (var backdrop in level.Background.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.Visible = false;
                     rainbowBg.Alpha = 0f;
@@ -188,7 +188,7 @@ namespace Celeste.Triggers
 
             foreach (var backdrop in level.Foreground.Backdrops)
             {
-                if (backdrop is RainbowBlackholeBG rainbowBg)
+                if (backdrop is RainbowBlackholeBg rainbowBg)
                 {
                     rainbowBg.Visible = false;
                     rainbowBg.Alpha = 0f;
