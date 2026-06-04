@@ -36,12 +36,7 @@ public static class TitleScreen_ExtHook
 
     private static EventInstance OnAudioPlayString(On.Celeste.Audio.orig_Play_string orig, string path)
     {
-        if (path == VANILLA_TITLE_FIRSTINPUT)
-        {
-            Logger.Log(LogLevel.Debug, "MaggyHelper",
-                $"TitleScreen_ExtHook: Replaced '{path}' → '{CUSTOM_TITLE_FIRSTINPUT}'");
-            return orig(CUSTOM_TITLE_FIRSTINPUT);
-        }
+        // Use vanilla audio since custom FMOD events may not exist
         return orig(path);
     }
 }

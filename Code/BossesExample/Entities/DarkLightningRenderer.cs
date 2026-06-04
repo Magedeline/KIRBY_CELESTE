@@ -279,6 +279,7 @@ public class DarkLightningRenderer : Entity
     foreach (DarkLightningRenderer.Bolt bolt in this.bolts)
       bolt.Render();
     Draw.SpriteBatch.End();
+    Engine.Graphics.GraphicsDevice.SetRenderTarget(null);
   }
 
   public override void Render()

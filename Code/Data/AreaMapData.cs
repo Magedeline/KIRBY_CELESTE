@@ -150,8 +150,8 @@ public static class AreaMapData
             Icon = "areas/prologue",
             IsInterlude = true,
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
-            MusicEvents = new[] { "event:/music/pusheen/lvl0/intro" },
-            AmbienceEvents = new[] { "event:/env/pusheen/00_prologue" },
+            MusicEvents = new[] { "event:/music/lvl0/main" },
+            AmbienceEvents = new[] { "event:/env/amb/00_prologue" },
             MountainState = 0,
             MountainData = new MountainCameraData
             {
@@ -305,8 +305,8 @@ public static class AreaMapData
             Icon = "areas/corruption",
             IsInterlude = false,
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
-            MusicEvents = new[] { "event:/music/pusheen/lvl16/cinematic/intro01" },
-            AmbienceEvents = new[] { "event:/env/pusheen/16_myworld" },
+            MusicEvents = new[] { "event:/music/lvl16/main" },
+            AmbienceEvents = new[] { "event:/env/amb/16_main" },
             MountainState = MountainOverworldManager.STATE_DARK,
             MountainData = new MountainCameraData
             {
@@ -330,8 +330,8 @@ public static class AreaMapData
             Icon = "areas/epilogue",
             IsInterlude = true,
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
-            MusicEvents = new[] { "event:/music/pusheen/lvl17/main" },
-            AmbienceEvents = new[] { "event:/env/pusheen/00_main" },
+            MusicEvents = new[] { "event:/music/lvl17/main" },
+            AmbienceEvents = new[] { "event:/env/amb/00_main" },
             MountainState = 0,
             MountainData = new MountainCameraData
             {
@@ -362,8 +362,8 @@ public static class AreaMapData
             Icon = "areas/space",
             IsInterlude = false,
             HasBSide = false, HasCSide = false, HasDSide = false, HasDXSide = false,
-            MusicEvents = new[] { "event:/music/pusheen/lvl18/main" },
-            AmbienceEvents = new[] { "event:/env/pusheen/18_main" },
+            MusicEvents = new[] { "event:/music/lvl18/main" },
+            AmbienceEvents = new[] { "event:/env/amb/18_main" },
             MountainState = MountainOverworldManager.STATE_VOID,
             MountainData = new MountainCameraData
             {
@@ -508,7 +508,7 @@ public static class AreaMapData
         Vector3 cursor)
     {
         string numStr = number.ToString("D2");
-        string mainMusic = $"event:/music/pusheen/lvl{numStr}/main";
+        string mainMusic = $"event:/music/lvl{numStr}/main";
         string ambience = GetStandardAmbienceEvent(number);
 
         Register(new ChapterDef
@@ -555,23 +555,7 @@ public static class AreaMapData
 
     private static string GetStandardAmbienceEvent(int chapterNumber)
     {
-        return chapterNumber switch
-        {
-            2 => "event:/env/pusheen/02_awake",
-            4 => "event:/env/pusheen/04_awake",
-            5 => "event:/env/pusheen/05_exterior",
-            7 => "event:/env/pusheen/07_interior_main",
-            8 => "event:/env/pusheen/08_main",
-            9 => "event:/env/pusheen/09_summit",
-            10 => "event:/env/pusheen/10_ruins",
-            11 => "event:/env/pusheen/11_snow_daytime",
-            12 => "event:/env/pusheen/12_waterfall",
-            13 => "event:/env/pusheen/13_factory",
-            14 => "event:/env/pusheen/14_digital",
-            15 => "event:/env/pusheen/15_castle",
-            18 => "event:/env/pusheen/18_main",
-            _ => $"event:/env/pusheen/{chapterNumber:D2}_main"
-        };
+        return $"event:/env/amb/{chapterNumber:D2}_main";
     }
 
     public static void RefreshAvailableSides()
@@ -706,10 +690,13 @@ public static class AreaMapData
 
         if (!string.IsNullOrEmpty(music) || !string.IsNullOrEmpty(ambience))
         {
-            mode.AudioState = new AudioState(
-                string.IsNullOrEmpty(music) ? "event:/music/lvl1/main" : music,
-                string.IsNullOrEmpty(ambience) ? "event:/env/amb/00_prologue" : ambience
-            );
+            string finalMusic = string.IsNullOrEmpty(music) ? "event:/music/lvl1/main" : music;
+            string finalAmbience = string.IsNullOrEmpty(ambience) ? "event:/env/amb/00_prologue" : ambience;
+
+            Logger.Log(LogLevel.Debug, "MaggyHelper",
+                $"BuildOrUpdateMode: Setting audio for {path} - Music: {finalMusic}, Ambience: {finalAmbience}");
+
+            mode.AudioState = new AudioState(finalMusic, finalAmbience);
         }
 
         return mode;
@@ -792,6 +779,9 @@ public static class AreaMapData
 
     private static void ApplyHardcodedRuntimeData(AreaData area, ChapterDef chapter)
     {
+        Logger.Log(LogLevel.Debug, "MaggyHelper",
+            $"ApplyHardcodedRuntimeData: Chapter {chapter.Number} ({chapter.Name}), SID: {area.SID}");
+
         area.Name = chapter.Name;
         area.Icon = ResolveChapterIconPath(chapter);
         area.Interlude_Safe = chapter.IsInterlude;
@@ -800,6 +790,12 @@ public static class AreaMapData
         // exercised for overworld cameras, fog, audio state, and mode properties.
         // This makes DZ chapters behave identically to vanilla/Everest-modded chapters.
         MapMeta meta = BuildMapMeta(chapter, area);
+
+        Logger.Log(LogLevel.Debug, "MaggyHelper",
+            $"  Music Events: {(chapter.MusicEvents?.Length > 0 ? string.Join(", ", chapter.MusicEvents) : "none")}");
+        Logger.Log(LogLevel.Debug, "MaggyHelper",
+            $"  Ambience Events: {(chapter.AmbienceEvents?.Length > 0 ? string.Join(", ", chapter.AmbienceEvents) : "none")}");
+
         meta.ApplyTo(area);
 
         // Hard-override mountain cameras and state after ApplyTo so our code-defined

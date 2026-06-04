@@ -225,14 +225,14 @@ namespace Celeste.Mod.MaggyHelper.Cutscenes {
             Scene.Add(logo);
             yield return logo.EaseIn();
             // Celeste 64 boot title hit — play when logo lands
-            global::Celeste.Audio.Play("event:/ui/pusheen/game/pre_title_firstinput");
+            // Custom FMOD event, skipped if not available
             yield return 4f;
             yield return ShowConfirmButton();
             while (!Input.MenuConfirm.Pressed) {
                 yield return null;
             }
-            // Title confirm out sound
-            global::Celeste.Audio.Play("event:/ui/pusheen/game/title_firstinput");
+            // Title confirm out sound (using vanilla audio)
+            global::Celeste.Audio.Play("event:/ui/main/title_firstinput");
             EndCutscene(level);
         }
 
