@@ -2217,3 +2217,43 @@
 {499c39ab-143a-4fdd-8a3a-5df65cf6bb9e} bank:/pusheen_audio_B
 {e7db3bd4-6f93-494d-b6ab-019e75e4f717} bank:/pusheen_audio_C
 {d79544e9-1a50-4c83-a174-4da2a97fd1ce} bank:/pusheen_audio_D
+
+# Custom KIRBY_CELESTE Music Events
+{11126cb5-16ce-54ca-93a1-c632ed99ed38} event:/music/1-forbiddenmetro/main
+{df05601d-d0a3-5586-bb07-6f20100c5945} event:/music/2-shadowofveil/main
+{8c09bbe3-34af-5ca5-8b08-4a90cca4ac7b} event:/music/3-arrivial/main
+{94892270-7e5a-53f5-a7a8-90eec18d94be} event:/music/4-thelegend/main
+{3629aeef-9623-57e0-9414-42e15734a66b} event:/music/5-fractureresort/main
+{599bebe0-b8ec-5bd4-abe0-86b9bffc51e4} event:/music/6-stronghold/main
+{12f4a235-6219-5c9d-b800-b7ddcb0b9fc3} event:/music/7-infornoreflection/main
+{3872c1d3-6028-5a7a-be49-a76dde063a07} event:/music/8-revelationedge/main
+{a9e018fa-5f30-5eca-853b-9d5d9680e478} event:/music/9-beyondsummit/main
+{bb50a731-2b3f-59a3-913d-dabc77f9e7f3} event:/music/10-echosofpast/main
+{bb53c6a3-352a-5655-bd2a-cad4b90550aa} event:/music/11-frozensanctuary/main
+{ca164be9-bd45-5d77-8ab7-2a649ec4e204} event:/music/12-cascadingdepths/main
+{2ab750b7-db73-586c-b806-69f97a427998} event:/music/13-balzingteritory/main
+{3459e7af-1dba-5ade-b65e-a88d92222e80} event:/music/14-cybernexus/main
+{552a4028-6a86-578f-babc-a6efae9e4c92} event:/music/15-etheraealcitadel/main
+{bc1a59f4-dad1-5d9f-956f-414dabc8227f} event:/music/16-organgarden/main
+{0dbe6cae-8f5e-5301-b724-de4431091bc1} event:/music/17-epilogue/main
+{1f3f4a27-523e-5703-bef0-0c24dafc8463} event:/music/18-coreexistence/main
+{8beee91f-5197-5d68-b855-00a6de23a555} event:/music/19-space/main
+{2486dd1a-55f7-537e-87f2-2082245b3186} event:/music/pusheen/DSide/01_city
+{200d0812-130b-500d-8374-c016c031282e} event:/music/pusheen/DSide/02_nightmare
+{d2245146-277c-5d9d-bf13-dcb4c7a91f28} event:/music/pusheen/DSide/03_stars
+{13f2acf1-94ae-563c-ad01-44b70d94762e} event:/music/pusheen/DSide/04_legend
+{c94b7e43-0661-5b9c-93f6-00363906d491} event:/music/pusheen/DSide/05_restore
+{b4b9646a-2dde-529f-a09d-981668b1d559} event:/music/pusheen/DSide/06_stronghold
+{ac20d78e-aa50-5a5b-a03c-39debcb7e1ca} event:/music/pusheen/DSide/07_hell
+{ef444bb9-21d7-5900-88ae-6ff9944c340e} event:/music/pusheen/DSide/08_truth
+{f7dcf3ba-bf0e-5c18-81db-d7ba9bd7b85c} event:/music/pusheen/DSide/09_summit
+{94b376f7-30d6-5952-95e4-ddfd2e10105f} event:/music/pusheen/DSide/10_ruins
+{cada4478-8931-51ad-b1a1-d2745f63536e} event:/music/pusheen/DSide/11_snow
+{a5132074-5417-5829-adf4-7832c25fa02c} event:/music/pusheen/DSide/12_water
+{7bbb451e-ebc6-51a0-9438-99a7a8a14b1d} event:/music/pusheen/DSide/13_fire
+{0791d94f-4c22-55fb-a38f-e48e1f5663c6} event:/music/pusheen/DSide/14_digital
+{29d834bd-fd84-51c9-af75-116981a1c1b2} event:/music/pusheen/DSide/15_castle
+{5123f7cb-4b7c-50f3-b20d-85cde0bcccad} event:/music/pusheen/DSide/18_heart
+event:/music/pusheen/DSide/16_corruption=guids://e625e73a-aa1d-548b-ba23-bbcd26296485
+event:/env/amb/00_main=guids://ca75d19f-cdfc-5124-8e57-482ae7a01e7b
+event:/env/amb/18_main=guids://c9ab19eb-28f6-5cfb-8be9-44a435a15003
