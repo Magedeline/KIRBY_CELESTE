@@ -14,7 +14,7 @@ public class TrueFinaleVignette : Scene
     private const string VignetteMusicEvent = "event:/new_content/music/pusheen/lvl21/climb";
 
     private Session session;
-    private HiresSnow snow;
+    private MaggyHiresSnow snow;
     private float fade = 1f;
     private float timer;
     private bool ready;
@@ -43,8 +43,8 @@ public class TrueFinaleVignette : Scene
     public TrueFinaleVignette(Session session, HiresSnow snow = null)
     {
         this.session = session;
-        this.snow = snow ?? new HiresSnow();
-        Add(snow);
+        this.snow = new MaggyHiresSnow();
+        Add(this.snow);
 
         titleText = Dialog.Has("MaggyHelper_TRUEFINALE_TITLE")
             ? Dialog.Clean("MaggyHelper_TRUEFINALE_TITLE")

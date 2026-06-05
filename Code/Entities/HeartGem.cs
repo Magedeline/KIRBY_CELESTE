@@ -912,7 +912,7 @@ Level level = Scene as Level;
         private IEnumerator ShowDsidePostcard(Level level)
         {
             var scene = new Scene();
-            var snow = new HiresSnow();
+            var snow = new MaggyHiresSnow();
             scene.Add(snow);
 
             var entity = new Entity();
@@ -944,13 +944,13 @@ Level level = Scene as Level;
             yield return postcard.DisplayRoutine();
 
             yield return 0.5f;
-            Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete, new HiresSnow());
+            Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete);
         }
 
         private IEnumerator ShowUltraPostcard(Level level)
         {
             var scene = new Scene();
-            var snow = new HiresSnow();
+            var snow = new MaggyHiresSnow();
             scene.Add(snow);
 
             var entity = new Entity();
@@ -988,7 +988,7 @@ Level level = Scene as Level;
             MaggyHelperModule.SaveData?.UnlockAchievement("ultra_crystal_hearts_postcard_shown");
 
             yield return 0.5f;
-            Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete, new HiresSnow());
+            Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete);
         }
 
         // Sevenbird inner class for crystal heart flyby (kept for compatibility)

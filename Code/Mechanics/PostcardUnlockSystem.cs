@@ -201,7 +201,7 @@ public class SideUnlockVignette : Scene
 {
     private readonly Session session;
     private readonly int completedMode;
-    private HiresSnow snow;
+    private MaggyHiresSnow snow;
     private bool started;
 
     public SideUnlockVignette(Session session, int completedMode)
@@ -213,7 +213,7 @@ public class SideUnlockVignette : Scene
     public override void Begin()
     {
         base.Begin();
-        snow = new HiresSnow();
+        snow = new MaggyHiresSnow();
         Add(snow);
     }
 
@@ -240,7 +240,7 @@ public class SideUnlockVignette : Scene
 
         // Transition back to overworld
         yield return 0.5f;
-        Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete, snow);
+        Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete, null);
     }
 }
 

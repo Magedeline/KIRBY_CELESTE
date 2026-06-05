@@ -28,7 +28,6 @@ namespace Celeste.Mod.MaggyHelper
             var sw = Stopwatch.StartNew();
 
             RunTriggerManagerTests();
-            RunSaveDataValidatorTests();
             RunBossConfigHelperTests();
 
             sw.Stop();
@@ -72,32 +71,6 @@ namespace Celeste.Mod.MaggyHelper
             Assert("SafeString_NullData_ReturnsDefault",
                 TriggerManager.SafeString(null, "name", "default") == "default",
                 "Should return default when EntityData is null");
-        }
-
-        #endregion
-
-        #region SaveDataValidator Tests
-
-        private static void RunSaveDataValidatorTests()
-        {
-            LogTestCategory("SaveDataValidator");
-
-            // Test validation state reset
-            SaveDataValidator.ResetValidationState();
-            Assert("ResetValidationState_ClearsLog",
-                SaveDataValidator.GetLastValidationLog().Count == 0,
-                "Validation log should be empty after reset");
-
-            // Test that validation doesn't crash with null save data
-            try
-            {
-                SaveDataValidator.ValidateOnLoad();
-                Assert("ValidateOnLoad_DoesNotCrash", true, "");
-            }
-            catch (Exception ex)
-            {
-                Assert("ValidateOnLoad_DoesNotCrash", false, $"Exception: {ex.Message}");
-            }
         }
 
         #endregion

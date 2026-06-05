@@ -23,10 +23,6 @@ namespace Celeste.Cutscenes
             this.returnCallback = returnCallback;
             Add(mountain = new MountainRenderer());
             mountain.SnapCamera(-1, new MountainCamera(startCamera.Position + (startCamera.Target - startCamera.Position).SafeNormalize() * 2f, startCamera.Target));
-            Add(new HiresSnow
-            {
-                ParticleAlpha = 0f
-            });
             Add(new Snow3D(mountain.Model));
             Add(maddy = new Maddy3D(mountain));
             maddy.Falling();

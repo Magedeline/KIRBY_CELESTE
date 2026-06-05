@@ -34,7 +34,7 @@ namespace Celeste.Cutscenes
         private bool wasDashAssistOn;
         private CS17_Credits.Fill fillbg;
         private float fade = 1f;
-        private HiresSnow snow;
+        private MaggyHiresSnow snow;
         private bool gotoEpilogue;
         private CharaDummy chara;
         private Entity kirbyFollower;
@@ -430,10 +430,9 @@ namespace Celeste.Cutscenes
                 yield return null;
             if (!this.gotoEpilogue)
             {
-                this.snow = new HiresSnow();
+                this.snow = new MaggyHiresSnow();
                 this.snow.Alpha = 0f;
-                this.snow.AttachAlphaTo = new FadeWipe(this.Level, false, () => { });
-                this.Level.Add(this.Level.HiresSnow = this.snow);
+                this.Level.Add(this.Level.HiresSnow);
             }
             else
             {
@@ -1523,7 +1522,7 @@ namespace Celeste.Cutscenes
                     MaggyHelperModule.Session.CreditsCompleted = MaggyHelperModule.IsChapter17EpilogueCompleted();
                 }
 
-                Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete, this.snow);
+                Engine.Scene = new OverworldLoader(Overworld.StartMode.AreaComplete);
             }
             else
             {

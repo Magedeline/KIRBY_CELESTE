@@ -64,7 +64,7 @@ namespace Celeste.Cutscenes
 
         public Cs03IntroVignette(Session session1) : this(session1, null)
         {
-            Add(new HiresSnow());
+            Add(new MaggyHiresSnow());
             Add(new FadeWipe(this, true));
         }
 
@@ -106,7 +106,7 @@ namespace Celeste.Cutscenes
             yield return 2f;
 
             // Display intro dialog on the postcard
-            var postcardTextbox = new Textbox("MAGGYHELPER_CH3_POSTCARD_INTRO");
+            var postcardTextbox = new Textbox("MAGGYHELPER_CH3_KIRBY_INTRO");
             yield return say(postcardTextbox);
 
             yield return 1f;

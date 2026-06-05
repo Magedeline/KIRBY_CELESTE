@@ -17,7 +17,7 @@ namespace Celeste.Cutscenes
         private const float INITIAL_DELAY = 0.5f;
 
         private readonly HudRenderer hud;
-        private readonly HiresSnow snow;
+        private readonly MaggyHiresSnow snow;
 
         private float bgFade;
         private float textFade;
@@ -54,7 +54,7 @@ namespace Celeste.Cutscenes
         public IntroWarning()
         {
             Add(hud = new HudRenderer());
-            snow = new HiresSnow();
+            snow = new MaggyHiresSnow();
             Add(snow);
             RendererList.UpdateLists();
             sequence = new Coroutine(WarningSequence());
@@ -191,7 +191,7 @@ namespace Celeste.Cutscenes
 
             // Proceed to the normal Overworld / title screen
             exiting = true;
-            Engine.Scene = new OverworldLoader(Overworld.StartMode.Titlescreen, snow);
+            Engine.Scene = new OverworldLoader(Overworld.StartMode.Titlescreen);
         }
 
         public override void Update()

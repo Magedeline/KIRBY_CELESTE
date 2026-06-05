@@ -136,7 +136,7 @@ public class CS00_EndingMod : CutsceneEntity
         Scene.Add(endingText);
         Snow bgSnow = level.Background.Get<Snow>();
         Snow fgSnow = level.Foreground.Get<Snow>();
-        level.Add(level.HiresSnow = new HiresSnow());
+        level.Add(level.HiresSnow);
         level.HiresSnow.Alpha = 0f;
         float ease = 0f;
         while (ease < 1f)
@@ -190,7 +190,7 @@ public class CS00_EndingMod : CutsceneEntity
             }
             if (level.HiresSnow == null)
             {
-                level.Add(level.HiresSnow = new HiresSnow());
+                level.Add(level.HiresSnow);
             }
             level.HiresSnow.Alpha = 1f;
             Snow snow = level.Background.Get<Snow>();

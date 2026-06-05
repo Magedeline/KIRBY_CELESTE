@@ -173,6 +173,10 @@ public class CharaChaser2 : Entity
         Collidable = true;
         following = true;
         Add(occlude = new LightOcclude());
+        if (level.Tracker.GetEntity<CharaChaserMusicHandler>() == null)
+        {
+            level.Add(new CharaChaserMusicHandler());
+        }
         if (IsChaseEnd(level))
         {
             Add(new Coroutine(StopChasing()));
@@ -201,7 +205,26 @@ public class CharaChaser2 : Entity
     private IEnumerator StopChasing()
     {
         Level level = Scene as Level;
-        while (!CollideCheck<BadelineOldsiteEnd>() && !CollideCheck<CharaChaserEnd>())
+        if (level.Session.Area.GetLevelSet() == "DesoloZantas")
+        {
+            return custom_StopChasing();
+        }
+        return orig_StopChasing();
+    }
+
+    private IEnumerator orig_StopChasing()
+    {
+        // Original vanilla-style behavior - no custom end zone
+        while (true)
+        {
+            yield return null;
+        }
+    }
+
+    private IEnumerator custom_StopChasing()
+    {
+        Level level = Scene as Level;
+        while (!CollideCheck<CharaChaserEnd>())
         {
             yield return null;
         }
@@ -361,13 +384,9 @@ public class CharaChaser2 : Entity
 
     private bool IsChaseEnd(Level level)
     {
-        if (level.Tracker.CountEntities<CharaChaserEnd>() != 0)
+        if (level.Session.Area.GetLevelSet() == "DesoloZantas")
         {
-            return true;
-        }
-        if (level.Tracker.CountEntities<BadelineOldsiteEnd>() != 0)
-        {
-            return true;
+            return level.Tracker.CountEntities<CharaChaserEnd>() != 0;
         }
         return false;
     }

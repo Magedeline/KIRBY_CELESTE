@@ -344,7 +344,7 @@ namespace Celeste.Triggers
             // Chapter 2
             Register("cs02_chara_intro", (trigger, player, eventId) => {
                 var chara = (trigger.Scene as Level).Entities.FindFirst<global::Celeste.Entities.CharaChaser>();
-                return chara != null ? new global::Celeste.Cutscenes.CS02_CharaIntro(chara) : null;
+                return chara != null ? new global::Celeste.CS02_CharaIntro(chara) : null;
             });
             
             // Chapter 4

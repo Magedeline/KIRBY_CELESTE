@@ -1,7 +1,7 @@
-#nullable enable
-
 using Celeste.Cutscenes;
 using Celeste.Entities;
+using Celeste.Triggers;
+using IL.Celeste;
 
 namespace Celeste;
 
@@ -21,8 +21,6 @@ public static class VignetteHooks
         _hooked = true;
 
         On.Celeste.LevelEnter.Go += OnLevelEnterGo;
-        On.Celeste.LevelExit.ctor += OnLevelExitCtor;
-
         Logger.Log(LogLevel.Info, "MaggyHelper", "VignetteHooks loaded");
     }
 
@@ -32,8 +30,6 @@ public static class VignetteHooks
         _hooked = false;
 
         On.Celeste.LevelEnter.Go -= OnLevelEnterGo;
-        On.Celeste.LevelExit.ctor -= OnLevelExitCtor;
-
         Logger.Log(LogLevel.Info, "MaggyHelper", "VignetteHooks unloaded");
     }
 
@@ -51,13 +47,11 @@ public static class VignetteHooks
             if (AreaModeExtender.IsOurMap(area))
             {
                 var chapter = AreaMapData.FindByAnySID(area.SID);
-                if (chapter != null)
+                if (chapter == null)
                 {
-                    Scene? vignette = CreateIntroVignette(session, chapter);
-                    if (vignette != null)
+                    Scene vignette = CreateIntroVignette(session, chapter);
+                    if (vignette == null)
                     {
-                        Logger.Log(LogLevel.Info, "MaggyHelper",
-                            $"VignetteHooks: showing intro vignette for chapter {chapter.Number}");
                         Engine.Scene = vignette;
                         return;
                     }
@@ -92,8 +86,6 @@ public static class VignetteHooks
         Scene? outro = CreateOutroVignette(session, chapter);
         if (outro != null)
         {
-            Logger.Log(LogLevel.Info, "MaggyHelper",
-                $"VignetteHooks: showing outro vignette for chapter {chapter.Number}");
             Engine.Scene = outro;
         }
     }
@@ -130,7 +122,7 @@ public static class VignetteHooks
                 if (!HasSeenVignette(flagKey))
                 {
                     MarkVignetteSeen(flagKey);
-                    return new BeyondSummitVignette(session);
+                    return new VortexVignette(session);
                 }
                 break;
 

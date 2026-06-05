@@ -46,7 +46,8 @@ public static class AreaMapData
         [17] = "postepilogue",
         [18] = "heart",
         [19] = "farewell",
-        [20] = "theend"
+        [20] = "theend",
+        [21] = "lastlevel"
     };
 
     /// <summary>
@@ -85,6 +86,15 @@ public static class AreaMapData
         /// Null means use the shared default (Mountain/Maggy/Desolo_Zantas).
         /// </summary>
         public string MountainModelDir { get; set; }
+
+        /// <summary>Optional intro vignette factory for chapter intro</summary>
+        public Func<Session, HiresSnow, Scene> VignetteHooks { get; set; }
+
+        /// <summary>Optional true finale vignette factory for chapter outro</summary>
+        public Func<Session, Scene> TrueFinaleVignette { get; set; }
+
+        /// <summary>Optional postcard vignette factory for chapter completion</summary>
+        public Func<Session, Scene> PostcardMaggy { get; set; }
     }
 
     /// <summary>Camera positions for the 3D mountain overworld per chapter.</summary>
@@ -213,7 +223,7 @@ public static class AreaMapData
     public static string ResolveChapterIconPath(ChapterDef chapter)
     {
         if (chapter == null)
-            return null;
+            return "areas/Maggy/lock";
 
         if (ChapterProgressionManager.IsChapterLockedForUI(chapter.SID) && HasGuiTexture(LockedGuiAreaIcon))
             return LockedGuiAreaIcon;
@@ -225,7 +235,7 @@ public static class AreaMapData
                 return guiIcon;
         }
 
-        return chapter.Icon;
+        return !string.IsNullOrWhiteSpace(chapter.Icon) ? chapter.Icon : "areas/Maggy/lock";
     }
 
 
@@ -361,7 +371,7 @@ public static class AreaMapData
 
         if (!string.IsNullOrEmpty(music) || !string.IsNullOrEmpty(ambience))
         {
-            string finalMusic = string.IsNullOrEmpty(music) ? "guids://e3205ef9-4d54-5f55-8a68-89cc87b5ee78" : music;
+            string finalMusic = music;
             string finalAmbience = string.IsNullOrEmpty(ambience) ? "event:/env/amb/00_prologue" : ambience;
 
             Logger.Log(LogLevel.Debug, "MaggyHelper",

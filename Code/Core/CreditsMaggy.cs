@@ -10,7 +10,7 @@ namespace Celeste.UI
     [HotReloadable]
     public class CreditsMaggy : Scene
     {
-        #region â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Constants
 
         private const float FADE_IN_DURATION = 1.5f;
         private const float FADE_OUT_DURATION = 1.0f;
@@ -30,7 +30,7 @@ namespace Celeste.UI
 
         #endregion
 
-        #region â”€â”€ Nested types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Nested types
 
         private enum SequencePhase
         {
@@ -178,7 +178,7 @@ namespace Celeste.UI
 
         #endregion
 
-        #region â”€â”€ Fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Fields
 
         private readonly List<CreditNode> credits = new();
 
@@ -208,14 +208,12 @@ namespace Celeste.UI
 
         #endregion
 
-        #region â”€â”€ Constructor â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Constructor
 
         public CreditsMaggy()
         {
             BuildCredits();
             RecalculateHeight();
-
-            snow = new HiresSnow();
             hud = new HudRenderer();
 
             Add(snow);
@@ -225,7 +223,7 @@ namespace Celeste.UI
 
         #endregion
 
-        #region â”€â”€ Credit Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Credit Data 
 
         private static float LineHeight => ActiveFont.LineHeight;
 
@@ -292,7 +290,7 @@ namespace Celeste.UI
 
         #endregion
 
-        #region â”€â”€ Update â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Update
 
         public override void Update()
         {
@@ -448,7 +446,7 @@ namespace Celeste.UI
 
         #endregion
 
-        #region â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Render
 
         public override void Render()
         {
@@ -533,7 +531,7 @@ namespace Celeste.UI
 
         #endregion
 
-        #region â”€â”€ Audio helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Audio helpers
 
         private void TryStartMusic()
         {
@@ -559,19 +557,17 @@ namespace Celeste.UI
 
         #endregion
 
-        #region â”€â”€ Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        #region Navigation
 
         private void ReturnToOverworld()
         {
             Engine.Scene = new OverworldLoader(
-                Overworld.StartMode.Titlescreen,
-                snow);
+                Overworld.StartMode.Titlescreen);
         }
 
         #endregion
 
-        #region â”€â”€ Cleanup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
+        #region Cleanup
         public override void End()
         {
             StopMusic();

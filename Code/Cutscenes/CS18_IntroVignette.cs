@@ -42,7 +42,7 @@ namespace Celeste.Cutscenes
 
         public Cs18IntroVignette(Session session1) : this(session1, null)
         {
-            Add(new HiresSnow());
+            Add(new MaggyHiresSnow());
             Add(new FadeWipe(this, true));
         }
 
