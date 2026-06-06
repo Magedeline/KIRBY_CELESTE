@@ -1983,7 +1983,8 @@ What ever that is, we need to get out of here as soon as possible!
 [MADELINE left angry]
 {trigger 0 Music starts}
 
-MAGGYHELPER_CH2_CHARA_INTRO=[CHARA left normal]
+MAGGYHELPER_CH2_CHARA_INTRO=
+[CHARA left normal]
 Greetings {+MADELINE}...
 {trigger 0 Madeline turns around}
 [MADELINE right distracted]
