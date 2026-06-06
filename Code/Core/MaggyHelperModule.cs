@@ -220,6 +220,9 @@ namespace Celeste.Mod.MaggyHelper
             global::Celeste.IntroRemixHooks.Load();
             global::Celeste.MonoModHooks.Load();
 
+            // Payphone cutscene triggers for dream/awake sequences
+            global::Celeste.Mod.MaggyHelper.PayphoneCutsceneTriggers.Load();
+
             // Initialize Vignette hooks for intro/outro cutscenes
             InitializeVignetteHooks();
 
@@ -374,6 +377,7 @@ namespace Celeste.Mod.MaggyHelper
             global::Celeste.CelesteDSideHooks.Unload();
             global::Celeste.AltSidesHelperBridge.Unload();
             global::Celeste.MonoModHooks.Unload();
+            global::Celeste.Mod.MaggyHelper.PayphoneCutsceneTriggers.Unload();
             global::Celeste.TitleScreen_ExtHook.Unload();
             global::Celeste.ChapterMasteryTracker.Unload();
             global::Celeste.CosmicChapterPanelHook.Unload();
