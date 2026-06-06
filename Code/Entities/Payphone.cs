@@ -163,6 +163,42 @@ namespace Celeste.Entities
             loopSfx?.Stop();
             base.Removed(scene);
         }
+
+        /// <summary>
+        /// Trigger the payphone cutscene with the appropriate dialog based on dream/awake state.
+        /// Used by cutscenes to automatically show dream or awake dialog.
+        /// </summary>
+        public IEnumerator TriggerCutsceneDialog()
+        {
+            if (Scene is not Level level)
+                yield break;
+
+            var player = level.Tracker.GetEntity<global::Celeste.Player>();
+            if (player == null)
+                yield break;
+
+            level.StartCutscene(onTalkEnd);
+            yield return talkCoroutine(player);
+        }
+
+        /// <summary>
+        /// Get the appropriate dialog ID based on current dream state.
+        /// Returns dream dialog if level.Session.Dreaming is true, otherwise awake dialog.
+        /// </summary>
+        public string GetDialogForCurrentState()
+        {
+            return GetCurrentDialogId();
+        }
+
+        /// <summary>
+        /// Check if the payphone is currently in dream state.
+        /// </summary>
+        public bool IsDreamState()
+        {
+            if (Scene is Level level)
+                return level.Session.Dreaming;
+            return false;
+        }
     }
 }
 

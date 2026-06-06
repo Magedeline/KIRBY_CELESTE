@@ -51,7 +51,11 @@ namespace Celeste.Cutscenes
       yield return (object) 6f;
       cs02Ending.phoneSfx.Stop();
       cs02Ending.payphone.Sprite.Play("talkPhone");
-      yield return (object) Textbox.Say("MAGGYHELPER_CH2_CALLING_KIRBY");
+
+      // Use appropriate dialog based on dream/awake state
+      string dialogId = cs02Ending.payphone.GetDialogForCurrentState();
+      yield return (object) Textbox.Say(dialogId);
+
       yield return (object) 0.3f;
       cs02Ending.endCutscene(level);
     }
