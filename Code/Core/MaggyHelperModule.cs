@@ -93,11 +93,13 @@ namespace Celeste.Mod.MaggyHelper
         //      - Everest.Events.Level.OnExit (cleanup)
         //
         //   15. Postcard Unlock Hooks (PostcardUnlockSystem)
+        //      - Chapter postcard dialog on first entry (Chapters 1-16)
         //      - C-Side unlock postcard (after B-Side completion)
         //      - D-Side unlock postcard (after C-Side completion)
         //      - DX-Side unlock postcard (after D-Side completion)
         //      - Desolo Variants unlock postcard (ultra completion)
         //      - SideUnlockVignette integration with LevelExit
+        //      - PostcardDialogVignette loading screen display
         //
         //   16. C-Side Tape Unlock Hooks (TapeCollection â†’ Overworld)
         //      - DesoloZantasTape.OnPlayer collection hook
@@ -206,12 +208,17 @@ namespace Celeste.Mod.MaggyHelper
             // Note: AreaMapData, ChapterActRegistry, and BossRosterRegistry
             // use lazy initialization - they'll be populated on first access.
 
+            // Load FMOD audio banks
+            LoadAudioBanks();
+
+            // Register hooks
+            // OuiChapterSelectHooks: Wraps OuiChapterSelect to catch crashes from updateScarf()
+            OuiChapterSelectHooks.Load();
             global::Celeste.AreaModeExtender.Load();
             global::Celeste.CelesteDSideHooks.Load();
             global::Celeste.AltSidesHelperBridge.Load();
             global::Celeste.IntroRemixHooks.Load();
             global::Celeste.MonoModHooks.Load();
-            global::Celeste.RoomTransitionHandler.Load();
 
             // Initialize Vignette hooks for intro/outro cutscenes
             InitializeVignetteHooks();
@@ -221,10 +228,13 @@ namespace Celeste.Mod.MaggyHelper
 
             global::Celeste.ChapterMasteryTracker.Load();
             global::Celeste.CosmicChapterPanelHook.Load();
-            global::Celeste.OuiChapterSelectHooks.Load();
+            global::Celeste.Mod.MaggyHelper.ChapterProgressDisplay.Load();
 
             // Chapter progression hooks for late-game unlock flow
             ChapterProgressionManager.Load();
+
+            // Room transition handler for Kirby mode
+            global::Celeste.RoomTransitionHandler.Load();
 
             // Kirby player map-entry hooks (Everest + MonoMod + vanilla compatibility)
             // Ensures controllers attach on Player spawn and metadata-based activation works.
@@ -307,31 +317,80 @@ namespace Celeste.Mod.MaggyHelper
             base.LoadSaveData(index);
         }
 
+        private static void LoadAudioBanks()
+        {
+            try
+            {
+                // Load the master bank first (required for all FMOD functionality)
+                Audio.Banks.Load("Audio/Master_Bank", loadStrings: true);
+                Audio.Banks.Load("Audio/Master_Bank.strings", loadStrings: true);
+
+                // Load custom audio banks for Pusheen/Maggy audio (divided by chapter sections)
+                // pusheen_audio_A: Chapter 0-7 music and SFX
+                Audio.Banks.Load("Audio/pusheen_audio_A", loadStrings: true);
+
+                // pusheen_audio_B: Chapter 8-14 music and SFX
+                Audio.Banks.Load("Audio/pusheen_audio_B", loadStrings: true);
+
+                // pusheen_audio_C: Chapter 15-17 music and SFX
+                Audio.Banks.Load("Audio/pusheen_audio_C", loadStrings: true);
+
+                // pusheen_audio_D: Chapter 18-21 and special music/SFX
+                Audio.Banks.Load("Audio/pusheen_audio_D", loadStrings: true);
+
+                Logger.Log(LogLevel.Info, "MaggyHelper", "All audio banks loaded successfully");
+                LogAudioEventNamespaces();
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "MaggyHelper", "Failed to load audio banks: " + ex.Message);
+            }
+        }
+
+        private static void LogAudioEventNamespaces()
+        {
+            // Document all major audio event namespaces used in KIRBY_CELESTE mod
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "Audio Event Namespaces:");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "  Music Events:");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "    - event:/music/pusheen/lvl[0-21]/* (Chapter music)");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "    - event:/music/pusheen/menu/* (Menu music)");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "    - event:/pusheen/ch[0-21]/music/* (Boss and special music)");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "  Sound Effects:");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "    - event:/game/pusheen/* (In-game SFX)");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "    - event:/char/pusheen/* (Character sounds)");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "    - event:/ui/pusheen/* (UI sounds)");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "    - event:/env/pusheen/* (Environment/ambient)");
+            Logger.Log(LogLevel.Debug, "MaggyHelper", "    - event:/new_content/* (New content sounds)");
+        }
+
         public override void Unload()
         {
-            ChapterProgressionManager.Unload();
-            global::Celeste.OuiChapterSelectHooks.Unload();
-            global::Celeste.CosmicChapterPanelHook.Unload();
-            global::Celeste.ChapterMasteryTracker.Unload();
-            global::Celeste.KirbyPlayerMapHooks.Unload();
-            global::Celeste.KirbyHealthSystemHooks.Unload();
-            global::Celeste.TitleScreen_ExtHook.Unload();
-            global::Celeste.Cutscenes.IntroWarning.Unload();
-            // Unhook Vignette System
-            UnloadVignetteHooks();
-
+            // Unload manual hooks
+            OuiChapterSelectHooks.Unload();
             global::Celeste.RoomTransitionHandler.Unload();
-            global::Celeste.MonoModHooks.Unload();
             global::Celeste.IntroRemixHooks.Unload();
-            global::Celeste.AltSidesHelperBridge.Unload();
+            global::Celeste.Cutscenes.IntroWarning.Unload();
             global::Celeste.AreaModeExtender.Unload();
             global::Celeste.CelesteDSideHooks.Unload();
-            // BossesExampleModule.Unload(); // TODO: Restore when BossesExampleModule is available
+            global::Celeste.AltSidesHelperBridge.Unload();
+            global::Celeste.MonoModHooks.Unload();
+            global::Celeste.TitleScreen_ExtHook.Unload();
+            global::Celeste.ChapterMasteryTracker.Unload();
+            global::Celeste.CosmicChapterPanelHook.Unload();
+            global::Celeste.Mod.MaggyHelper.ChapterProgressDisplay.Unload();
 
             // Unhook level exit cleanup
             Everest.Events.Level.OnExit -= OnLevelExit;
             // Unhook debug room warp menu
             Everest.Events.Level.OnLoadLevel -= OnLoadLevel_EnsureHotReloadController;
+
+            // Unhook Vignette System
+            UnloadVignetteHooks();
+
+            // Manual hook cleanup for ChapterProgressionManager (if not converted to ModuleHook yet)
+            ChapterProgressionManager.Unload();
+            global::Celeste.KirbyPlayerMapHooks.Unload();
+            global::Celeste.KirbyHealthSystemHooks.Unload();
 
             // Unload SubChapterManager (EXPERIMENTAL/TEST ONLY)
             global::Celeste.SubChapterManager.Unload();
@@ -851,15 +910,155 @@ namespace Celeste.Mod.MaggyHelper
 
         private static void InitializePostcardHooks()
         {
-            // Hook into LevelExit to intercept side completions and show postcards
-            On.Celeste.LevelExit.Routine += OnLevelExitRoutine_PostcardCheck;
-
-            Logger.Log(LogLevel.Info, "MaggyHelper", "Postcard unlock hooks initialized");
+            // Postcard system is now handled via MonoMod patches
+            // See: Patches/patch_LevelEnter.cs, Patches/patch_LevelExit.cs, Patches/patch_HeartGem.cs
+            Logger.Log(LogLevel.Info, "MaggyHelper", "Postcard system initialized via MonoMod patches");
         }
 
         private static void UnloadPostcardHooks()
         {
-            On.Celeste.LevelExit.Routine -= OnLevelExitRoutine_PostcardCheck;
+            // Patches are unloaded automatically with the module
+        }
+
+        private static MonoMod.RuntimeDetour.Hook _heartGemCollectHook;
+        private static bool _skipPostcardHook;
+
+        /// <summary>
+        /// Call this to skip the postcard hook on the next LevelEnter.Go call.
+        /// Used by PostcardDialogVignette to avoid recursion.
+        /// </summary>
+        public static void SkipPostcardHookOnce()
+        {
+            _skipPostcardHook = true;
+        }
+
+        private static void OnLevelEnter_ShowPostcardDialog(On.Celeste.LevelEnter.orig_Go orig, Session session, bool fromSaveData)
+        {
+            // Skip postcard interception if we're coming from the postcard vignette itself
+            if (_skipPostcardHook)
+            {
+                _skipPostcardHook = false;
+                orig(session, fromSaveData);
+                return;
+            }
+
+            try
+            {
+                // Only intercept actual level loads, not UI screens
+                if (session?.Area != null && session.StartedFromBeginning && !fromSaveData)
+                {
+                    int chapterNumber = GetChapterNumberFromSession(session);
+
+                    Logger.Log(LogLevel.Debug, "MaggyHelper", $"LevelEnter: Chapter {chapterNumber}, Mode {(int)session.Area.Mode}");
+
+                    // Only show postcard for chapters 1-16, and only on A-Side
+                    if (chapterNumber >= 1 && chapterNumber <= 16 && (int)session.Area.Mode == AreaModeExtender.MODE_NORMAL)
+                    {
+                        // Check if postcard hasn't been shown yet
+                        if (SaveData != null && !SaveData.PostcardsShown.Contains(chapterNumber))
+                        {
+                            Logger.Log(LogLevel.Info, "MaggyHelper", $"Showing postcard for Chapter {chapterNumber}");
+
+                            // Mark postcard as shown
+                            SaveData.PostcardsShown.Add(chapterNumber);
+
+                            // Show postcard vignette instead of going directly to the level
+                            Engine.Scene = new PostcardDialogVignette(session, chapterNumber);
+                            return;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "MaggyHelper", "Error in postcard dialog hook: " + ex.Message + "\n" + ex.StackTrace);
+            }
+
+            // Normal level entry flow - always call the original
+            orig(session, fromSaveData);
+        }
+
+        private delegate void orig_HeartGemCollect(object self, global::Celeste.Player player);
+
+        private static void OnHeartGemCollect(orig_HeartGemCollect orig, object self, global::Celeste.Player player)
+        {
+            // Call the original collect method
+            orig(self, player);
+
+            try
+            {
+                // Get the level to show postcard in
+                Level level = Engine.Scene as Level;
+                if (level == null)
+                    return;
+
+                Session session = level.Session;
+                if (session == null)
+                    return;
+
+                int currentMode = (int)session.Area.Mode;
+
+                // D-Side unlock postcard (when completing C-Side and collecting heart gem)
+                if (currentMode == AreaModeExtender.MODE_CSIDE && !(SaveData?.DSideUnlockPostcardShown ?? false))
+                {
+                    SaveData.DSideUnlockPostcardShown = true;
+                    var entity = new Entity();
+                    entity.Add(new Coroutine(ShowDSideUnlockPostcard(level)));
+                    level.Add(entity);
+                }
+                // Ultra completion postcard (when completing D-Side and collecting heart gem)
+                else if (currentMode == AreaModeExtender.MODE_DSIDE && !(SaveData?.UltraCompletionPostcardShown ?? false))
+                {
+                    SaveData.UltraCompletionPostcardShown = true;
+                    var entity = new Entity();
+                    entity.Add(new Coroutine(ShowUltraHeartGemPostcard(level)));
+                    level.Add(entity);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "MaggyHelper", "Error in heart gem collection hook: " + ex.Message);
+            }
+        }
+
+        private static IEnumerator ShowDSideUnlockPostcard(Level level)
+        {
+            yield return 1.5f;
+            var postcard = new PostcardMaggy("D-Side Unlocked!\nYour journey continues into darker depths.", "dsides");
+            level.Add(postcard);
+            yield return postcard.DisplayRoutine();
+        }
+
+        private static IEnumerator ShowUltraHeartGemPostcard(Level level)
+        {
+            yield return 1.5f;
+            var postcard = new PostcardMaggy("Ultra Completion Unlocked!\nThe ultimate challenge awaits.", "ultra");
+            level.Add(postcard);
+            yield return postcard.DisplayRoutine();
+        }
+
+        private static int GetChapterNumberFromSession(Session session)
+        {
+            if (session?.Area == null)
+                return -1;
+
+            // Try to extract chapter number from SID
+            string sid = session.Area.SID;
+            if (string.IsNullOrEmpty(sid))
+                return -1;
+
+            // Format is typically "Maggy/01_City_A_Side" or "Maggy/02_Nightmare_B_Side"
+            // Extract the first two digits after the slash
+            int slashIndex = sid.IndexOf('/');
+            if (slashIndex >= 0 && slashIndex + 2 < sid.Length)
+            {
+                if (int.TryParse(sid.Substring(slashIndex + 1, 2), out int chapter))
+                {
+                    return chapter;
+                }
+            }
+
+            return -1;
         }
 
         private static IEnumerator OnLevelExitRoutine_PostcardCheck(
@@ -869,6 +1068,19 @@ namespace Celeste.Mod.MaggyHelper
             bool shouldShowPostcard = false;
             int completedMode = -1;
             Session session = self?.session;
+            int chapterNumber = GetChapterNumberFromSession(session);
+
+            // Check for Chapter 18 outro postcard
+            if (self?.mode == LevelExit.Mode.Completed && chapterNumber == 18 && !(SaveData?.Chapter18OutroPostcardShown ?? false))
+            {
+                IEnumerator routine = orig(self);
+                while (routine.MoveNext())
+                    yield return routine.Current;
+
+                SaveData.Chapter18OutroPostcardShown = true;
+                yield return ShowChapter18OutroPostcard(session);
+                yield break;
+            }
 
             if (self?.mode == LevelExit.Mode.Completed && session != null)
             {
@@ -997,6 +1209,12 @@ namespace Celeste.Mod.MaggyHelper
             yield return null;
         }
 
+        private static IEnumerator ShowChapter18OutroPostcard(Session session)
+        {
+            yield return 0.3f;
+            Engine.Scene = new PostcardOutroVignette(session, 18);
+        }
+
         private static IEnumerator ShowUltraCompletionPostcard()
         {
             // Mark as shown so we don't repeat
@@ -1060,11 +1278,66 @@ namespace Celeste.Mod.MaggyHelper
             }
         }
 
+        /// <summary>
+        /// Console command: postcard_dside - Unlock and show D-Side postcard
+        /// </summary>
+        [Command("postcard_dside", "Unlock and show D-Side postcard.")]
+        private static void CmdPostcardDside()
+        {
+            if (Engine.Scene is not Level level)
+            {
+                Engine.Commands?.Log("[MaggyHelper] Must be in a level to show postcard.");
+                return;
+            }
+
+            Engine.Commands?.Log("[MaggyHelper] Showing D-Side unlock postcard...");
+            var entity = new Entity();
+            entity.Add(new Coroutine(PostcardUnlockSystem.ShowUnlockPostcard(level, level.Session, AreaModeExtender.MODE_CSIDE)));
+            level.Add(entity);
+        }
+
+        /// <summary>
+        /// Console command: postcard_ultra - Unlock and show Ultra completion postcard
+        /// </summary>
+        [Command("postcard_ultra", "Unlock and show Ultra completion postcard.")]
+        private static void CmdPostcardUltra()
+        {
+            if (Engine.Scene is not Level level)
+            {
+                Engine.Commands?.Log("[MaggyHelper] Must be in a level to show postcard.");
+                return;
+            }
+
+            Engine.Commands?.Log("[MaggyHelper] Showing ultra completion postcard...");
+            var entity = new Entity();
+            entity.Add(new Coroutine(ShowUltraCompletionPostcard()));
+            level.Add(entity);
+        }
+
         public override void LoadContent(bool firstLoad)
         {
             base.LoadContent(firstLoad);
             // BossesExampleModule.LoadContent(firstLoad);
             // ProphecyFont is now lazy-initialized on first access
+
+            // Initialize backdrops (CustomBackdrop attributes auto-register, but ensure loading)
+            InitializeBackdrops();
+        }
+
+        private static void InitializeBackdrops()
+        {
+            // All backdrops are auto-registered via [CustomBackdrop] attributes
+            // Backdrops registered:
+            //   - MaggyHelper/RainbowSpaceDust (RainbowSpaceDust)
+            //   - MaggyHelper/PopstarBg (PopstarBg)
+            //   - MaggyHelper/HeavenGatesBackdrop (HeavenGatesBackdrop)
+            //   - MaggyHelper/ElsTrueFinalBackdrop (ElsTrueFinalBackdrop)
+            //   - MaggyHelper/AsrielGodBackdrop (AsrielGodBackdrop)
+            //   - MaggyHelper/AsrielAngelOfDeathWingsBackdrop (AsrielAngelOfDeathWingsBackdrop)
+            //   - MaggyHelper/GiygasBackdrop (GiygasBackdrop)
+            //   - MaggyHelper/RainbowBlackholeBG (RainbowBlackholeBg)
+
+            Logger.Log(LogLevel.Info, "MaggyHelper", "All backdrops initialized");
         }
 
         public static bool IsChapter17EpilogueCompleted()

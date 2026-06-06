@@ -30,6 +30,7 @@ namespace Celeste
         private static On.Celeste.Level.hook_LoadLevel levelLoadLevelHook;
         private static Hook levelTemplateCctorHook;
         private static On.Celeste.Level.hook_Update levelUpdateHook;
+        private static Hook flingBirdIntroCtor;
 
         // ── Public API ───────────────────────────────────────────────────────────
 
@@ -104,6 +105,49 @@ namespace Celeste
 
             // ─── 3. OuiMapList null-MapData guard ───────────────────────────
             MapListExt.Load();
+
+            // ─── 3.5. FlingBirdIntro → EnhancedBirdNPC integration ────────────
+            try
+            {
+                Type flingBirdIntroType = Type.GetType("Celeste.Entities.FlingBirdIntro, Celeste");
+                Type entityDataType = Type.GetType("Celeste.Editor.EntityData, Celeste");
+
+                if (flingBirdIntroType != null && entityDataType != null)
+                {
+                    ConstructorInfo flingBirdCtor = flingBirdIntroType.GetConstructor(
+                        BindingFlags.Instance | BindingFlags.Public,
+                        null,
+                        new Type[] { entityDataType, typeof(Vector2) },
+                        null);
+
+                    if (flingBirdCtor != null)
+                    {
+                        flingBirdIntroCtor = new Hook(
+                            flingBirdCtor,
+                            typeof(MonoModHooks).GetMethod(
+                                nameof(Hook_FlingBirdIntro_Ctor),
+                                BindingFlags.Static | BindingFlags.NonPublic));
+
+                        Logger.Log(LogLevel.Info, "MaggyHelper",
+                            "[MonoModHooks] Hook on FlingBirdIntro constructor registered");
+                    }
+                    else
+                    {
+                        Logger.Log(LogLevel.Warn, "MaggyHelper",
+                            "[MonoModHooks] FlingBirdIntro constructor not found — skipping hook");
+                    }
+                }
+                else
+                {
+                    Logger.Log(LogLevel.Warn, "MaggyHelper",
+                        "[MonoModHooks] FlingBirdIntro type not found — skipping hook");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.Warn, "MaggyHelper",
+                    $"[MonoModHooks] Failed to hook FlingBirdIntro: {ex.Message}");
+            }
 
             // ─── 4. Dream-block Madeline ↔ Kirby player swap ────────────────────
             DreamBlockPlayerSwapHooks.Load();
@@ -198,6 +242,10 @@ namespace Celeste
             // Remove LevelTemplate static constructor hook
             levelTemplateCctorHook?.Dispose();
             levelTemplateCctorHook = null;
+
+            // Remove FlingBirdIntro hook
+            flingBirdIntroCtor?.Dispose();
+            flingBirdIntroCtor = null;
 
             // Remove OuiMapList guard
             MapListExt.Unload();
@@ -556,6 +604,26 @@ namespace Celeste
                 Logger.Log(LogLevel.Warn, "MaggyHelper",
                     $"[LevelTemplateHook] Failed to expand color array: {ex.Message}");
             }
+        }
+
+        // =====================================================================
+        //  FLING BIRD INTRO HOOK — Integrate with EnhancedBirdNPC
+        // =====================================================================
+        //
+        //  Stores reference to FlingBirdIntro so CS19_MissTheBird can access
+        //  its properties (sprite, position, nodes) when creating EnhancedBirdNPC.
+        //
+        // =====================================================================
+
+        private delegate void orig_FlingBirdIntro_Ctor(FlingBirdIntro self, EntityData data, Vector2 levelOffset);
+
+        private static void Hook_FlingBirdIntro_Ctor(orig_FlingBirdIntro_Ctor orig, FlingBirdIntro self, EntityData data, Vector2 levelOffset)
+        {
+            // Call original constructor
+            orig(self, data, levelOffset);
+
+            // FlingBirdIntro is now initialized and ready for use with EnhancedBirdNPC
+            // CS19_MissTheBird will find this instance and use its data
         }
     }
 }

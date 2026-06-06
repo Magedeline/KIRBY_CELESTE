@@ -15,14 +15,15 @@ public class BirdNPC : Actor
 {
     public enum Modes
     {
+        None,
+        Sleeping,
+        HoverNGrab,
         ClimbingTutorial,
         DashingTutorial,
         DreamJumpTutorial,
         SuperWallJumpTutorial,
         HyperJumpTutorial,
         FlyAway,
-        None,
-        Sleeping,
         MoveToNodes,
         WaitForLightningOff
     }
@@ -152,6 +153,9 @@ public class BirdNPC : Actor
             case Modes.Sleeping:
                 Sprite.Play("sleep");
                 Facing = Facings.Right;
+                break;
+            case Modes.HoverNGrab:
+                Sprite.Play("hover");
                 break;
             case Modes.MoveToNodes:
                 Add(tutorialRoutine = new Coroutine(MoveToNodesRoutine()));

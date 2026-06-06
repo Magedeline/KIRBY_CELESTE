@@ -25,6 +25,7 @@ public class EnhancedBirdNPC : Actor
         KirbyFloatAbilityTutorial,
         FlyAway,
         None,
+        HoverNGrab,
         Sleeping,
         MoveToNodes,
         WaitForLightningOff,
@@ -186,6 +187,9 @@ public class EnhancedBirdNPC : Actor
                 break;
             case Modes.FlyAway:
                 Add(tutorialRoutine = new Coroutine(WaitRoutine()));
+                break;
+            case Modes.HoverNGrab:
+                Sprite.Play("hover");
                 break;
             case Modes.Sleeping:
                 Sprite.Play("sleep");

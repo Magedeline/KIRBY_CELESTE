@@ -1,15 +1,15 @@
+using System;
 using Celeste.Cutscenes;
 
 namespace Celeste;
 
 /// <summary>
+/// Hooks for intro remix cutscenes.
 /// Hooks into the LevelEnter flow to show VHS intro remix cutscenes
 /// when entering B-Side or C-Side levels for the first time.
 /// </summary>
 public static class IntroRemixHooks
 {
-    private static bool _hooked = false;
-
     /// <summary>
     /// Hookable delegate for D-Side chapter entry.
     /// Subscribe to this to customize D-Side intro behavior.
@@ -23,26 +23,40 @@ public static class IntroRemixHooks
     /// </summary>
     public static event DSideEnterHandler OnDSideEnter;
 
+    private static bool _hooked;
+
     public static void Load()
     {
-        if (_hooked)
-            return;
-
+        if (_hooked) return;
         _hooked = true;
-        On.Celeste.LevelEnter.Go += OnLevelEnterGo;
 
-        Logger.Log(LogLevel.Info, "MaggyHelper", "IntroRemixHooks loaded");
+        try
+        {
+            On.Celeste.LevelEnter.Go += OnLevelEnterGo;
+            Logger.Log(LogLevel.Info, "MaggyHelper", "[IntroRemixHooks] Loaded");
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Error, "MaggyHelper",
+                $"[IntroRemixHooks] Failed to load: {ex.Message}");
+        }
     }
 
     public static void Unload()
     {
-        if (!_hooked)
-            return;
-
+        if (!_hooked) return;
         _hooked = false;
-        On.Celeste.LevelEnter.Go -= OnLevelEnterGo;
 
-        Logger.Log(LogLevel.Info, "MaggyHelper", "IntroRemixHooks unloaded");
+        try
+        {
+            On.Celeste.LevelEnter.Go -= OnLevelEnterGo;
+            Logger.Log(LogLevel.Info, "MaggyHelper", "[IntroRemixHooks] Unloaded");
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Error, "MaggyHelper",
+                $"[IntroRemixHooks] Failed to unload: {ex.Message}");
+        }
     }
 
     /// <summary>

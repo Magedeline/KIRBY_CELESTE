@@ -114,6 +114,12 @@ namespace Celeste.Mod.MaggyHelper
         public HashSet<string> UnlockedRemixExtraIDs { get; set; } = new HashSet<string>();
         public HashSet<string> UnlockedModes { get; set; } = new HashSet<string>();
 
+        // Postcard dialog tracking (which chapters have shown their postcard)
+        public HashSet<int> PostcardsShown { get; set; } = new HashSet<int>();
+        public bool Chapter18OutroPostcardShown { get; set; }
+        public bool DSideUnlockPostcardShown { get; set; }
+        public bool UltraCompletionPostcardShown { get; set; }
+
         // Achievement tracking
         private HashSet<string> Achievements { get; set; } = new HashSet<string>();
         public HashSet<string> BossesExampleStoneFlags { get; set; } = new HashSet<string>();

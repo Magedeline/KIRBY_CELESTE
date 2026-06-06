@@ -57,7 +57,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="**\*.cs" Exclude="obj\**\*.cs" />
+        <Compile Include="**\*.cs" Exclude="obj\**\*.cs;dummy.cs;..\.kilo\**\*.cs" />
     </ItemGroup>
 
     <Target Name="CopyFiles" AfterTargets="Build">

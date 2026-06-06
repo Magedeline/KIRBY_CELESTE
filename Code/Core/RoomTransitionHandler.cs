@@ -8,7 +8,7 @@ using Monocle;
 namespace Celeste;
 
 /// <summary>
-/// Handles room transitions when Kirby mode is active.
+/// Hooks for room transitions when Kirby mode is active.
 ///
 /// This uses the NEW architecture: the vanilla <c>global::Celeste.Player</c>
 /// remains authoritative and Kirby mechanics are layered via
@@ -21,22 +21,46 @@ namespace Celeste;
 /// </summary>
 public static class RoomTransitionHandler
 {
+    private static bool _hooked;
+
     public static void Load()
     {
-        On.Celeste.Level.LoadLevel += Hook_Level_LoadLevel;
-        Everest.Events.Level.OnTransitionTo += OnTransitionTo;
+        if (_hooked) return;
+        _hooked = true;
 
-        Logger.Log(LogLevel.Info, "MaggyHelper",
-            "[RoomTransitionHandler] Hooks loaded");
+        try
+        {
+            On.Celeste.Level.LoadLevel += Hook_Level_LoadLevel;
+            Everest.Events.Level.OnTransitionTo += OnTransitionTo;
+
+            Logger.Log(LogLevel.Info, "MaggyHelper",
+                "[RoomTransitionHandler] Hooks loaded");
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Error, "MaggyHelper",
+                $"[RoomTransitionHandler] Failed to load: {ex.Message}");
+        }
     }
 
     public static void Unload()
     {
-        On.Celeste.Level.LoadLevel -= Hook_Level_LoadLevel;
-        Everest.Events.Level.OnTransitionTo -= OnTransitionTo;
+        if (!_hooked) return;
+        _hooked = false;
 
-        Logger.Log(LogLevel.Info, "MaggyHelper",
-            "[RoomTransitionHandler] Hooks unloaded");
+        try
+        {
+            On.Celeste.Level.LoadLevel -= Hook_Level_LoadLevel;
+            Everest.Events.Level.OnTransitionTo -= OnTransitionTo;
+
+            Logger.Log(LogLevel.Info, "MaggyHelper",
+                "[RoomTransitionHandler] Hooks unloaded");
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Error, "MaggyHelper",
+                $"[RoomTransitionHandler] Failed to unload: {ex.Message}");
+        }
     }
 
     private static void Hook_Level_LoadLevel(
@@ -52,8 +76,6 @@ public static class RoomTransitionHandler
             bool hasSpawner = self.Tracker.GetEntities<global::Celeste.Entities.KirbyPlayerSpawner>().Count > 0;
             bool sessionKirby = global::Celeste.Mod.MaggyHelper.MaggyHelperModule.Session?.IsKirbyModeActive == true;
 
-            // If there's no spawner but session says Kirby mode is active,
-            // restore Kirby state on the vanilla player.
             if (!hasSpawner && sessionKirby)
             {
                 var player = self.Tracker.GetEntity<CelestePlayer>();
@@ -82,7 +104,6 @@ public static class RoomTransitionHandler
         if (session == null)
             return;
 
-        // Persist Kirby state into session so the next room knows to restore it
         if (session.IsKirbyModeActive)
         {
             var player = level.Tracker.GetEntity<CelestePlayer>();

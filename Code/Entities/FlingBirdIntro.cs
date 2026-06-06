@@ -37,7 +37,7 @@ namespace Celeste.Entities
     {
         this.crashes = crashes;
         Add(Sprite = GFX.SpriteBank.Create("bird"));
-        Sprite.Play(crashes ? "hoverStressed" : "hover");
+        Sprite.Play(crashes ? "hover" : "hover");
         Sprite.Scale.X = ((!crashes) ? 1 : (-1));
         Sprite.OnFrameChange = [MethodImpl(MethodImplOptions.NoInlining)] (string anim) =>
         {

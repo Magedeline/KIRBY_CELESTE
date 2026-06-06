@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <AssemblyName>MaggyHelper.Content</AssemblyName>
+        <RootNamespace>Celeste.Mod.MaggyHelper.Content</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <Features>preview</Features>
+        <NoWarn>NU1701;CS0414;CS0649;CS0169;CS0618</NoWarn>
+        <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    </PropertyGroup>
+
+    <!-- Content stub for future graphics/audio integration -->
+    <ItemGroup>
+        <Compile Include="dummy.cs" />
+    </ItemGroup>
+
+</Project>

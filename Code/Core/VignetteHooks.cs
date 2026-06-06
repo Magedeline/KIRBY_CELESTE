@@ -47,10 +47,10 @@ public static class VignetteHooks
             if (AreaModeExtender.IsOurMap(area))
             {
                 var chapter = AreaMapData.FindByAnySID(area.SID);
-                if (chapter == null)
+                if (chapter != null && IsVignetteEnabledForChapter(chapter.Number))
                 {
                     Scene vignette = CreateIntroVignette(session, chapter);
-                    if (vignette == null)
+                    if (vignette != null)
                     {
                         Engine.Scene = vignette;
                         return;
@@ -60,6 +60,11 @@ public static class VignetteHooks
         }
 
         orig(session, fromSaveData);
+    }
+
+    private static bool IsVignetteEnabledForChapter(int chapterNumber)
+    {
+        return chapterNumber == 3 || chapterNumber == 18;
     }
 
     // ── Outro hook ────────────────────────────────────────────────────────
@@ -95,50 +100,14 @@ public static class VignetteHooks
     private static Scene? CreateIntroVignette(Session session, AreaMapData.ChapterDef chapter)
     {
         string flagKey = $"seen_intro_vignette_{chapter.Number}";
-        var saveData = global::Celeste.Mod.MaggyHelper.MaggyHelperModule.SaveData;
 
         switch (chapter.Number)
         {
-            case 0:
-                // Prologue: vessel creation on first play, then Cs00IntroVignette
-                if (saveData?.HasSeenModIntro != true)
-                    return new VesselCreationVignette(session);
-                if (!HasSeenVignette(flagKey))
-                {
-                    MarkVignetteSeen(flagKey);
-                    return new Cs00IntroVignette(session);
-                }
-                break;
-
             case 3:
                 if (!HasSeenVignette(flagKey))
                 {
                     MarkVignetteSeen(flagKey);
                     return new Cs03IntroVignette(session);
-                }
-                break;
-
-            case 9:
-                if (!HasSeenVignette(flagKey))
-                {
-                    MarkVignetteSeen(flagKey);
-                    return new VortexVignette(session);
-                }
-                break;
-
-            case 21:
-                if (!HasSeenVignette(flagKey))
-                {
-                    MarkVignetteSeen(flagKey);
-                    return new TrueFinaleVignette(session);
-                }
-                break;
-
-            case 10:
-                if (!HasSeenVignette(flagKey))
-                {
-                    MarkVignetteSeen(flagKey);
-                    return new Cs10IntroVignetteAlt(session);
                 }
                 break;
 

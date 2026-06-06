@@ -7,7 +7,7 @@ using Monocle;
 
 namespace Celeste;
 
-[CustomBackdrop("MaggyHelper/RainbowBlackholeBg")]
+[CustomBackdrop("MaggyHelper/RainbowBlackholeBG")]
 [HotReloadable]
 public class RainbowBlackholeBg : Backdrop
 {

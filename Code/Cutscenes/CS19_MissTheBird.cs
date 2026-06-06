@@ -18,7 +18,8 @@ public class CS19_MissTheBird : CutsceneEntity
 
     private FlingBirdIntro flingBird;
 
-    private BirdNPC bird;
+    private EnhancedBirdNPC bird;
+
 
     private Coroutine zoomRoutine;
 
@@ -49,7 +50,12 @@ public class CS19_MissTheBird : CutsceneEntity
         Audio.SetMusicParam("bird_grab", 1f);
         crashMusicSfx = Audio.Play("event:/new_content/music/pusheen/lvl19/cinematic/bird_crash_first");
         yield return flingBird?.DoGrabbingRoutine(player);
-        bird = new BirdNPC(flingBird.Position, BirdNPC.Modes.None);
+        if (flingBird == null)
+        {
+            yield break;
+        }
+        bird = new EnhancedBirdNPC(flingBird.Position, EnhancedBirdNPC.Modes.HoverNGrab);
+        bird.Sprite.Play("idle");
         level.Add(bird);
         flingBird.RemoveSelf();
         yield return null;
