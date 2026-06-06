@@ -7,9 +7,19 @@ payphone.texture = "scenery/payphone"
 
 payphone.placements = {
     {
-        name = "payphone",
+        name = "payphone_dream",
         data = {
-            dialogId = "MAGGYHELPER_CH2_DREAM_PHONECALL_TRAP",
+            dreamDialogId = "MAGGYHELPER_CH2_DREAM_PHONECALL_TRAP",
+            awakeDialogId = "MAGGYHELPER_CH2_AWAKE_PHONECALL_TRAP",
+            flagToSet = "",
+            onlyOnce = true
+        }
+    },
+    {
+        name = "payphone_custom",
+        data = {
+            dreamDialogId = "MAGGYHELPER_CH2_DREAM_PHONECALL_TRAP",
+            awakeDialogId = "MAGGYHELPER_CH2_AWAKE_PHONECALL_TRAP",
             flagToSet = "",
             onlyOnce = true
         }
@@ -17,9 +27,13 @@ payphone.placements = {
 }
 
 payphone.fieldInformation = {
-    dialogId = {
+    dreamDialogId = {
         fieldType = "string",
-        description = "Dialog ID to show when using the payphone"
+        description = "Dialog ID to show when using the payphone in dream state"
+    },
+    awakeDialogId = {
+        fieldType = "string",
+        description = "Dialog ID to show when using the payphone in awake state"
     },
     flagToSet = {
         fieldType = "string",

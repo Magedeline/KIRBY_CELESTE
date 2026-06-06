@@ -15,7 +15,8 @@ namespace Celeste.Entities
         private TalkComponent talk;
         private SoundSource loopSfx;
         private bool activated;
-        private string dialogId;
+        private string dreamDialogId;
+        private string awakeDialogId;
         private string flagToSet;
         private bool onlyOnce;
         
@@ -26,7 +27,8 @@ namespace Celeste.Entities
 
         public Payphone(EntityData data, Vector2 offset) : base(data.Position + offset)
         {
-            dialogId = data.Attr("dialogId", "MAGGYHELPER_CH2_DREAM_PHONECALL_TRAP");
+            dreamDialogId = data.Attr("dreamDialogId", "MAGGYHELPER_CH2_DREAM_PHONECALL_TRAP");
+            awakeDialogId = data.Attr("awakeDialogId", "MAGGYHELPER_CH2_AWAKE_PHONECALL_TRAP");
             flagToSet = data.Attr("flagToSet", "");
             onlyOnce = data.Bool("onlyOnce", true);
 
@@ -85,14 +87,26 @@ namespace Celeste.Entities
             sprite.Play("pickUp");
             yield return 0.5f;
 
+            // Determine which dialog to use based on dream state
+            string dialogToUse = GetCurrentDialogId();
+
             // Play dialog
-            yield return Textbox.Say(dialogId);
+            yield return Textbox.Say(dialogToUse);
 
             // Hang up
             sprite.Play("hangUp");
             yield return 0.3f;
 
             endCutscene();
+        }
+
+        private string GetCurrentDialogId()
+        {
+            if (Scene is Level level && level.Session.Dreaming)
+            {
+                return dreamDialogId;
+            }
+            return awakeDialogId;
         }
 
         private void endCutscene()

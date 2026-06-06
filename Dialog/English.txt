@@ -1655,6 +1655,56 @@ OH NO!!!
 {+PART_OF_ME} WAKE ME UP BEFORE...!
 {trigger 1 Chara disappears}
 
+MAGGYHELPER_CH2_AWAKE_PHONECALL_TRAP=
+[MADELINE_PHONE left distracted]
+Hello?
+
+[GASTER right normal]
+{+MADELINE}?
+Is this you?
+
+[MADELINE_PHONE left distracted]
+Yeah.
+
+[MADELINE_PHONE left sad]
+No, wait... you called me.
+
+[GASTER right normal]
+I've been trying to reach you.
+This is very important.
+
+[MADELINE_PHONE left angry]
+Who is this?
+
+[BADELINE left concerned]
+Madeline, do you know this guy?
+
+[GASTER right normal]
+I also can hear you too Badeline.
+
+[BADELINE left yell]
+Wait! How did you hear me too!?
+
+[MADELINE_PHONE left distracted]
+Yeah. I have been wondering the same things.
+
+[MADELINE_PHONE left upset]
+...
+What do you want from us?
+
+[GASTER right normal]
+I need your help with something.
+It's connected to what you faced on Celeste.
+
+[MADELINE_PHONE left angry]
+This better not be another nightmare!
+
+[GASTER right normal]
+No tricks. Just truth.
+I'll be in touch.
+
+{trigger 0 Gaster hangs up}
+
 MAGGYHELPER_CH2_BADELINE_GRIEFA=
 [BADELINE left concerned]
 {+ MADELINE} where are you?
