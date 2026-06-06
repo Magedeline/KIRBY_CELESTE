@@ -70,7 +70,7 @@ namespace Celeste.Entities
                 reflection = new Entity();
                 reflectionSprite = new global::Celeste.PlayerSprite(PlayerSpriteMode.Badeline);
                 reflectionHair = new PlayerHair(reflectionSprite);
-                reflectionHair.Color = BadelineOldsiteChaser.HairColor;
+                reflectionHair.Color = Calc.HexToColor("FFD700");
                 reflectionHair.Border = Color.Black;
                 reflection.Add(reflectionHair);
                 reflection.Add(reflectionSprite);

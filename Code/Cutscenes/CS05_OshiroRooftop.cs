@@ -1,4 +1,6 @@
 ﻿using Celeste.Entities;
+using System;
+using System.Collections;
 
 namespace Celeste.Cutscenes
 {
@@ -29,7 +31,7 @@ namespace Celeste.Cutscenes
         public override void OnBegin(Level level)
         {
             bossSpawnPosition = new Vector2(oshiro.X, level.Bounds.Bottom - 40);
-            Add(new Coroutine(Cutscene(level)));
+            Add(new Coroutine(Cutscene(level), true));
         }
 
         private IEnumerator Cutscene(Level level)
@@ -51,15 +53,25 @@ namespace Celeste.Cutscenes
             }
             yield return 0.6f;
             player.Facing = Facings.Left;
-            yield return Textbox.Say("MAGGYHELPER_CH5_OSHIRO_START_CHASE", CharaAppear, BadelineFaceChara, KirbyWalkAwayWithGroup, KirbyLookAtChara, OshiroEnterAndAsk, CharaTurnsToOshiro, CharaDisappearsOshiroSnaps, OshiroTransformChase);
+            yield return Textbox.Say("MAGGYHELPER_CH5_OSHIRO_START_CHASE", new Func<IEnumerator>[]
+            {
+                new Func<IEnumerator>(CharaAppear),
+                new Func<IEnumerator>(BadelineFaceChara),
+                new Func<IEnumerator>(KirbyWalkAwayWithGroup),
+                new Func<IEnumerator>(KirbyLookAtChara),
+                new Func<IEnumerator>(OshiroEnterAndAsk),
+                new Func<IEnumerator>(CharaTurnsToOshiro),
+                new Func<IEnumerator>(CharaDisappearsOshiroSnaps),
+                new Func<IEnumerator>(OshiroTransformChase)
+            });
             yield return OshiroTransform();
-            Add(new Coroutine(AnxietyAndCameraOut()));
+            Add(new Coroutine(AnxietyAndCameraOut(), true));
             yield return level.ZoomBack(0.5f);
             yield return 0.25f;
-            EndCutscene(level);
+            EndCutscene(level, true);
+            yield break;
         }
 
-        // Trigger 0: Chara appears
         private IEnumerator CharaAppear()
         {
             Level level = Scene as Level;
@@ -68,27 +80,27 @@ namespace Celeste.Cutscenes
             chara.Appear(level);
             level.Add(chara);
             yield return 0.3f;
+            yield break;
         }
 
-        // Trigger 1: Badeline faces Chara and yells
         private IEnumerator BadelineFaceChara()
         {
             player.Facing = Facings.Left;
             yield return 0.2f;
+            yield break;
         }
 
-        // Trigger 2: Kirby walks away with Badeline, Chara follows, Ralsei appears
         private IEnumerator KirbyWalkAwayWithGroup()
         {
             Level level = Scene as Level;
-            Add(new Coroutine(player.DummyWalkTo((float)level.Bounds.Left + 170f)));
+            Add(new Coroutine(player.DummyWalkTo((float)level.Bounds.Left + 170f, false, 1f, false), true));
             yield return 0.2f;
             Audio.Play("event:/game/pusheen/05_restore/suite_bad_moveroof", chara.Position);
-            Add(new Coroutine(chara.FloatTo(chara.Position + new Vector2(80f, 30f))));
-            yield return 0.5f;
+            Add(new Coroutine(chara.FloatTo(chara.Position + new Vector2(80f, 30f), null, true, false, false), true));
+            yield return null;
+            yield break;
         }
 
-        // Trigger 3: Kirby looks at Chara and zoom in
         private IEnumerator KirbyLookAtChara()
         {
             yield return 0.25f;
@@ -96,16 +108,16 @@ namespace Celeste.Cutscenes
             yield return 0.1f;
             Level level = SceneAs<Level>();
             yield return level.ZoomTo(new Vector2(150f, bossSpawnPosition.Y - (float)level.Bounds.Y - 8f), 2f, 0.5f);
+            yield break;
         }
 
-        // Trigger 4: Oshiro enters and asks a question, Chara responds rudely
         private IEnumerator OshiroEnterAndAsk()
         {
             yield return 0.3f;
             bossSpriteOffset = (bossSprite.Justify.Value.Y - oshiro.Sprite.Justify.Value.Y) * bossSprite.Height;
             oshiro.Visible = true;
             oshiro.Sprite.Scale.X = 1f;
-            Add(new Coroutine(oshiro.MoveTo(bossSpawnPosition - new Vector2(0f, bossSpriteOffset))));
+            Add(new Coroutine(oshiro.MoveTo(bossSpawnPosition - new Vector2(0f, bossSpriteOffset), false, null, false), true));
             oshiro.Add(new SoundSource("event:/char/oshiro/move_07_roof00_enter"));
             float from = Level.ZoomFocusPoint.X;
             for (float p = 0f; p < 1f; p += Engine.DeltaTime / 0.7f)
@@ -117,17 +129,17 @@ namespace Celeste.Cutscenes
             player.Facing = Facings.Left;
             yield return 0.1f;
             chara.Sprite.Scale.X = -1f;
+            yield break;
         }
 
-        // Trigger 5: Chara turns to Oshiro
         private IEnumerator CharaTurnsToOshiro()
         {
             yield return 0.1f;
             chara.Sprite.Scale.X = 1f;
             yield return 0.2f;
+            yield break;
         }
 
-        // Trigger 6: Chara disappears, Oshiro snaps
         private IEnumerator CharaDisappearsOshiroSnaps()
         {
             yield return 0.1f;
@@ -135,27 +147,28 @@ namespace Celeste.Cutscenes
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             chara = null;
             yield return 0.8f;
+            yield break;
         }
 
-        // Trigger 7: Oshiro transforms into boss form, chase begins
         private IEnumerator OshiroTransformChase()
         {
             Audio.Play("event:/char/oshiro/boss_transform_begin", oshiro.Position);
             oshiro.Remove(oshiro.Sprite);
             oshiro.Sprite = bossSprite;
-            oshiro.Sprite.Play("transformStart");
+            oshiro.Sprite.Play("transformStart", false, false);
             oshiro.Y += bossSpriteOffset;
             oshiro.Add(oshiro.Sprite);
             oshiro.Depth = -12500;
             oshiroRumble = true;
             yield return 1f;
+            yield break;
         }
 
         private IEnumerator OshiroTransform()
         {
             yield return 0.2f;
             Audio.Play("event:/char/oshiro/boss_transform_burst", oshiro.Position);
-            oshiro.Sprite.Play("transformFinish");
+            oshiro.Sprite.Play("transformFinish", false, false);
             Input.Rumble(RumbleStrength.Strong, RumbleLength.Long);
             SceneAs<Level>().Shake(0.5f);
             SetChaseMusic();
@@ -165,6 +178,7 @@ namespace Celeste.Cutscenes
                 yield return null;
             }
             yield return 0.25f;
+            yield break;
         }
 
         private IEnumerator AnxietyAndCameraOut()
@@ -178,14 +192,16 @@ namespace Celeste.Cutscenes
                 level.Camera.Position = from + (to - from) * Ease.CubeInOut(t);
                 yield return null;
             }
+            yield break;
         }
 
         private void SetChaseMusic()
         {
-            Level obj = base.Scene as Level;
-            obj.Session.Audio.Music.Event = "event:/music/pusheen/lvl5/oshiro_chase";
-            obj.Session.Audio.Apply(forceSixteenthNoteHack: false);
+            Level level = base.Scene as Level;
+            level.Session.Audio.Music.Event = "event:/music/pusheen/lvl5/oshiro_chase";
+            level.Session.Audio.Apply(forceSixteenthNoteHack: false);
         }
+
         public override void OnEnd(Level level)
         {
             Distort.Anxiety = (anxiety = (anxietyFlicker = 0f));
@@ -215,6 +231,7 @@ namespace Celeste.Cutscenes
             level.Session.RespawnPoint = new Vector2((float)level.Bounds.Left + 170f, level.Bounds.Top + 160);
             level.Session.SetFlag("oshiro_05_rooftop");
         }
+
         public override void Update()
         {
             Distort.Anxiety = anxiety + anxiety * anxietyFlicker;
