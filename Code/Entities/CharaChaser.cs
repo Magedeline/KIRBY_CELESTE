@@ -5,10 +5,9 @@ namespace Celeste.Entities;
 /// <summary>
 /// CharaChaser - A chaser entity that follows the player with Chara's appearance.
 /// This chaser triggers the CS02_CharaIntro cutscene when appropriate conditions are met.
-/// Tracked as vanilla Chaser for proper chaser context integration.
 /// </summary>
 [CustomEntity(ids: "MaggyHelper/CharaChaser")]
-[TrackedAs(typeof(Chaser))]
+[Tracked]
 [HotReloadable]
 public class CharaChaser : Entity
 {

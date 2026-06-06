@@ -64,9 +64,7 @@ namespace Celeste.Cutscenes
         Audio.SetMusic("event:/music/pusheen/lvl2/phone_loop");
       payphone.Sprite.Play("talkPhone");
 
-      // Use appropriate dialog based on current dream state
-      string dialogId = payphone.GetDialogForCurrentState();
-      yield return Textbox.Say(dialogId, showChara);
+      yield return Textbox.Say("MAGGYHELPER_CH2_DREAM_PHONECALLPORTAL", showChara);
       if (evil != null)
       {
         if (level.Session.Area.Mode == AreaMode.Normal)

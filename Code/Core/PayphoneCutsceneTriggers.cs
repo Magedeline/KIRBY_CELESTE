@@ -3,6 +3,7 @@
 using System;
 using Celeste;
 using Celeste.Cutscenes;
+using Celeste.Entities;
 using Monocle;
 
 namespace Celeste.Mod.MaggyHelper
@@ -60,7 +61,7 @@ namespace Celeste.Mod.MaggyHelper
                 if (levelName.Contains("02_") && levelName.Contains("end"))
                 {
                     // Check if payphone exists in this level
-                    var payphone = self.Tracker.GetEntity<Entities.Payphone>();
+                    var payphone = self.Tracker.GetEntity<Payphone>();
                     if (payphone != null)
                     {
                         var cutscene = new Cs02CallKirby(player);
@@ -76,8 +77,8 @@ namespace Celeste.Mod.MaggyHelper
                     // Check for specific dream phonecall trigger
                     if (levelName.Contains("dream") || levelName.Contains("nightmare") || levelName.Contains("trap"))
                     {
-                        var payphone = self.Tracker.GetEntity<Entities.Payphone>();
-                        if (payphone != null && !self.Tracker.GetEntity<Cs02DreamingPhonecallPortal>())
+                        var payphone = self.Tracker.GetEntity<Payphone>();
+                        if (payphone != null && self.Tracker.GetEntity<Cs02DreamingPhonecallPortal>() == null)
                         {
                             var cutscene = new Cs02DreamingPhonecallPortal(player);
                             self.Add(cutscene);
@@ -92,8 +93,8 @@ namespace Celeste.Mod.MaggyHelper
                 {
                     if (levelName.Contains("dream") || levelName.Contains("nightmare") || levelName.Contains("trap"))
                     {
-                        var payphone = self.Tracker.GetEntity<Entities.Payphone>();
-                        if (payphone != null && !self.Tracker.GetEntity<Cs02CharaTrap>())
+                        var payphone = self.Tracker.GetEntity<Payphone>();
+                        if (payphone != null && self.Tracker.GetEntity<Cs02CharaTrap>() == null)
                         {
                             var cutscene = new Cs02CharaTrap(player);
                             self.Add(cutscene);
