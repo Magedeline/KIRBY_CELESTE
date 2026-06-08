@@ -59,6 +59,7 @@
         // Internal state
         private Vector2 floatNormal = Vector2.UnitY;
         private bool isInitialized = false;
+        internal float Float;
         public RalseiDummy(Vector2 position, int index = 0) : base(position)
         {
             try
@@ -420,6 +421,16 @@
             Sprite.Play("idle");
         }
 
+        public IEnumerator DummyWalkToExact(int x, bool walkBackwards = false, float speedMultiplier = 1f)
+        {
+            yield return WalkTo(x, 64f * speedMultiplier);
+        }
+
+        public IEnumerator DummyWalkToExact(int x, float speed, bool walkBackwards = false)
+        {
+            yield return WalkTo(x, speed);
+        }
+
         public IEnumerator SmashBlock(Vector2 target)
         {
             if (!isInitialized || Sprite == null) yield break;
@@ -521,12 +532,34 @@
             try
             {
                 UpdateHairColor();
+                UpdateAnimation();
                 base.Update();
             }
             catch (Exception ex)
             {
                 Logger.Log(LogLevel.Error, "RalseiDummy", $"Error in Update: {ex.Message}");
             }
+        }
+
+        private void UpdateAnimation()
+        {
+            if (Sprite == null || AutoAnimator == null) return;
+
+            // Simple auto-animator: walk when moving, fallSlow when idle
+            if (Floatness <= 0.01f && (Math.Abs(Float) > 0.01f || GetSpeed().LengthSquared() > 1f))
+            {
+                if (Sprite.CurrentAnimationID != "walk")
+                    Sprite.Play("walk");
+            }
+            else if (!Sprite.Animating)
+            {
+                Sprite.Play("fallSlow");
+            }
+        }
+
+        private Vector2 GetSpeed()
+        {
+            return Vector2.Zero;
         }
 
         public override void Render()

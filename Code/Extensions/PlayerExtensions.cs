@@ -1,5 +1,4 @@
 using System;
-using Celeste;
 using Celeste.Entities;
 using global::Celeste.Mod.MaggyHelper;
 using MonoMod.Utils;
@@ -14,12 +13,12 @@ namespace Celeste.Extensions
     /// </summary>
     public static class PlayerExtensions
     {
-        public static bool IsKirbyMode(this Player player)
+        public static bool IsKirbyMode(this global::Celeste.Player player)
         {
             return MaggyHelperModule.Session?.IsKirbyModeActive == true;
         }
 
-        public static bool IsKirbyPlayerMode(this Player player)
+        public static bool IsKirbyPlayerMode(this global::Celeste.Player player)
         {
             return player.IsKirbyMode();
         }
@@ -27,7 +26,7 @@ namespace Celeste.Extensions
         /// <summary>
         /// Enable Kirby mode on the player.
         /// </summary>
-        public static void EnableKirbyMode(this Player player, int maxDashes = 1)
+        public static void EnableKirbyMode(this global::Celeste.Player player, int maxDashes = 1)
         {
             var session = MaggyHelperModule.Session;
             if (session != null)
@@ -57,12 +56,16 @@ namespace Celeste.Extensions
             // Attach the Kirby sprite state controller
             if (player.Get<KirbyPlayerSpriteController>() == null)
                 player.Add(new KirbyPlayerSpriteController());
+
+            // Attach the Kirby skin controller
+            if (player.Get<KirbySkinController>() == null)
+                player.Add(new KirbySkinController());
         }
 
         /// <summary>
         /// Disable Kirby mode on the player.
         /// </summary>
-        public static void DisableKirbyMode(this Player player)
+        public static void DisableKirbyMode(this global::Celeste.Player player)
         {
             var session = MaggyHelperModule.Session;
             if (session != null)
@@ -87,14 +90,19 @@ namespace Celeste.Extensions
             var spriteCtrl = player.Get<KirbyPlayerSpriteController>();
             if (spriteCtrl != null)
                 player.Remove(spriteCtrl);
+
+            // Remove the Kirby skin controller
+            var skinCtrl = player.Get<KirbySkinController>();
+            if (skinCtrl != null)
+                player.Remove(skinCtrl);
         }
 
-        public static void EnableKirbyPlayerMode(this Player player, int maxDashes = 3)
+        public static void EnableKirbyPlayerMode(this global::Celeste.Player player, int maxDashes = 3)
         {
             player.EnableKirbyMode(maxDashes);
         }
 
-        public static void DisableKirbyPlayerMode(this Player player)
+        public static void DisableKirbyPlayerMode(this global::Celeste.Player player)
         {
             player.DisableKirbyMode();
         }
@@ -102,12 +110,12 @@ namespace Celeste.Extensions
         /// <summary>
         /// Set custom max dashes. Pass -1 to reset to default.
         /// </summary>
-        public static void SetMaxDashes(this Player player, int count)
+        public static void SetMaxDashes(this global::Celeste.Player player, int count)
         {
             PersistDashInventory(player, count);
         }
 
-        public static void SetKirbyPowerState(this Player player, KirbyMode.KirbyPowerState powerState)
+        public static void SetKirbyPowerState(this global::Celeste.Player player, KirbyMode.KirbyPowerState powerState)
         {
             var session = MaggyHelperModule.Session;
             if (session != null)
@@ -131,7 +139,7 @@ namespace Celeste.Extensions
             }
         }
 
-        public static void RestorePersistentState(this Player player)
+        public static void RestorePersistentState(this global::Celeste.Player player)
         {
             if (player?.Scene is not Level level)
             {
@@ -158,6 +166,8 @@ namespace Celeste.Extensions
                 player.Add(new KirbyPlayerController());
             if (player.Get<KirbyPlayerSpriteController>() == null)
                 player.Add(new KirbyPlayerSpriteController());
+            if (player.Get<KirbySkinController>() == null)
+                player.Add(new KirbySkinController());
 
             if (TryGetStoredKirbyPower(session, out KirbyMode.KirbyPowerState powerState) &&
                 powerState != KirbyMode.KirbyPowerState.None)
@@ -173,7 +183,7 @@ namespace Celeste.Extensions
             }
         }
 
-        public static bool TryDamageKirby(this Player player, int damage, Vector2 source)
+        public static bool TryDamageKirby(this global::Celeste.Player player, int damage, Vector2 source)
         {
             if (!player.IsKirbyMode() || player.Scene is not Level level)
             {
@@ -192,27 +202,27 @@ namespace Celeste.Extensions
         /// <summary>
         /// Enable combat mode on the player via DynamicData.
         /// </summary>
-        public static void EnableCombat(this Player player)
+        public static void EnableCombat(this global::Celeste.Player player)
         {
             if (player == null) return;
-            new DynData<Player>(player).Set("CombatEnabled", true);
+            new DynData<global::Celeste.Player>(player).Set("CombatEnabled", true);
         }
 
         /// <summary>
         /// Disable combat mode on the player via DynamicData.
         /// </summary>
-        public static void DisableCombat(this Player player)
+        public static void DisableCombat(this global::Celeste.Player player)
         {
             if (player == null) return;
-            new DynData<Player>(player).Set("CombatEnabled", false);
+            new DynData<global::Celeste.Player>(player).Set("CombatEnabled", false);
         }
 
-        public static DynData<Player> GetData(this Player player)
+        public static DynData<global::Celeste.Player> GetData(this global::Celeste.Player player)
         {
-            return player != null ? new DynData<Player>(player) : null;
+            return player != null ? new DynData<global::Celeste.Player>(player) : null;
         }
 
-        private static void TryApplyPlayerSprite(Player player, string spriteId)
+        private static void TryApplyPlayerSprite(global::Celeste.Player player, string spriteId)
         {
             if (player?.Sprite == null || string.IsNullOrEmpty(spriteId))
             {
@@ -240,7 +250,7 @@ namespace Celeste.Extensions
             }
         }
 
-        private static void PersistDashInventory(Player player, int dashCount)
+        private static void PersistDashInventory(global::Celeste.Player player, int dashCount)
         {
             if (dashCount < 1)
             {
@@ -261,6 +271,124 @@ namespace Celeste.Extensions
         private static bool TryGetStoredKirbyPower(MaggyHelperModuleSession session, out KirbyMode.KirbyPowerState powerState)
         {
             return Enum.TryParse(session?.CurrentKirbyPower, true, out powerState);
+        }
+
+        /// <summary>
+        /// Attach a floating Ralsei dummy to the player as a companion.
+        /// </summary>
+        public static void AttachRalseiDummy(this global::Celeste.Player player)
+        {
+            if (player == null)
+                return;
+
+            if (player.Get<RalseiDummyAttacher>() == null)
+            {
+                player.Add(new RalseiDummyAttacher());
+            }
+        }
+
+        /// <summary>
+        /// Remove the Ralsei dummy from the player.
+        /// </summary>
+        public static void RemoveRalseiDummy(this global::Celeste.Player player)
+        {
+            if (player == null)
+                return;
+
+            var attacher = player.Get<RalseiDummyAttacher>();
+            if (attacher != null)
+            {
+                player.Remove(attacher);
+            }
+        }
+
+        /// <summary>
+        /// Attach a floating Badeline dummy to the player as a companion.
+        /// </summary>
+        public static void AttachBadelineDummy(this global::Celeste.Player player)
+        {
+            if (player == null)
+                return;
+
+            if (player.Get<BadelineDummyAttacher>() == null)
+            {
+                player.Add(new BadelineDummyAttacher());
+            }
+        }
+
+        /// <summary>
+        /// Remove the Badeline dummy from the player.
+        /// </summary>
+        public static void RemoveBadelineDummy(this global::Celeste.Player player)
+        {
+            if (player == null)
+                return;
+
+            var attacher = player.Get<BadelineDummyAttacher>();
+            if (attacher != null)
+            {
+                player.Remove(attacher);
+            }
+        }
+
+        /// <summary>
+        /// Attach a floating Chara dummy to the player as a companion.
+        /// Intended for later DLC use.
+        /// </summary>
+        public static void AttachCharaDummy(this global::Celeste.Player player)
+        {
+            if (player == null)
+                return;
+
+            if (player.Get<CharaDummyAttacher>() == null)
+            {
+                player.Add(new CharaDummyAttacher());
+            }
+        }
+
+        /// <summary>
+        /// Remove the Chara dummy from the player.
+        /// </summary>
+        public static void RemoveCharaDummy(this global::Celeste.Player player)
+        {
+            if (player == null)
+                return;
+
+            var attacher = player.Get<CharaDummyAttacher>();
+            if (attacher != null)
+            {
+                player.Remove(attacher);
+            }
+        }
+
+        /// <summary>
+        /// Attach a floating Madeline dummy to the player as a companion.
+        /// Intended for later DLC use.
+        /// </summary>
+        public static void AttachMadelineDummy(this global::Celeste.Player player)
+        {
+            if (player == null)
+                return;
+
+            if (player.Get<MadelineDummyAttacher>() == null)
+            {
+                player.Add(new MadelineDummyAttacher());
+            }
+        }
+
+        /// <summary>
+        /// Remove the Madeline dummy from the player.
+        /// </summary>
+        public static void RemoveMadelineDummy(this global::Celeste.Player player)
+        {
+            if (player == null)
+                return;
+
+            var attacher = player.Get<MadelineDummyAttacher>();
+            if (attacher != null)
+            {
+                player.Remove(attacher);
+            }
         }
     }
 }

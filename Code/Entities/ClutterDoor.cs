@@ -62,9 +62,9 @@
             base.Update();
         }
 
-        public bool IsLocked(Session session) => !session.GetFlag("oshiro_clutter_mod_door_open") || IsComplete(session);
+        public bool IsLocked(Session session) => !session.GetFlag("oshiro_clutter_door_open") || IsComplete(session);
 
-        public bool IsComplete(Session session) => session.GetFlag("oshiro_clutter_mod_cleared_" + (int) Color);
+        public bool IsComplete(Session session) => session.GetFlag("oshiro_clutter_cleared_" + (int) Color);
 
         public IEnumerator UnlockRoutine()
         {

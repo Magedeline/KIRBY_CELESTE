@@ -54,7 +54,7 @@ public sealed class KirbyPlayerSpawner : Entity
 
     private void ApplySpawn(Level level)
     {
-        var player = level.Tracker.GetEntity<CelestePlayer>();
+        var player = level.Tracker.GetEntity<global::Celeste.Player>();
         if (player == null)
         {
             IngesteLogger.Info("[KirbyPlayerSpawner] global::Celeste.Player not available during Awake");
@@ -80,7 +80,7 @@ public sealed class KirbyPlayerSpawner : Entity
 
     internal static void ConfigureVanillaPlayer(
         Level level,
-        CelestePlayer player,
+        global::Celeste.Player player,
         Vector2? forcedSpawnPos,
         bool enableKirbyMode,
         KirbyMode.KirbyPowerState startingPower,
@@ -157,7 +157,7 @@ public sealed class KirbyPlayerSpawner : Entity
         if (level == null)
             return;
 
-        var vanillaPlayer = level.Tracker.GetEntity<CelestePlayer>();
+        var vanillaPlayer = level.Tracker.GetEntity<global::Celeste.Player>();
         if (vanillaPlayer == null)
             return;
 

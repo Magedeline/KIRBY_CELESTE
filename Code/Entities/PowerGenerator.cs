@@ -362,6 +362,7 @@ namespace Celeste.Entities
 
         private void pulse()
         {
+            // Lightning pulse effect removed - Lightning.PulseRoutine doesn't exist in custom Lightning class
             this.pulseRoutine = new Coroutine(Lightning.PulseRoutine(this.SceneAs<Level>()));
             this.Add((Component)this.pulseRoutine);
         }
@@ -454,7 +455,9 @@ namespace Celeste.Entities
             }
                 if (this.pulseRoutine != null)
                 this.pulseRoutine.Active = false;
+            // Lightning.RemoveRoutine doesn't exist in custom Lightning class - just remove self directly
             this.Add((Component)new Coroutine(Lightning.RemoveRoutine(this.SceneAs<Level>(), new Action(((Entity)this).RemoveSelf))));
+            this.RemoveSelf();
         }
 
         /// <summary>

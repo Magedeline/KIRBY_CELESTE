@@ -26,8 +26,8 @@ public class ELSTerminaHealth : Entity
         this.currentHealth = maxHealth;
         
         // Calculate number of slices based on max health
-        this.sliceCount = hardMode ? 75 : 40;
-        this.sliceWidth = hardMode ? 8f : 15f;
+        this.sliceCount = hardMode ? 500 : 250;
+        this.sliceWidth = hardMode ? 1.2f : 2.4f;
 
         this.healthSlices = new List<HealthSlice>();
         this.Tag = Tags.HUD | Tags.PauseUpdate;
@@ -141,8 +141,8 @@ public class ELSTerminaHealth : Entity
             this.sprite.CenterOrigin();
             this.Add(this.sprite);
 
-            // Scale based on size
-            float scale = small ? 0.5f : 0.8f;
+            // Scale based on size (adjusted for smaller slice widths)
+            float scale = small ? 0.15f : 0.3f;
             this.sprite.Scale = Vector2.One * scale;
 
             this.Tag = Tags.HUD | Tags.PauseUpdate;
@@ -162,7 +162,7 @@ public class ELSTerminaHealth : Entity
         {
             if (this.sprite == null) yield break;
 
-            float targetScale = this.sprite.Scale.X > 0.5f ? 0.8f : 0.5f;
+            float targetScale = this.sprite.Scale.X > 0.2f ? 0.3f : 0.15f;
             for (float t = 0f; t < 1f; t += Engine.DeltaTime * 4f)
             {
                 this.sprite.Scale = Vector2.One * targetScale * Ease.BackOut(t);

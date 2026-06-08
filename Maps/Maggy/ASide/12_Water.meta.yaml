@@ -16,7 +16,7 @@ CassetteSong: event:/music/pusheen/Cassette/12_depth
 
 Modes:
   - AudioState:
-      Music: guid://{09f67fdf-a0fa-4999-9775-08edbd93c3bc}
+      Music: event:/music/pusheen/lvl12/main
       Ambience: event:/env/pusheen/12_waterfall
     Inventory: Default
     HeartIsEnd: false

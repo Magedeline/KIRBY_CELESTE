@@ -10,6 +10,7 @@ public class NPC05_Oshiro_Lobby : NPC
 
     private float startX;
     protected new TalkComponent Talker;
+    private bool isInteracting;
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public NPC05_Oshiro_Lobby(Vector2 position)
@@ -58,6 +59,8 @@ public class NPC05_Oshiro_Lobby : NPC
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void OnTalk(CelestePlayer player)
     {
+        if (isInteracting) return;
+        isInteracting = true;
         base.Scene.Add(new CS05_OshiroLobby(player, this));
         Talker.Enabled = false;
     }
@@ -69,6 +72,10 @@ public class NPC05_Oshiro_Lobby : NPC
         if (base.X >= startX + 12f)
         {
             base.Depth = 1000;
+        }
+        if (isInteracting && Talker.Enabled)
+        {
+            isInteracting = false;
         }
     }
 }

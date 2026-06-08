@@ -24,8 +24,8 @@ namespace Celeste.Projectiles
             Depth = -50;
             Collider = new Hitbox(32f, 8f, direction > 0 ? 0 : -32f, -4f);
 
-            Add(sprite = new Sprite(GFX.Game, "projectiles/beam/"));
-            sprite.AddLoop("whip", "whip", 0.05f);
+            Add(sprite = new Sprite(GFX.Game, "projectiles/kirby/beam/"));
+            sprite.AddLoop("whip", "idle", 0.05f);
             sprite.Play("whip");
             sprite.Scale.X = direction;
 
@@ -94,8 +94,8 @@ namespace Celeste.Projectiles
             Depth = -50;
             Collider = new Circle(8f, 0f, -8f);
 
-            Add(sprite = new Sprite(GFX.Game, "projectiles/bomb/"));
-            sprite.AddLoop("spin", "spin", 0.1f);
+            Add(sprite = new Sprite(GFX.Game, "projectiles/kirby/bomb/"));
+            sprite.AddLoop("spin", "idle", 0.1f);
             sprite.Play("spin");
 
             Add(new PlayerCollider(OnPlayerHit));
@@ -183,7 +183,14 @@ namespace Celeste.Projectiles
                 }
             }
 
-            sprite.Play("explode");
+            if (sprite.Has("explode"))
+            {
+                sprite.Play("explode");
+            }
+            else
+            {
+                sprite.Visible = false;
+            }
             Add(new Coroutine(RemoveAfterExplosion()));
         }
 
@@ -212,8 +219,8 @@ namespace Celeste.Projectiles
             Depth = -50;
             Collider = new Hitbox(12f, 12f, -6f, -6f);
 
-            Add(sprite = new Sprite(GFX.Game, "projectiles/star/"));
-            sprite.AddLoop("star", "star", 0.05f);
+            Add(sprite = new Sprite(GFX.Game, "projectiles/kirby/star/"));
+            sprite.AddLoop("star", "idle", 0.05f);
             sprite.Play("star");
 
             Add(new PlayerCollider(OnPlayerHit));
@@ -287,8 +294,8 @@ namespace Celeste.Projectiles
             Depth = -50;
             Collider = new Hitbox(16f, 8f, direction > 0 ? 0 : -16f, -4f);
 
-            Add(sprite = new Sprite(GFX.Game, "projectiles/fire/"));
-            sprite.AddLoop("fire", "fire", 0.08f);
+            Add(sprite = new Sprite(GFX.Game, "projectiles/kirby/fire/"));
+            sprite.AddLoop("fire", "idle", 0.08f);
             sprite.Play("fire");
             sprite.Scale.X = dir;
 
@@ -360,8 +367,8 @@ namespace Celeste.Projectiles
             Depth = -50;
             Collider = new Hitbox(12f, 8f, direction > 0 ? 0 : -12f, -4f);
 
-            Add(sprite = new Sprite(GFX.Game, "projectiles/ice/"));
-            sprite.AddLoop("ice", "ice", 0.08f);
+            Add(sprite = new Sprite(GFX.Game, "projectiles/kirby/ice/"));
+            sprite.AddLoop("ice", "idle", 0.08f);
             sprite.Play("ice");
             sprite.Scale.X = dir;
 
@@ -435,8 +442,8 @@ namespace Celeste.Projectiles
             Depth = -50;
             Collider = new Hitbox(40f, 8f, direction > 0 ? 0 : -40f, -4f);
 
-            Add(sprite = new Sprite(GFX.Game, "projectiles/beam/"));
-            sprite.AddLoop("beam", "beam", 0.05f);
+            Add(sprite = new Sprite(GFX.Game, "projectiles/kirby/beam/"));
+            sprite.AddLoop("beam", "idle", 0.05f);
             sprite.Play("beam");
             sprite.Scale.X = dir;
 

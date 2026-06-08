@@ -11,7 +11,7 @@ namespace Celeste.Entities
     /// </summary>
     public class KirbyHatScarf : Component
     {
-        // ── Layout constants (pixels, relative to K_Player Center) ─────────────
+        // ── Layout constants (pixels, relative to Player Center) ─────────────
         // All offsets assume the sprite is facing RIGHT; X is flipped for left.
 
         // Hat brim — wide flat rectangle sitting just above the head
@@ -48,11 +48,11 @@ namespace Celeste.Entities
         /// <summary>Whether to draw the hat+scarf at all.</summary>
         public new bool Visible = false;
 
-        private readonly K_Player player;
+        private readonly global::Celeste.Player player;
 
         // ── Constructor ───────────────────────────────────────────────────────
 
-        public KirbyHatScarf(K_Player player) : base(active: true, visible: false)
+        public KirbyHatScarf(global::Celeste.Player player) : base(active: true, visible: false)
         {
             this.player = player;
         }
@@ -107,7 +107,7 @@ namespace Celeste.Entities
                 main);
 
             // ── Scarf tail (hangs away from facing direction) ─────────────────
-            // tail hangs on the side opposite to facing (behind the K_Player)
+            // tail hangs on the side opposite to facing (behind the Player)
             float tailX = center.X - dir * TailOffX - TailW * 0.5f;
             Draw.Rect(
                 tailX,

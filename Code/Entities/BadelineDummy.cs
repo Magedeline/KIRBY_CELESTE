@@ -419,6 +419,16 @@ namespace Celeste.Entities
             Sprite.Play("idle");
         }
 
+        public IEnumerator DummyWalkToExact(int x, bool walkBackwards = false, float speedMultiplier = 1f)
+        {
+            yield return WalkTo(x, 64f * speedMultiplier);
+        }
+
+        public IEnumerator DummyWalkToExact(int x, float speed, bool walkBackwards = false)
+        {
+            yield return WalkTo(x, speed);
+        }
+
         public override void Update()
         {
             base.Update();

@@ -128,6 +128,10 @@ namespace Celeste
                     if (self.Get<KirbyPlayerSpriteController>() == null)
                         self.Add(new KirbyPlayerSpriteController());
 
+                    // Attach skin controller if missing
+                    if (self.Get<KirbySkinController>() == null)
+                        self.Add(new KirbySkinController());
+
                     // Ensure health system is ready
                     var healthManager = PlayerHealthManager.GetOrCreate(level, 6);
                     if (!healthManager.IsKirbyMode)
@@ -160,6 +164,9 @@ namespace Celeste
 
                     if (self.Get<KirbyPlayerSpriteController>() == null)
                         self.Add(new KirbyPlayerSpriteController());
+
+                    if (self.Get<KirbySkinController>() == null)
+                        self.Add(new KirbySkinController());
                 }
             }
             catch (Exception ex)
@@ -204,6 +211,11 @@ namespace Celeste
                     if (player != null && !player.IsKirbyMode())
                     {
                         player.EnableKirbyMode();
+                        
+                        // Attach skin controller if missing
+                        if (player.Get<KirbySkinController>() == null)
+                            player.Add(new KirbySkinController());
+                        
                         Logger.Log(LogLevel.Info, "MaggyHelper",
                             "[KirbyPlayerMapHooks] Kirby mode enabled via map metadata");
                     }

@@ -1191,6 +1191,7 @@
         <Anim id="flip" path="flip" delay="0.04" frames="0-7" goto="runFast"/>
         <Loop id="skid" path="flip" delay="0.04" frames="8"/>
         <Loop id="dangling" path="dangling" delay="0.11" frames="0-9" />
+        <Loop id="shaking" path="idle" delay="0.1" frames="0" />
         <Anim id="deadside" path="death_h" delay="0.02" frames="0-12" />
         <Anim id="deadup"   path="death_h" delay="0.02" frames="0-12" />
         <Anim id="deaddown" path="death_h" delay="0.02" frames="0-12" />

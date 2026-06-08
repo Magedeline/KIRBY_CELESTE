@@ -49,7 +49,7 @@ Modes:
     Inventory: Default
     HeartIsEnd: true
     SeekerSlowdown: false
-    BackgroundMusic: guid://{8c44006d-1541-45d8-9ddc-284ddc59f861}
+    BackgroundMusic: event:/music/pusheen/menu/level_select
     BackgroundAmbience: event:/new_content/env/pusheen/gen_last_push
     BackgroundMusicParams:
         moon_and_blackhole: 1

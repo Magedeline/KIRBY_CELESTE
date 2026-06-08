@@ -61,7 +61,7 @@ public class ELSTerminaBoss : Actor
         Collider = new Hitbox(80f, 120f, -40f, -60f);
         this.DashCollider = new Hitbox(80f, 120f, -40f, -60f);
 
-        this.state = new StateMachine(14);
+        this.state = new StateMachine(25);
         this.state.SetCallbacks(0, IdleUpdate, IdleCoroutine, IdleBegin, null);
         this.state.SetCallbacks(1, ChaseUpdate, ChaseCoroutine, ChaseBegin, null);
         this.state.SetCallbacks(2, AttackUpdate, AttackCoroutine, AttackBegin, null);
@@ -76,6 +76,18 @@ public class ELSTerminaBoss : Actor
         this.state.SetCallbacks(11, Phase2DeathUpdate, Phase2DeathCoroutine, Phase2DeathBegin, null);
         this.state.SetCallbacks(12, Phase3DeathUpdate, Phase3DeathCoroutine, Phase3DeathBegin, null);
         this.state.SetCallbacks(13, Phase4DeathUpdate, Phase4DeathCoroutine, Phase4DeathBegin, null);
+        // Kirby-inspired attacks
+        this.state.SetCallbacks(14, InhaleAttackUpdate, InhaleAttackCoroutine, InhaleAttackBegin, null);
+        this.state.SetCallbacks(15, SwordSlashUpdate, SwordSlashCoroutine, SwordSlashBegin, null);
+        this.state.SetCallbacks(16, FireBreathUpdate, FireBreathCoroutine, FireBreathBegin, null);
+        this.state.SetCallbacks(17, IceBreathUpdate, IceBreathCoroutine, IceBreathBegin, null);
+        this.state.SetCallbacks(18, SparkAttackUpdate, SparkAttackCoroutine, SparkAttackBegin, null);
+        this.state.SetCallbacks(19, StoneDropUpdate, StoneDropCoroutine, StoneDropBegin, null);
+        this.state.SetCallbacks(20, CutterBoomerangUpdate, CutterBoomerangCoroutine, CutterBoomerangBegin, null);
+        this.state.SetCallbacks(21, BeamWhipUpdate, BeamWhipCoroutine, BeamWhipBegin, null);
+        this.state.SetCallbacks(22, WheelDashUpdate, WheelDashCoroutine, WheelDashBegin, null);
+        this.state.SetCallbacks(23, HammerSmashUpdate, HammerSmashCoroutine, HammerSmashBegin, null);
+        this.state.SetCallbacks(24, StarProjectileUpdate, StarProjectileCoroutine, StarProjectileBegin, null);
 
         this.Add(this.state);
         this.Add(new PlayerCollider(OnPlayerCollide, Collider, null));
@@ -194,7 +206,18 @@ public class ELSTerminaBoss : Actor
     private IEnumerator ChaseCoroutine()
     {
         yield return 2f;
-        this.state.State = 2;
+        
+        // Choose between basic attack or Kirby attacks
+        if (Calc.Random.Chance(0.4f))
+        {
+            int[] kirbyAttacks = { 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
+            int randomAttack = kirbyAttacks[Calc.Random.Next(kirbyAttacks.Length)];
+            this.state.State = randomAttack;
+        }
+        else
+        {
+            this.state.State = 2;
+        }
     }
     #endregion
 
@@ -231,7 +254,18 @@ public class ELSTerminaBoss : Actor
     private IEnumerator AttackCoroutine()
     {
         yield return 1.5f;
-        this.state.State = 1;
+        
+        // Sometimes choose a Kirby attack instead of returning to chase
+        if (Calc.Random.Chance(0.3f))
+        {
+            int[] kirbyAttacks = { 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
+            int randomAttack = kirbyAttacks[Calc.Random.Next(kirbyAttacks.Length)];
+            this.state.State = randomAttack;
+        }
+        else
+        {
+            this.state.State = 1;
+        }
     }
     #endregion
 
@@ -253,15 +287,21 @@ public class ELSTerminaBoss : Actor
     {
         yield return 1f;
         
-        // Choose next attack pattern based on phase
-        int nextPattern = this.currentBossPhase switch
+        // Choose next attack pattern based on phase - includes Kirby attacks
+        int[] phase2Attacks = { 4, 14, 15, 16 };
+        int[] phase3Attacks = { 5, 17, 18, 19, 20 };
+        int[] phase4Attacks = { 6, 21, 22, 23, 24 };
+        int[] basicAttacks = { 1, 14, 15, 16 };
+        
+        int[] attackPool = this.currentBossPhase switch
         {
-            2 => 4, // Special attack
-            3 => 5, // Shield
-            4 => 6, // Teleport
-            _ => 1
+            2 => phase2Attacks,
+            3 => phase3Attacks,
+            4 => phase4Attacks,
+            _ => basicAttacks
         };
-
+        
+        int nextPattern = attackPool[Calc.Random.Next(attackPool.Length)];
         this.state.State = nextPattern;
     }
     #endregion
@@ -736,4 +776,376 @@ public class ELSTerminaBoss : Actor
         // Player damage logic here
         // You can integrate with your health system
     }
+
+    #region Kirby-Inspired Attacks
+
+    #region State 14: Inhale Attack (Kirby's signature move)
+    private int InhaleAttackUpdate()
+    {
+        Player? player = this.level.Tracker.GetEntity<Player>();
+        if (player == null)
+            return 14;
+
+        // Pull player towards boss
+        Vector2 direction = Center - player.Center;
+        float distance = direction.Length();
+        if (distance < 200f && distance > 20f)
+        {
+            Vector2 pullForce = Vector2.Normalize(direction) * 300f * Engine.DeltaTime;
+            player.Position += pullForce;
+        }
+
+        return 14;
+    }
+
+    private void InhaleAttackBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Pink;
+        this.currRed = Color.Pink;
+        if (this.level != null)
+            this.level.Shake(0.3f);
+    }
+
+    private IEnumerator InhaleAttackCoroutine()
+    {
+        // Inhale for 2 seconds
+        yield return 2f;
+        
+        // Return to chase
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 15: Sword Slash (Kirby's Sword ability)
+    private int SwordSlashUpdate()
+    {
+        return 15;
+    }
+
+    private void SwordSlashBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Green;
+        this.currRed = Color.Green;
+        if (this.level != null)
+            this.level.Shake(0.4f);
+    }
+
+    private IEnumerator SwordSlashCoroutine()
+    {
+        // Create sword slash effect
+        for (int i = 0; i < 3; i++)
+        {
+            if (this.level != null)
+            {
+                // Spawn slash projectile in direction of player
+                Player? player = this.level.Tracker.GetEntity<Player>();
+                if (player != null)
+                {
+                    Vector2 direction = Vector2.Normalize(player.Center - Center);
+                    // Create slash effect here
+                    this.level.Shake(0.2f);
+                }
+            }
+            yield return 0.3f;
+        }
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 16: Fire Breath (Kirby's Fire ability)
+    private int FireBreathUpdate()
+    {
+        Player? player = this.level.Tracker.GetEntity<Player>();
+        if (player == null)
+            return 16;
+
+        // Continuous fire breath towards player
+        if (this.level.OnInterval(0.1f))
+        {
+            Vector2 direction = Vector2.Normalize(player.Center - Center);
+            // Spawn fire projectile
+            // Add fire effect
+        }
+
+        return 16;
+    }
+
+    private void FireBreathBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Orange;
+        this.currRed = Color.Orange;
+        if (this.level != null)
+            this.level.Shake(0.3f);
+    }
+
+    private IEnumerator FireBreathCoroutine()
+    {
+        // Fire breath for 1.5 seconds
+        yield return 1.5f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 17: Ice Breath (Kirby's Ice ability)
+    private int IceBreathUpdate()
+    {
+        Player? player = this.level.Tracker.GetEntity<Player>();
+        if (player == null)
+            return 17;
+
+        // Continuous ice breath towards player
+        if (this.level.OnInterval(0.1f))
+        {
+            Vector2 direction = Vector2.Normalize(player.Center - Center);
+            // Spawn ice projectile
+            // Add ice effect
+        }
+
+        return 17;
+    }
+
+    private void IceBreathBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Cyan;
+        this.currRed = Color.Cyan;
+        if (this.level != null)
+            this.level.Shake(0.3f);
+    }
+
+    private IEnumerator IceBreathCoroutine()
+    {
+        // Ice breath for 1.5 seconds
+        yield return 1.5f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 18: Spark Attack (Kirby's Spark ability)
+    private int SparkAttackUpdate()
+    {
+        // Electric sparks around boss
+        if (this.level.OnInterval(0.05f))
+        {
+            // Spawn spark particles
+            if (this.level != null)
+                this.level.Shake(0.1f);
+        }
+
+        return 18;
+    }
+
+    private void SparkAttackBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Yellow;
+        this.currRed = Color.Yellow;
+        if (this.level != null)
+            this.level.Shake(0.4f);
+    }
+
+    private IEnumerator SparkAttackCoroutine()
+    {
+        // Electric field for 2 seconds
+        yield return 2f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 19: Stone Drop (Kirby's Stone ability)
+    private int StoneDropUpdate()
+    {
+        // Falling stone attack
+        return 19;
+    }
+
+    private void StoneDropBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Brown;
+        this.currRed = Color.Brown;
+        if (this.level != null)
+        {
+            this.level.Shake(0.5f);
+            // Spawn falling stones
+        }
+    }
+
+    private IEnumerator StoneDropCoroutine()
+    {
+        // Drop stones for 2 seconds
+        yield return 2f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 20: Cutter Boomerang (Kirby's Cutter ability)
+    private int CutterBoomerangUpdate()
+    {
+        // Boomerang projectile tracking
+        return 20;
+    }
+
+    private void CutterBoomerangBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Lime;
+        this.currRed = Color.Lime;
+        if (this.level != null)
+            this.level.Shake(0.3f);
+    }
+
+    private IEnumerator CutterBoomerangCoroutine()
+    {
+        // Throw cutter boomerang
+        yield return 0.5f;
+        
+        // Wait for return
+        yield return 1.5f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 21: Beam Whip (Kirby's Beam ability)
+    private int BeamWhipUpdate()
+    {
+        Player? player = this.level.Tracker.GetEntity<Player>();
+        if (player == null)
+            return 21;
+
+        // Beam whip towards player
+        if (this.level.OnInterval(0.1f))
+        {
+            // Beam effect
+        }
+
+        return 21;
+    }
+
+    private void BeamWhipBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Violet;
+        this.currRed = Color.Violet;
+        if (this.level != null)
+            this.level.Shake(0.3f);
+    }
+
+    private IEnumerator BeamWhipCoroutine()
+    {
+        // Beam whip attack
+        yield return 1f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 22: Wheel Dash (Kirby's Wheel ability)
+    private int WheelDashUpdate()
+    {
+        Player? player = this.level.Tracker.GetEntity<Player>();
+        if (player == null)
+            return 22;
+
+        // Dash towards player in wheel form
+        float speed = 400f;
+        Vector2 direction = Vector2.Normalize(player.Center - Center);
+        Position += direction * speed * Engine.DeltaTime;
+
+        if (this.level.OnInterval(0.05f))
+            TrailManager.Add(this, Color.Blue * 0.8f, 1f, false, false);
+
+        return 22;
+    }
+
+    private void WheelDashBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Blue;
+        this.currRed = Color.Blue;
+        if (this.level != null)
+            this.level.Shake(0.4f);
+    }
+
+    private IEnumerator WheelDashCoroutine()
+    {
+        // Wheel dash for 1.5 seconds
+        yield return 1.5f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 23: Hammer Smash (Kirby's Hammer ability)
+    private int HammerSmashUpdate()
+    {
+        return 23;
+    }
+
+    private void HammerSmashBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.DarkRed;
+        this.currRed = Color.DarkRed;
+        if (this.level != null)
+        {
+            this.level.Shake(0.8f);
+            // Create shockwave
+        }
+    }
+
+    private IEnumerator HammerSmashCoroutine()
+    {
+        // Hammer smash with shockwave
+        yield return 0.5f;
+        
+        // Shockwave expansion
+        yield return 1f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #region State 24: Star Projectile (Kirby's Star attack)
+    private int StarProjectileUpdate()
+    {
+        return 24;
+    }
+
+    private void StarProjectileBegin()
+    {
+        this.Sprite.Play("idle");
+        this.Sprite.Color = Color.Gold;
+        this.currRed = Color.Gold;
+        if (this.level != null)
+            this.level.Shake(0.3f);
+    }
+
+    private IEnumerator StarProjectileCoroutine()
+    {
+        // Spawn multiple star projectiles
+        for (int i = 0; i < 8; i++)
+        {
+            float angle = (MathHelper.TwoPi / 8) * i;
+            Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+            // Spawn star projectile in direction
+            yield return 0.1f;
+        }
+        
+        yield return 1f;
+        
+        this.state.State = 1;
+    }
+    #endregion
+
+    #endregion
 }

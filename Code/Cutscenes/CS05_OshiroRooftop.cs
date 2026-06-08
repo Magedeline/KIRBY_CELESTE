@@ -57,12 +57,12 @@ namespace Celeste.Cutscenes
             {
                 new Func<IEnumerator>(CharaAppear),
                 new Func<IEnumerator>(BadelineFaceChara),
-                new Func<IEnumerator>(KirbyWalkAwayWithGroup),
+                new Func<IEnumerator>(KirbyWalkAway),
                 new Func<IEnumerator>(KirbyLookAtChara),
-                new Func<IEnumerator>(OshiroEnterAndAsk),
+                new Func<IEnumerator>(OshiroEnter),
                 new Func<IEnumerator>(CharaTurnsToOshiro),
-                new Func<IEnumerator>(CharaDisappearsOshiroSnaps),
-                new Func<IEnumerator>(OshiroTransformChase)
+                new Func<IEnumerator>(CharaDisappears),
+                new Func<IEnumerator>(OshiroTransformStart)
             });
             yield return OshiroTransform();
             Add(new Coroutine(AnxietyAndCameraOut(), true));
@@ -79,18 +79,16 @@ namespace Celeste.Cutscenes
             chara.Sprite.Scale.X = 1f;
             chara.Appear(level);
             level.Add(chara);
-            yield return 0.3f;
-            yield break;
+            yield return 0.1f;
         }
 
         private IEnumerator BadelineFaceChara()
         {
             player.Facing = Facings.Left;
             yield return 0.2f;
-            yield break;
         }
 
-        private IEnumerator KirbyWalkAwayWithGroup()
+        private IEnumerator KirbyWalkAway()
         {
             Level level = Scene as Level;
             Add(new Coroutine(player.DummyWalkTo((float)level.Bounds.Left + 170f, false, 1f, false), true));
@@ -98,7 +96,6 @@ namespace Celeste.Cutscenes
             Audio.Play("event:/game/pusheen/05_restore/suite_bad_moveroof", chara.Position);
             Add(new Coroutine(chara.FloatTo(chara.Position + new Vector2(80f, 30f), null, true, false, false), true));
             yield return null;
-            yield break;
         }
 
         private IEnumerator KirbyLookAtChara()
@@ -108,10 +105,9 @@ namespace Celeste.Cutscenes
             yield return 0.1f;
             Level level = SceneAs<Level>();
             yield return level.ZoomTo(new Vector2(150f, bossSpawnPosition.Y - (float)level.Bounds.Y - 8f), 2f, 0.5f);
-            yield break;
         }
 
-        private IEnumerator OshiroEnterAndAsk()
+        private IEnumerator OshiroEnter()
         {
             yield return 0.3f;
             bossSpriteOffset = (bossSprite.Justify.Value.Y - oshiro.Sprite.Justify.Value.Y) * bossSprite.Height;
@@ -128,29 +124,24 @@ namespace Celeste.Cutscenes
             yield return 0.3f;
             player.Facing = Facings.Left;
             yield return 0.1f;
-            chara.Sprite.Scale.X = -1f;
-            yield break;
         }
 
         private IEnumerator CharaTurnsToOshiro()
         {
+            chara.Sprite.Scale.X = -1f;
             yield return 0.1f;
-            chara.Sprite.Scale.X = 1f;
-            yield return 0.2f;
-            yield break;
         }
 
-        private IEnumerator CharaDisappearsOshiroSnaps()
+        private IEnumerator CharaDisappears()
         {
             yield return 0.1f;
             chara.Vanish();
             Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
             chara = null;
             yield return 0.8f;
-            yield break;
         }
 
-        private IEnumerator OshiroTransformChase()
+        private IEnumerator OshiroTransformStart()
         {
             Audio.Play("event:/char/oshiro/boss_transform_begin", oshiro.Position);
             oshiro.Remove(oshiro.Sprite);
@@ -161,7 +152,6 @@ namespace Celeste.Cutscenes
             oshiro.Depth = -12500;
             oshiroRumble = true;
             yield return 1f;
-            yield break;
         }
 
         private IEnumerator OshiroTransform()
@@ -178,7 +168,6 @@ namespace Celeste.Cutscenes
                 yield return null;
             }
             yield return 0.25f;
-            yield break;
         }
 
         private IEnumerator AnxietyAndCameraOut()
@@ -192,7 +181,6 @@ namespace Celeste.Cutscenes
                 level.Camera.Position = from + (to - from) * Ease.CubeInOut(t);
                 yield return null;
             }
-            yield break;
         }
 
         private void SetChaseMusic()
@@ -237,7 +225,7 @@ namespace Celeste.Cutscenes
             Distort.Anxiety = anxiety + anxiety * anxietyFlicker;
             if (base.Scene.OnInterval(0.05f))
             {
-                anxietyFlicker = -0.2f + Calc.Random.NextFloat(0.4f);
+                anxietyFlicker = Calc.Random.NextFloat(0.4f) - 0.2f;
             }
             base.Update();
             if (oshiroRumble)

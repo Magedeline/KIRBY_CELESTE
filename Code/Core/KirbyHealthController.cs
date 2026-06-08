@@ -39,7 +39,7 @@ namespace Celeste
         private bool hasSavedRespawn;
 
         // References
-        private Player player;
+        private global::Celeste.Player player;
         private Level level;
         private PlayerHealthManager healthManager;
         private UniversalHealthUI healthUI;
@@ -79,11 +79,7 @@ namespace Celeste
             healthUI.ShowPlayerHealth = true;
 
             // Find player
-            player = level.Tracker.GetEntity<Player>();
-            if (player == null)
-            {
-                player = level.Tracker.GetEntity<global::Celeste.Player>();
-            }
+            player = level.Tracker.GetEntity<global::Celeste.Player>();
 
             // Restore health from health manager
             CurrentHealth = healthManager.CurrentHP;
@@ -132,7 +128,7 @@ namespace Celeste
             // Update player reference if needed
             if (player == null || player.Scene == null)
             {
-                player = level?.Tracker.GetEntity<Player>() ?? level?.Tracker.GetEntity<global::Celeste.Player>();
+                player = level?.Tracker.GetEntity<global::Celeste.Player>();
             }
 
             // Check for out of bounds

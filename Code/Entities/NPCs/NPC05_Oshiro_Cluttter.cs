@@ -1,4 +1,4 @@
-﻿using Celeste.Cutscenes;
+using Celeste.Cutscenes;
 using ModOshiroSprite = Celeste.OshiroSprite;
 
 namespace Celeste.NPCs
@@ -7,31 +7,19 @@ namespace Celeste.NPCs
     public class NPC05_Oshiro_Cluttter : NPC
     {
         public const string TalkFlagsA = "oshiro_clutter_";
-
         public const string TalkFlagsB = "oshiro_clutter_optional_";
-
         public const string ClearedFlags = "oshiro_clutter_cleared_";
-
         public const string FinishedFlag = "oshiro_clutter_finished";
-
         public const string DoorOpenFlag = "oshiro_clutter_door_open";
 
         public Vector2 HomePosition;
-
         private int sectionsComplete;
-
         private bool talked;
-
         private bool inRoutine;
-
         private List<Vector2> nodes = new List<Vector2>();
-
         private Coroutine paceRoutine;
-
         private Coroutine talkRoutine;
-
         private SoundSource paceSfx;
-
         private float paceTimer;
 
         protected new VertexLight Light;
@@ -236,4 +224,3 @@ namespace Celeste.NPCs
         }
     }
 }
-

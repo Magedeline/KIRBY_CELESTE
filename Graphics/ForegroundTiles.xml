@@ -205,4 +205,5 @@
   <Tileset id="H" copy="z" path="maggy/ch13/magmaRock" />
   <Tileset id="J" copy="z" path="maggy/ch14/neon_temple" />
   <Tileset id="K" copy="z" path="maggy/ch15/advCloudPurple" />
+  <Tileset id="!" copy="z" path="maggy/ch21/ad" displayName="ad" />
 </Data>

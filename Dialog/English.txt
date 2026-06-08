@@ -2539,6 +2539,112 @@ He seems very nice and kind.
 [BADELINE left angryAlt]
 Ugh fine...
 
+[RALSEI right happy]
+Thank you, Baddy! I knew you'd understand.
+
+[OSHIRO right normal]
+Oh! I didn't realize you had company with you.
+Welcome, welcome to both of you!
+
+[RALSEI right normal]
+Hello, Mr. Oshiro. I'm Ralsei.
+It's a pleasure to meet you.
+
+[OSHIRO right normal]
+A pleasure to meet you as well, Ralsei.
+Any friend of Lady Badeline is a friend of mine.
+
+[BADELINE left angryalt]
+Don't call me "Lady Badeline."
+Just Badeline is fine.
+
+[OSHIRO right worried]
+Oh, my apologies! Badeline it is then.
+I meant no disrespect.
+
+[RALSEI right normal]
+So, Mr. Oshiro, you mentioned you broke a component
+of your power grid generator?
+
+[OSHIRO right worried]
+Yes, unfortunately.
+It's quite embarrassing, really.
+I was trying to upgrade the system to handle
+more guests, but I must have been too hasty.
+
+[BADELINE left normal]
+What kind of component are we talking about?
+
+[OSHIRO right worried]
+It's a voltage regulator.
+Without it, the whole system is unstable.
+I've tried to fix it myself, but...
+well, I'm afraid I don't have the technical expertise.
+
+[RALSEI right sad]
+That sounds serious.
+Is the hotel in danger?
+
+[OSHIRO right normal]
+Not immediately, no.
+But if it's not fixed soon, the power could fail completely.
+And that would leave all my guests in the dark...
+
+[BADELINE left thinking]
+I suppose we could take a look at it.
+I'm not exactly an engineer, but I know my way around
+machinery better than most.
+
+[RALSEI right happy]
+Really? That's wonderful, Baddy!
+I can help too - I know a bit about magical circuits
+and energy systems.
+
+[OSHIRO right happy]
+Oh, would you? That would be incredibly kind of you!
+I can't tell you how much I'd appreciate it.
+
+[BADELINE left normal]
+Don't get your hopes up.
+I'm not promising anything.
+
+[RALSEI right normal]
+We'll do our best, Mr. Oshiro.
+Where is this power grid generator located?
+
+[OSHIRO right normal]
+It's in the basement, deep below the hotel.
+I can show you the way, if you'd like.
+
+[BADELINE left annoyed]
+Lead the way, I guess.
+
+[OSHIRO right happy]
+Thank you both so much!
+Right this way, then.
+The entrance to the basement is through the kitchen.
+
+[RALSEI right normal]
+Thank you for having us, Mr. Oshiro.
+We'll get this sorted out together.
+
+[OSHIRO right normal]
+I have complete faith in you both.
+After all, you've come all this way across the galaxy.
+Surely a little voltage regulator is no match for such
+capable adventurers!
+
+[BADELINE left scoff]
+Heh. I guess you have a point.
+
+[RALSEI right happy]
+See, Baddy? This will be an adventure!
+
+[OSHIRO right normal]
+Well in that case, follow me.
+
+{trigger 2 oshiro door open}
+
 MAGGYHELPER_CH5_GUESTBOOK=
 It appears to be a very old and dusty guestbook.
 Many of the pages are damaged or missing.
@@ -3040,7 +3146,7 @@ So? What do you think?
 
 [BADELINE left angry]
 It's... uh, it's beautiful.
-The furniture looks expensive... {>> 2}and abit rusty tho...{>>}
+The furniture looks expensive... {>> 2}and a bit rusty though...{>>}
 
 [BADELINE left angryAlt]
 But to be honest I hate it.
@@ -3051,19 +3157,19 @@ I don't want to stay in this dump.
 {trigger 1 Ralsei Appear}
 
 [RALSEI right angry]
-Badeline thats enough!
-You have pressure him too much because of your carelessness!
+Badeline that's enough!
+You pressured him too much because of your carelessness!
 
 [BADELINE left yell]
 Are you kidding me?
-Your the one who wanted to do.
+You're the one who wanted to do this.
 
 [BADELINE left scoff]
 Kindness...
-when all he did was broke down the hotel.
+when all he did was break down the hotel.
 
 [BADELINE left yell]
-But no! your just a fluff stuff toy from another world!
+But no! you're just a fluff stuff toy from another world!
 
 [RALSEI right upset]
 That's not fair and you know it!
@@ -3080,7 +3186,7 @@ The little cry baby is throwing a tantrum.
 
 [BADELINE left freakA]
 You!
-You little rats
+You little rat!
 {trigger 3 Chara escapes the mirror}
 
 [CHARA right normal]
@@ -3178,12 +3284,12 @@ I don't want your pity!
 {*}All of you!{/*}
 
 [CHARA right smirk]
-well you know what it best to say, it better than safe and sorry
+Well, you know what's best to say: it's better safe than sorry.
 
 {trigger 5 Chara blasts a hole in the ceiling}
 
 [CHARA left smirk]
-So you better get a hussle with it.
+So you better get a hustle with it.
 
 MAGGYHELPER_CH5_OSHIRO_SUITE_SAD0=
 [OSHIRO right sideworried]

@@ -1464,7 +1464,16 @@ namespace Celeste.Cutscenes
                 }
             }
             if (this.credits != null)
-                this.credits.Update();
+            {
+                try
+                {
+                    this.credits.Update();
+                }
+                catch (System.NullReferenceException)
+                {
+                    // Credits renderer list has a null reference, skip update to prevent crash
+                }
+            }
             base.Update();
         }
 

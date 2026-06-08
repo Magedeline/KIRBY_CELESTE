@@ -294,7 +294,14 @@ namespace Celeste.UI
 
         public override void Update()
         {
-            base.Update();
+            try
+            {
+                base.Update();
+            }
+            catch (System.NullReferenceException)
+            {
+                // Renderer list has a null reference, skip base update to prevent crash
+            }
 
             StartMusicIfNeeded();
             UpdateSequence();

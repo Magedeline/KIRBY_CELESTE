@@ -1,3 +1,10 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Monocle;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
 namespace Celeste.Entities;
 [CustomEntity(ids: "MaggyHelper/ResortMirror")]
 [Tracked]

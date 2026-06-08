@@ -76,10 +76,7 @@ namespace Celeste.Mod.MaggyHelper
         //   9. Area Mode Extension Hooks (AreaModeExtender)
         //      - Custom side (D-Side, DX-Side) registration hooks
         //
-        //   10. Kirby Player State Hooks (KirbyPlayerStateController)
-        //      - Custom player state machine hooks
-        //
-        //   11. Kirby Health System Hooks (KirbyHealthSystemHooks)
+        //   10. Kirby Health System Hooks (KirbyHealthSystemHooks)
         //      - Hazard damage integration hooks
         //
         //   12. Cosmic Chapter Panel Hooks (CosmicChapterPanelHook)
@@ -1339,7 +1336,7 @@ namespace Celeste.Mod.MaggyHelper
             //   - MaggyHelper/AsrielGodBackdrop (AsrielGodBackdrop)
             //   - MaggyHelper/AsrielAngelOfDeathWingsBackdrop (AsrielAngelOfDeathWingsBackdrop)
             //   - MaggyHelper/GiygasBackdrop (GiygasBackdrop)
-            //   - MaggyHelper/RainbowBlackholeBG (RainbowBlackholeBg)
+            //   - MaggyHelper/RainbowBlackholeBG (RainbowBlackholeBG)
 
             Logger.Log(LogLevel.Info, "MaggyHelper", "All backdrops initialized");
         }

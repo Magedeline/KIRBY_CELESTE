@@ -135,12 +135,12 @@ namespace Celeste.Triggers
                     player.SetMaxDashes(maxDashes);
                     break;
                 case PlayerAction.EnablePlayer:
-                    player.StateMachine.State = Player.StNormal;
+                    player.StateMachine.State = global::Celeste.Player.StNormal;
                     player.DummyAutoAnimate = true;
                     player.Speed = Vector2.Zero;
                     break;
                 case PlayerAction.DisablePlayer:
-                    player.StateMachine.State = Player.StDummy;
+                    player.StateMachine.State = global::Celeste.Player.StDummy;
                     player.DummyAutoAnimate = false;
                     player.Speed = Vector2.Zero;
                     break;

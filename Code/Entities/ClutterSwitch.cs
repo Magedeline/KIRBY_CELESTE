@@ -69,6 +69,7 @@ public class ClutterSwitch : Solid
     private readonly string absorbCutsceneSound;
     private readonly bool progressMusic;
     private readonly float configLightingAlphaAdd;
+    private readonly bool disableLightning;
 
     // Visual Components
     private Sprite sprite;
@@ -88,7 +89,8 @@ public class ClutterSwitch : Solid
         string musicEvent = "event:/music/pusheen/lvl5/clean",
         string absorbCutsceneSound = "event:/game/03_resort/clutterswitch_books",
         bool progressMusic = true,
-        float configLightingAlphaAdd = LightingAlphaAdd)
+        float configLightingAlphaAdd = LightingAlphaAdd,
+        bool disableLightning = false)
         : base(position, 32f, 16f, safe: true)
     {
         this.color = color;
@@ -96,6 +98,7 @@ public class ClutterSwitch : Solid
         this.absorbCutsceneSound = absorbCutsceneSound;
         this.progressMusic = progressMusic;
         this.configLightingAlphaAdd = configLightingAlphaAdd;
+        this.disableLightning = disableLightning;
         startY = atY = base.Y;
 
         // Configure collision behavior
@@ -116,7 +119,8 @@ public class ClutterSwitch : Solid
             data.Attr("musicEvent", "event:/music/pusheen/lvl5/clean"),
             data.Attr("absorbCutsceneSound", "event:/game/03_resort/clutterswitch_books"),
             data.Bool("progressMusic", true),
-            data.Float("lightingAlphaAdd", LightingAlphaAdd))
+            data.Float("lightingAlphaAdd", LightingAlphaAdd),
+            data.Bool("disableLightning", false))
     {
     }
     #endregion
@@ -153,7 +157,7 @@ public class ClutterSwitch : Solid
         base.Added(scene);
 
         // Check if this switch was already activated in a previous session
-        if (SceneAs<Level>().Session.GetFlag($"oshiro_clutter_mod_cleared_{(int)color}"))
+        if (SceneAs<Level>().Session.GetFlag($"oshiro_clutter_cleared_{(int)color}"))
         {
             BePressed();
         }
@@ -293,8 +297,8 @@ public class ClutterSwitch : Solid
         Level level = base.Scene as Level;
 
         // Set session flags matching ClutterDoor naming conventions
-        level.Session.SetFlag($"oshiro_clutter_mod_cleared_{(int)color}");
-        level.Session.SetFlag("oshiro_clutter_mod_door_open", setTo: true);
+        level.Session.SetFlag($"oshiro_clutter_cleared_{(int)color}");
+        level.Session.SetFlag("oshiro_clutter_door_open", setTo: true);
 
         // Visual effects
         UpdateActivationVisuals(level);
@@ -436,10 +440,32 @@ public class ClutterSwitch : Solid
     {
         Input.Rumble(RumbleStrength.Light, RumbleLength.Medium);
 
+        // Disable lightning if this is a lightning switch
+        if (disableLightning)
+        {
+            yield return DisableLightning();
+        }
+
         // Find and absorb clutter blocks following proper entity patterns
         AbsorbClutterEntities();
 
         yield return 1.5f;
+    }
+
+    private IEnumerator DisableLightning()
+    {
+        Level level = SceneAs<Level>();
+
+        // Set flag to disable lightning
+        level.Session.SetFlag("disable_lightning");
+
+        // Find and disable all Lightning entities
+        foreach (Lightning lightning in level.Entities.FindAll<Lightning>())
+        {
+            this.Add((Component)new Coroutine(Lightning.RemoveRoutine(this.SceneAs<Level>(), new Action(((Entity)lightning).RemoveSelf))));
+        }
+
+        yield return 0.5f;
     }
 
     private void AbsorbClutterEntities()

@@ -16,7 +16,7 @@ CassetteSong: event:/music/pusheen/Cassette/11_frozen
 
 Modes:
   - AudioState:
-      Music: guid://{6c9a972b-9e7b-4e08-9c6e-fa85836bbcb4}
+      Music: event:/music/pusheen/lvl11/main
       Ambience: event:/env/pusheen/11_snow_daytime
     Inventory: Default
     HeartIsEnd: false

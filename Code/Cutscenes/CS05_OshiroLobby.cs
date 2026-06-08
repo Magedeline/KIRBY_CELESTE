@@ -33,7 +33,7 @@ public class CS05_OshiroLobby : CutsceneEntity
         if (createSparks && Level.OnInterval(0.025f))
         {
             Vector2 vector = oshiro.Position + new Vector2(0f, -12f) + new Vector2(Calc.Random.Range(4, 12) * Calc.Random.Choose(1, -1), Calc.Random.Range(4, 12) * Calc.Random.Choose(1, -1));
-            Level.Particles.Emit(NPC03_Oshiro_Lobby.P_AppearSpark, vector, (vector - oshiro.Position).Angle());
+            Level.Particles.Emit(NPC05_Oshiro_Lobby.P_AppearSpark, vector, (vector - oshiro.Position).Angle());
         }
     }
 

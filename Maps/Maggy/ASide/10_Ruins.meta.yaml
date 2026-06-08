@@ -16,7 +16,7 @@ CassetteSong: event:/music/pusheen/Cassette/10_ruins
 
 Modes:
   - AudioState:
-      Music: guid://{ae72dd94-9d20-4850-a58e-cbad870ddf8e}
+      Music: event:/music/pusheen/lvl10/main
       Ambience: event:/env/pusheen/10_ruins
     Inventory: Default
     HeartIsEnd: false

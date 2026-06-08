@@ -16,7 +16,7 @@ CassetteSong: event:/music/pusheen/Cassette/13_blazing
 
 Modes:
   - AudioState:
-      Music: guid://{a04f851c-9617-4da3-97d2-8ba8d7abc3a6}
+      Music: event:/music/pusheen/lvl13/main
       Ambience: event:/env/pusheen/13_factory
     Inventory: Default
     HeartIsEnd: false

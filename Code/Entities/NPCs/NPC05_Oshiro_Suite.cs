@@ -25,6 +25,12 @@ public class NPC05_Oshiro_Suite : NPC
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
+    public NPC05_Oshiro_Suite(EntityData data, Vector2 offset)
+        : this(data.Position + offset)
+    {
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public override void Added(Scene scene)
     {
         base.Added(scene);

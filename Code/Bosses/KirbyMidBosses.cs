@@ -418,11 +418,12 @@ namespace Celeste.Entities.Enemies
 
         protected override void SetupAnimations()
         {
+            // Placeholder art - only "idle" frame exists currently
             sprite.AddLoop("idle", "idle", 0.15f);
-            sprite.AddLoop("jump", "jump", 0.1f);
-            sprite.Add("throw", "throw", 0.08f, "idle");
-            sprite.Add("hurt", "hurt", 0.1f, "idle");
-            sprite.Add("defeat", "defeat", 0.08f);
+            sprite.AddLoop("jump", "idle", 0.1f);
+            sprite.Add("throw", "idle", 0.08f, "idle");
+            sprite.Add("hurt", "idle", 0.1f, "idle");
+            sprite.Add("defeat", "idle", 0.08f);
         }
 
         protected override void UpdateAI()
@@ -512,12 +513,14 @@ namespace Celeste.Entities.Enemies
 
         protected override void SetupAnimations()
         {
-            sprite.AddLoop("idle", "idle", 0.15f);
-            sprite.AddLoop("walk", "walk", 0.12f);
-            sprite.Add("charge", "charge", 0.08f, "attack");
-            sprite.Add("attack", "attack", 0.05f, "idle");
-            sprite.Add("hurt", "hurt", 0.1f, "idle");
-            sprite.Add("defeat", "defeat", 0.08f);
+            // Only a single "boss" frame is currently available, so map all
+            // states to it to keep Bonkers visible until full art exists.
+            sprite.AddLoop("idle", "boss", 0.15f);
+            sprite.AddLoop("walk", "boss", 0.12f);
+            sprite.Add("charge", "boss", 0.08f, "attack");
+            sprite.Add("attack", "boss", 0.05f, "idle");
+            sprite.Add("hurt", "boss", 0.1f, "idle");
+            sprite.Add("defeat", "boss", 0.08f);
         }
 
         protected override void UpdateAI()
@@ -621,12 +624,13 @@ namespace Celeste.Entities.Enemies
 
         protected override void SetupAnimations()
         {
+            // Placeholder art - only "idle" frame exists currently
             sprite.AddLoop("idle", "idle", 0.15f);
-            sprite.AddLoop("fly", "fly", 0.08f);
-            sprite.Add("dive", "dive", 0.05f, "idle");
-            sprite.Add("grab", "grab", 0.08f, "idle");
-            sprite.Add("hurt", "hurt", 0.1f, "idle");
-            sprite.Add("defeat", "defeat", 0.08f);
+            sprite.AddLoop("fly", "idle", 0.08f);
+            sprite.Add("dive", "idle", 0.05f, "idle");
+            sprite.Add("grab", "idle", 0.08f, "idle");
+            sprite.Add("hurt", "idle", 0.1f, "idle");
+            sprite.Add("defeat", "idle", 0.08f);
         }
 
         protected override void UpdateAI()

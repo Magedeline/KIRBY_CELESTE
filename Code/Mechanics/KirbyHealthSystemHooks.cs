@@ -134,6 +134,7 @@ namespace Celeste
         /// <summary>
         /// Hook for Player.Die - intercepts death in Kirby mode and converts to health damage
         /// Also handles deathlink by damaging Kirby instead of instant death
+        /// Handles enemy damage by converting death to health damage
         /// </summary>
         private static global::Celeste.PlayerDeadBody PlayerDieHook(
             Func<global::Celeste.Player, Vector2, bool, bool, global::Celeste.PlayerDeadBody> orig,
@@ -169,8 +170,11 @@ namespace Celeste
             }
 
             // In Kirby mode with health remaining - don't die, just take damage
-            // The health controller will handle the visual feedback
-            Logger.Log(LogLevel.Info, "KirbyHealthSystemHooks", "Death intercepted - health remaining: " + controller.CurrentHealth);
+            // This handles enemy damage since enemies call Player.Die
+            Logger.Log(LogLevel.Info, "KirbyHealthSystemHooks", "Death intercepted (likely enemy damage) - health remaining: " + controller.CurrentHealth);
+
+            // Apply enemy damage (1 damage from enemies)
+            controller.DamageFromEnemy(self.Position - direction * 10f, 1);
 
             // Return null to prevent death body from spawning
             return null;

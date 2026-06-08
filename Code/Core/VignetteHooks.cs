@@ -21,6 +21,7 @@ public static class VignetteHooks
         _hooked = true;
 
         On.Celeste.LevelEnter.Go += OnLevelEnterGo;
+        On.Celeste.LevelExit.ctor += OnLevelExitCtor;
         Logger.Log(LogLevel.Info, "MaggyHelper", "VignetteHooks loaded");
     }
 
@@ -30,6 +31,7 @@ public static class VignetteHooks
         _hooked = false;
 
         On.Celeste.LevelEnter.Go -= OnLevelEnterGo;
+        On.Celeste.LevelExit.ctor -= OnLevelExitCtor;
         Logger.Log(LogLevel.Info, "MaggyHelper", "VignetteHooks unloaded");
     }
 
@@ -64,7 +66,7 @@ public static class VignetteHooks
 
     private static bool IsVignetteEnabledForChapter(int chapterNumber)
     {
-        return chapterNumber == 3 || chapterNumber == 18;
+        return chapterNumber == 0 || chapterNumber == 3 || chapterNumber == 10 || chapterNumber == 18 || chapterNumber == 21;
     }
 
     // ── Outro hook ────────────────────────────────────────────────────────
@@ -103,6 +105,14 @@ public static class VignetteHooks
 
         switch (chapter.Number)
         {
+            case 0:
+                if (!HasSeenVignette(flagKey))
+                {
+                    MarkVignetteSeen(flagKey);
+                    return new Cs00IntroVignette(session);
+                }
+                break;
+
             case 3:
                 if (!HasSeenVignette(flagKey))
                 {
@@ -111,11 +121,27 @@ public static class VignetteHooks
                 }
                 break;
 
+            case 10:
+                if (!HasSeenVignette(flagKey))
+                {
+                    MarkVignetteSeen(flagKey);
+                    return new Cs10IntroVignetteAlt(session);
+                }
+                break;
+
             case 18:
                 if (!HasSeenVignette(flagKey))
                 {
                     MarkVignetteSeen(flagKey);
                     return new Cs18IntroVignette(session);
+                }
+                break;
+
+            case 21:
+                if (!HasSeenVignette(flagKey))
+                {
+                    MarkVignetteSeen(flagKey);
+                    return new TrueFinaleVignette(session);
                 }
                 break;
         }

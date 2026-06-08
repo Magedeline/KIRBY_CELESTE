@@ -276,7 +276,10 @@ public class CS05_Ending : CutsceneEntity
         if (angyOshiro != null)
         {
             player.DummyAutoAnimate = false;
-            player.Sprite.Play("shaking");
+            if (player.Sprite.Has("shaking"))
+            {
+                player.Sprite.Play("shaking");
+            }
             roof.Wobble(null, final);
             if (!final)
             {

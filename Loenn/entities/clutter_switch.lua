@@ -23,12 +23,16 @@ clutterSwitch.fieldInformation = {
     },
     lightingAlphaAdd = {
         minimumValue = 0.0
+    },
+    disableLightning = {
+        fieldType = "boolean"
     }
 }
 
 -- Create placements for each variant
 clutterSwitch.placements = {}
 for i, variant in ipairs(variants) do
+    local isLightning = variant == "ClutterSwitch yellow" or variant == "Lightning"
     clutterSwitch.placements[i] = {
         name = variant,
         data = {
@@ -36,7 +40,8 @@ for i, variant in ipairs(variants) do
             musicEvent = "guid://{d49a04ce-06fb-43bb-8880-1b95a4f6544f}",
             absorbCutsceneSound = "guid://{ab48ef65-2a19-4e26-bd96-c91188020dd6}",
             progressMusic = true,
-            lightingAlphaAdd = 0.05
+            lightingAlphaAdd = 0.05,
+            disableLightning = isLightning
         }
     }
 end

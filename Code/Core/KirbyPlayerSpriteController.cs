@@ -26,6 +26,7 @@ namespace Celeste.Entities
         // Current visual state
         private string currentAnimId;
         private bool forceOnce;
+        private bool cachedKirbyModeActive;
 
         public KirbyPlayerSpriteController() : base(true, false) { }
 
@@ -38,7 +39,20 @@ namespace Celeste.Entities
 
         public override void Update()
         {
-            if (player == null || !player.IsKirbyMode())
+            if (player == null)
+                return;
+
+            // Cache session check to avoid per-frame IsKirbyMode() overhead
+            var session = MaggyHelperModule.Session;
+            bool isKirbyMode = session != null && session.IsKirbyModeActive;
+
+            // Fast exit if Kirby mode state hasn't changed and is inactive
+            if (!isKirbyMode && !cachedKirbyModeActive)
+                return;
+
+            cachedKirbyModeActive = isKirbyMode;
+
+            if (!isKirbyMode)
                 return;
 
             string desired = ResolveDesiredAnimation();
@@ -70,30 +84,34 @@ namespace Celeste.Entities
             // ── Inhale takes highest priority ──
             if (kirbyCtrl.IsInhaling)
             {
+                // Walking while inhaling — use walk variant if available
+                if (onGround && Math.Abs(player.Speed.X) > 10f && sprite.Has("inhalewalk"))
+                    return "inhalewalk";
+
                 // If we just started inhaling, use begin anim; otherwise loop
                 if (sprite.CurrentAnimationID != "inhalebegin" &&
-                    sprite.CurrentAnimationID != "inhaleloop")
+                    sprite.CurrentAnimationID != "inhaleloop" &&
+                    sprite.CurrentAnimationID != "inhalewalk")
                 {
                     forceOnce = true;
                     return "inhalebegin";
                 }
                 if (!sprite.Animating || sprite.CurrentAnimationID == "inhalebegin")
-                {
                     return "inhaleloop";
-                }
                 return "inhaleloop";
             }
 
             // ── Float / Hover while airborne ──
             if (!onGround && state == global::Celeste.Player.StNormal)
             {
-                if (Input.Jump.Check && player.Speed.Y > 0f)
+                if (Input.Jump.Check)
                 {
-                    return "float";
-                }
-                if (Input.Jump.Check && Math.Abs(player.Speed.Y) <= 10f)
-                {
-                    return "hover";
+                    // Hovering near-stationary vertically
+                    if (Math.Abs(player.Speed.Y) <= 15f && sprite.Has("hover"))
+                        return "hover";
+                    // Actively floating (drifting down slowly)
+                    if (sprite.Has("float"))
+                        return "float";
                 }
             }
 

@@ -58,17 +58,15 @@ namespace Celeste.Entities
         private float floatWobble;
         private int lastPuffDirection = 5;
 
-        // Movement smoothing
-        private float targetSpeedX;
-        private float currentAcceleration;
-        private float momentumCarry;
-
         // Attack state
         private bool isAttacking;
         private float attackAnimTimer;
         private CopyAbilityType lastUsedAbility;
         private int comboCount;
         private float comboTimer;
+
+        // Cached state to avoid per-frame IsKirbyMode() calls
+        private bool cachedKirbyModeActive;
 
         // Constants
         private const int MaxAirJumps = 5;
@@ -95,10 +93,6 @@ namespace Celeste.Entities
         // ═══════════════════════════════════════════════════════════════════════
         // NEW: Enhanced constants
         // ═══════════════════════════════════════════════════════════════════════
-        private const float MovementAcceleration = 800f;
-        private const float MovementDeceleration = 1200f;
-        private const float AirAcceleration = 600f;
-        private const float MomentumDecay = 0.92f;
         private const float ComboTimeWindow = 0.8f;
         private const float AbilityGlowSpeed = 4f;
         private const float FloatWobbleSpeed = 8f;
@@ -123,9 +117,21 @@ namespace Celeste.Entities
 
         public override void Update()
         {
-            if (player == null || !player.IsKirbyMode())
+            if (player == null)
                 return;
 
+            // Cache session state to avoid repeated property access and casting
+            var session = MaggyHelperModule.Session;
+            bool isKirbyMode = session != null && session.IsKirbyModeActive;
+
+            // Fast exit if Kirby mode is not active
+            if (!isKirbyMode)
+            {
+                cachedKirbyModeActive = false;
+                return;
+            }
+
+            cachedKirbyModeActive = true;
             float dt = Engine.DeltaTime;
 
             // Tick timers
@@ -169,7 +175,6 @@ namespace Celeste.Entities
 
             if (canControl)
             {
-                HandleMovementSmoothing(onGround);
                 HandleFloat(onGround);
                 HandleMultiJump(onGround);
                 HandleInhaleAndAbilities();
@@ -199,7 +204,8 @@ namespace Celeste.Entities
         {
             base.Render();
 
-            if (player == null || !player.IsKirbyMode())
+            // Use cached Kirby mode state to avoid per-frame property access
+            if (player == null || !cachedKirbyModeActive)
                 return;
 
             // Render ability glow
@@ -222,8 +228,7 @@ namespace Celeste.Entities
             isInhaling = false;
             inhaleTimer = 0f;
             landSquish = 1f;
-            momentumCarry = 0f;
-            isFloating = false;       // Reset float state on landing
+            isFloating = false;
             floatPuffTimer = 0f;
             // Landing particles and sound
             if (player.Scene is Level level)
@@ -251,88 +256,56 @@ namespace Celeste.Entities
             }
         }
 
-        // ═══════════════════════════════════════════════════════════════════════
-        // NEW: Movement smoothing for "heavier" feel
-        // ═══════════════════════════════════════════════════════════════════════
-        private void HandleMovementSmoothing(bool onGround)
-        {
-            float dt = Engine.DeltaTime;
-            float inputX = Input.MoveX.Value;
-
-            // Calculate target speed based on input
-            targetSpeedX = inputX * 90f; // Base Kirby walk speed
-
-            // Apply momentum from attacks/abilities
-            if (momentumCarry != 0f)
-            {
-                player.Speed.X += momentumCarry * dt;
-                momentumCarry *= MomentumDecay;
-                if (Math.Abs(momentumCarry) < 1f)
-                    momentumCarry = 0f;
-            }
-
-            // Smooth acceleration/deceleration
-            float accel = onGround ? MovementAcceleration : AirAcceleration;
-            float decel = onGround ? MovementDeceleration : AirAcceleration * 0.8f;
-
-            if (Math.Abs(inputX) > 0.1f)
-            {
-                // Accelerating
-                currentAcceleration = Calc.Approach(currentAcceleration, accel, accel * 2f * dt);
-            }
-            else
-            {
-                // Decelerating - Kirby stops a bit slower for that bouncy feel
-                currentAcceleration = Calc.Approach(currentAcceleration, decel, decel * dt);
-            }
-        }
-
         private void HandleFloat(bool onGround)
         {
             if (onGround)
             {
                 floatWobble = 0f;
                 isFloating = false;
+                floatPuffTimer = 0f;
                 return;
             }
 
-            // Float: holding Jump while falling enables Kirby's signature hover
-            if (Input.Jump.Check && jumpCount > 0) // Must have done at least one air jump to float
+            // Float: hold Jump after any puff jump to hover
+            // jumpCount >= 1 means Kirby has done at least one air puff
+            if (Input.Jump.Check && jumpCount >= 1)
             {
                 floatReleaseCoyote = FloatReleaseCoyoteTime;
                 floatTimer += Engine.DeltaTime;
                 isFloating = true;
 
-                // Cap fall speed to Kirby's gentle float
+                // Strongly cap fall speed — Kirby drifts down gently
                 if (player.Speed.Y > FloatMaxFall)
-                    player.Speed.Y = FloatMaxFall;
+                    player.Speed.Y = Calc.Approach(player.Speed.Y, FloatMaxFall, 300f * Engine.DeltaTime);
 
-                // Automatic puff animation/particles while floating
+                // Periodic puff: spawn particles and tiny upward nudge
                 floatPuffTimer -= Engine.DeltaTime;
                 if (floatPuffTimer <= 0f)
                 {
                     floatPuffTimer = FloatPuffInterval;
                     SpawnFloatPuffParticles();
-                    
-                    // Small upward boost to maintain altitude
+
+                    // Gentle upward nudge to counteract gravity and maintain altitude
                     if (player.Speed.Y > 0f)
                     {
-                        player.Speed.Y -= 40f;
-                        if (player.Speed.Y < 0f)
-                            player.Speed.Y = 0f;
+                        player.Speed.Y = Math.Max(0f, player.Speed.Y - 50f);
                     }
                 }
 
-                // Float trail particles
+                // Constant very gentle upward anti-gravity while float-held
+                player.Speed.Y -= 80f * Engine.DeltaTime;
+                if (player.Speed.Y < -FloatMaxFall)
+                    player.Speed.Y = -FloatMaxFall;
+
                 SpawnFloatTrailParticles();
             }
             else
             {
                 isFloating = false;
-                
+
                 if (floatReleaseCoyote > 0f && player.Speed.Y > FloatMaxFall)
                 {
-                    // Brief grace period after releasing jump where fall speed stays capped
+                    // Brief grace period after releasing jump
                     player.Speed.Y = FloatMaxFall;
                 }
             }
@@ -340,35 +313,38 @@ namespace Celeste.Entities
 
         private void HandleMultiJump(bool onGround)
         {
-            if (onGround || isInhaling)
+            if (onGround)
                 return;
 
-            // Kirby gets up to 5 mid-air "puff" jumps
-            // Each jump press while in the air does a puff jump
+            // Kirby gets up to MaxAirJumps mid-air puff jumps.
+            // The first puff jump also enables float (hold Jump to hover).
             if (Input.Jump.Pressed && jumpCount < MaxAirJumps)
             {
                 jumpCount++;
-                
-                // Apply puff jump velocity - decreasing strength with each puff
-                float puffStrength = 1f - (jumpCount - 1) * 0.1f; // Slightly weaker each puff
-                player.Speed.Y = AirJumpSpeed * puffStrength;
-                
-                floatTimer = 0f; // reset float timer for fresh puff
-                floatPuffTimer = FloatPuffInterval; // reset auto-puff timer
-                isFloating = true; // Enable floating after a puff jump
 
-                // Alternate puff direction for visual variety
+                // Puff velocity: consistent height, slight decay per jump so later puffs feel lighter
+                float puffStrength = 1f - (jumpCount - 1) * 0.08f;
+                player.Speed.Y = AirJumpSpeed * puffStrength;
+
+                // Immediately cancel any downward momentum for a crisp puff feel
+                if (player.Speed.Y > 0f)
+                    player.Speed.Y = AirJumpSpeed * puffStrength;
+
+                // If inhaling mid-air, spit and then puff (cancel inhale)
+                if (isInhaling)
+                    EndInhale();
+
+                floatTimer = 0f;
+                floatPuffTimer = FloatPuffInterval;
                 lastPuffDirection *= -1;
 
                 SpawnPuffParticles();
                 PlayPuffSound();
                 SetExpression(KirbyExpression.Puffed, 0.4f);
 
-                // Slight horizontal momentum on puff
+                // Slight horizontal nudge towards current input direction
                 if (Math.Abs(Input.MoveX.Value) > 0.1f)
-                {
                     player.Speed.X += Input.MoveX.Value * 15f;
-                }
             }
         }
 
@@ -395,6 +371,11 @@ namespace Celeste.Entities
                 TryPullNearbyEntities();
                 UpdateInhaleParticles();
 
+                // Slow down while inhaling — Kirby can still walk but slowly
+                if (Math.Abs(player.Speed.X) > 40f)
+                    player.Speed.X = Calc.Approach(player.Speed.X, Math.Sign(player.Speed.X) * 40f, 600f * Engine.DeltaTime);
+
+                // End inhale: timer expired OR player released the button
                 if (inhaleTimer <= 0f || !Input.Grab.Check)
                 {
                     EndInhale();
@@ -402,19 +383,18 @@ namespace Celeste.Entities
                 return;
             }
 
-            if (!Input.Grab.Pressed || inhaleCooldown > 0f)
+            if (inhaleCooldown > 0f)
                 return;
 
             var session = MaggyHelperModule.Session;
             CopyAbilityType currentPower = session?.CurrentCopyAbility ?? CopyAbilityType.None;
 
-            if (currentPower == CopyAbilityType.None)
+            if (Input.Grab.Pressed)
             {
-                StartInhale();
-            }
-            else
-            {
-                UseCopyAbility(currentPower);
+                if (currentPower == CopyAbilityType.None)
+                    StartInhale();
+                else
+                    UseCopyAbility(currentPower);
             }
         }
 
@@ -641,7 +621,13 @@ namespace Celeste.Entities
             isInhaling = false;
             inhaleCooldown = InhaleCooldownMax;
             inhaleParticles.Clear();
-            TrySwallow();
+
+            bool swallowed = TrySwallow();
+
+            // If nothing was swallowed, exhale a star — the core Ingeste/Kirby mechanic
+            if (!swallowed)
+                UseStarSpit();
+
             SetExpression(KirbyExpression.Normal, 0f);
         }
 
@@ -693,10 +679,10 @@ namespace Celeste.Entities
             }
         }
 
-        private void TrySwallow()
+        private bool TrySwallow()
         {
             if (player.Scene == null)
-                return;
+                return false;
 
             Vector2 mouthPos = player.Center + new Vector2((int)player.Facing * 8, -4);
             float swallowRange = 20f;
@@ -717,7 +703,7 @@ namespace Celeste.Entities
                     star.RemoveSelf();
                     SpawnSwallowParticles();
                     PlayAbilityGetEffect();
-                    return;
+                    return true;
                 }
 
                 // Swallow enemies with copy abilities
@@ -725,7 +711,7 @@ namespace Celeste.Entities
                 {
                     var session = MaggyHelperModule.Session;
                     CopyAbilityType newAbility = copySource.GetCopyAbility();
-                    
+
                     if (session != null)
                     {
                         session.CurrentCopyAbility = newAbility;
@@ -733,24 +719,22 @@ namespace Celeste.Entities
                     }
 
                     if (entity is Actor actor && actor is not global::Celeste.Player)
-                    {
                         actor.RemoveSelf();
-                    }
                     else
-                    {
                         entity.RemoveSelf();
-                    }
 
                     SpawnSwallowParticles();
-                    
+
                     if (newAbility != CopyAbilityType.None)
                     {
                         PlayAbilityGetEffect();
                         SetExpression(KirbyExpression.Happy, 1f);
                     }
-                    return;
+                    return true;
                 }
             }
+
+            return false;
         }
 
         // ═══════════════════════════════════════════════════════════════════════
@@ -868,9 +852,9 @@ namespace Celeste.Entities
                 SpawnAttackHitbox(hitPos, 20f, 3 * comboBonus, Color.Brown);
             }
             
-            // Momentum from swing
-            momentumCarry = (int)player.Facing * 50f * comboBonus;
-            
+            // Forward lunge from swing
+            player.Speed.X += (int)player.Facing * 60f * comboBonus;
+
             Audio.Play(SFX_PUFF, player.Position);
         }
 
@@ -970,9 +954,7 @@ namespace Celeste.Entities
             float wheelSpeed = 320f * (1f + comboCount * 0.15f);
             player.Speed.X = (int)player.Facing * wheelSpeed;
             player.Speed.Y = 0f;
-            
-            momentumCarry = (int)player.Facing * 100f;
-            
+
             if (player.Scene is Level level)
             {
                 // Wheel dust trail
@@ -1063,26 +1045,37 @@ namespace Celeste.Entities
 
         private void UseStarSpit()
         {
+            // Aim: up/diagonal if holding vertical input, else straight forward
             Vector2 dir = new Vector2((int)player.Facing, 0);
-            if (Math.Abs(Input.MoveY.Value) > 0.1f)
+            if (Math.Abs(Input.MoveY.Value) > 0.3f)
+            {
                 dir.Y = Input.MoveY.Value;
+                dir.X *= 0.7f; // soften diagonal
+            }
             dir.Normalize();
 
             if (player.Scene is Level level)
             {
-                // Spawn star projectile
                 var star = new KirbyProjectile(
-                    player.Center + dir * 8,
-                    dir * 180f,
+                    player.Center + dir * 10,
+                    dir * 220f,
                     Color.White,
                     CopyAbilityType.None,
                     1.5f
                 );
                 level.Add(star);
-                
-                level.Particles.Emit(ParticleTypes.Dust, player.Center + dir * 8, Color.White, dir.Angle());
+
+                // Muzzle poof
+                for (int i = 0; i < 5; i++)
+                {
+                    float angle = dir.Angle() + Calc.Random.Range(-0.35f, 0.35f);
+                    level.Particles.Emit(ParticleTypes.Dust, player.Center + dir * 10, Color.White * 0.9f, angle);
+                }
             }
-            
+
+            // Slight recoil so exhaling feels physical
+            player.Speed -= dir * 30f;
+
             Audio.Play(SFX_PUFF, player.Position);
         }
 

@@ -16,7 +16,7 @@ CassetteSong: event:/music/pusheen/Cassette/15_citadel
 
 Modes:
   - AudioState:
-      Music: guid://{7e8da26a-4993-4922-8c5f-2dc531e82ddd}
+      Music: event:/music/pusheen/lvl15/main
       Ambience: event:/env/pusheen/15_castle
     Inventory: Default
     HeartIsEnd: false
