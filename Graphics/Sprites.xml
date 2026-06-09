@@ -2313,29 +2313,29 @@
       <Anim id="flash" path="flash" delay="0.06"  frames="0-20" goto="loop"/>
     </MaggyHelper_flyFeather>
 
-  <MaggyHelper_refill path="objects/refill/" start="idle">
+  <refill path="objects/refill/" start="idle">
       <Justify x="0.5" y="0.5"/>
       <Loop id="idle" path="idle" delay="0.1" frames="0-4"/>
       <Anim id="spin" path="idle" delay="0.06" frames="0-4" goto="idle"/>
       <Anim id="flash" path="flash" delay="0.05" frames="0-5"/>
-    </MaggyHelper_refill>
+    </refill>
 
-  <MaggyHelper_refillFlash path="objects/refill/" start="flash">
+  <refillFlash path="objects/refill/" start="flash">
       <Justify x="0.5" y="0.5"/>
       <Anim id="flash" path="flash" delay="0.05" frames="0-5"/>
-    </MaggyHelper_refillFlash>
+    </refillFlash>
 
-  <MaggyHelper_refillTwo path="objects/refillTwo/" start="idle">
+  <refillTwo path="objects/refillTwo/" start="idle">
       <Justify x="0.5" y="0.5"/>
       <Loop id="idle" path="idle" delay="0.08" frames="0-12"/>
       <Anim id="spin" path="idle" delay="0.06" frames="0-12" goto="idle"/>
       <Anim id="flash" path="flash" delay="0.05" frames="0-5"/>
-    </MaggyHelper_refillTwo>
+    </refillTwo>
 
-  <MaggyHelper_refillTwoFlash path="objects/refillTwo/" start="flash">
+  <refillTwoFlash path="objects/refillTwo/" start="flash">
       <Justify x="0.5" y="0.5"/>
       <Anim id="flash" path="flash" delay="0.05" frames="0-5"/>
-    </MaggyHelper_refillTwoFlash>
+    </refillTwoFlash>
 
   <solarrefill path="objects/solarrefill/" start="idle">
       <Justify x="0.5" y="0.5"/>

@@ -205,6 +205,9 @@ namespace Celeste.Mod.MaggyHelper
             // Note: AreaMapData, ChapterActRegistry, and BossRosterRegistry
             // use lazy initialization - they'll be populated on first access.
 
+            // Hook GameLoader to load audio banks after FMOD is initialized
+            On.Celeste.GameLoader.LoadThread += OnGameLoaderLoadThread;
+
             // Register hooks
             // OuiChapterSelectHooks: Wraps OuiChapterSelect to catch crashes from updateScarf()
             OuiChapterSelectHooks.Load();
@@ -313,6 +316,13 @@ namespace Celeste.Mod.MaggyHelper
             base.LoadSaveData(index);
         }
 
+        private static void OnGameLoaderLoadThread(On.Celeste.GameLoader.orig_LoadThread orig, GameLoader self)
+        {
+            orig(self);
+            // Load audio banks here - FMOD is fully initialized after orig() completes
+            LoadAudioBanks();
+        }
+
         private static void LoadAudioBanks()
         {
             try
@@ -361,6 +371,7 @@ namespace Celeste.Mod.MaggyHelper
         public override void Unload()
         {
             // Unload manual hooks
+            On.Celeste.GameLoader.LoadThread -= OnGameLoaderLoadThread;
             OuiChapterSelectHooks.Unload();
             global::Celeste.RoomTransitionHandler.Unload();
             global::Celeste.IntroRemixHooks.Unload();
@@ -1315,12 +1326,6 @@ namespace Celeste.Mod.MaggyHelper
             base.LoadContent(firstLoad);
             // BossesExampleModule.LoadContent(firstLoad);
             // ProphecyFont is now lazy-initialized on first access
-
-            // Load FMOD audio banks after audio system is ready
-            if (firstLoad)
-            {
-                LoadAudioBanks();
-            }
 
             // Initialize backdrops (CustomBackdrop attributes auto-register, but ensure loading)
             InitializeBackdrops();
