@@ -285,7 +285,7 @@ namespace Celeste
             if (healthManager.Damage(1))
             {
                 // Damage applied successfully - don't call original Die
-                Logger.Log(LogLevel.Info, "KirbyHealthSystemHooks", "Spinner damage applied");
+                Logger.Log(LogLevel.Verbose, "KirbyHealthSystemHooks", "Spinner damage applied");
 
                 // If still alive, push player away from spinner
                 if (!healthManager.IsDead)

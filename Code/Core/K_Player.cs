@@ -246,6 +246,7 @@ namespace Celeste.Entities
         private const float KirbyHammerTime = .3f;
         private const float KirbyHammerRadius = 28f;
         private const int KirbyHammerDamage = 4;
+        private const float KirbyHammerStaminaCost = 30f;
 
         private const float KirbyStarSpitSpeed = 300f;
         private const int KirbyStarSpitDamage = 2;
@@ -468,13 +469,25 @@ namespace Celeste.Entities
         public bool KirbyModeActive = false;
         private float dashAttackCooldownTimer;
         private float combatSlashCooldownTimer;
+        private float combatSlashTimer;
         private int comboCount;
         private float comboWindowTimer;
         private Vector2 combatSlashDir;
         private float groundPoundTimer;
         private bool groundPounding;
+        private bool groundPoundImpacted;
         private int aerialComboHits;
         private float aerialComboTimer;
+
+        // Entities already hit by the current swing — each swing hits a target once
+        private readonly HashSet<Entity> swingHitEntities = new HashSet<Entity>();
+
+        // Rising-edge jump detection. Kirby air abilities must only trigger on a
+        // FRESH jump press; a buffered press (made just before landing or reaching
+        // a wall) is reserved for vanilla jumps so jump buffering works exactly
+        // like Madeline's.
+        private bool prevJumpCheck;
+        private bool jumpPressedFresh;
 
         // Kirby Vars
         private float kirbyInhaleTimer;
@@ -504,6 +517,7 @@ namespace Celeste.Entities
         private Vector2 skillGrappleTarget;
         private float skillGrappleLength;
         private float skillGrappleSwingAngle;
+        private float skillGrappleAngularVel;
 
         // Skill timers
         private float airDriftTimer;
@@ -659,8 +673,8 @@ namespace Celeste.Entities
             onCollideH = OnCollideH;
             onCollideV = OnCollideV;
 
-            // states
-            StateMachine = new StateMachine(31);
+            // states (must be at least StAquaGrapple + 1, or SetCallbacks below throws)
+            StateMachine = new StateMachine(StAquaGrapple + 1);
             StateMachine.SetCallbacks(StNormal, NormalUpdate, null, NormalBegin, NormalEnd);
             StateMachine.SetCallbacks(StClimb, ClimbUpdate, null, ClimbBegin, ClimbEnd);
             StateMachine.SetCallbacks(StDash, DashUpdate, DashCoroutine, DashBegin, DashEnd);
@@ -686,9 +700,9 @@ namespace Celeste.Entities
             StateMachine.SetCallbacks(StAttract, AttractUpdate, null, AttractBegin, AttractEnd);
             // Combat states
             StateMachine.SetCallbacks(StDashAttack, DashAttackUpdate, DashAttackCoroutine, DashAttackBegin, DashAttackEnd);
-            StateMachine.SetCallbacks(StCombatSlash, CombatSlashUpdate, CombatSlashCoroutine, CombatSlashBegin, CombatSlashEnd);
+            StateMachine.SetCallbacks(StCombatSlash, CombatSlashUpdate, null, CombatSlashBegin, CombatSlashEnd);
             StateMachine.SetCallbacks(StGroundPound, GroundPoundUpdate, GroundPoundCoroutine, GroundPoundBegin, GroundPoundEnd);
-            StateMachine.SetCallbacks(StAerialCombo, AerialComboUpdate, AerialComboCoroutine, AerialComboBegin, AerialComboEnd);
+            StateMachine.SetCallbacks(StAerialCombo, AerialComboUpdate, null, AerialComboBegin, AerialComboEnd);
             // Kirby states
             StateMachine.SetCallbacks(StKirbyInhale, KirbyInhaleUpdate, KirbyInhaleCoroutine, KirbyInhaleBegin, KirbyInhaleEnd);
             StateMachine.SetCallbacks(StKirbyFloat, KirbyFloatUpdate, null, KirbyFloatBegin, KirbyFloatEnd);
@@ -924,6 +938,10 @@ namespace Celeste.Entities
 
         public override void Render()
         {
+            // damage i-frames: flicker the whole player while invincible
+            if (skillInvincibilityTimer > 0f && flash && !Dead)
+                return;
+
             var was = Sprite.RenderPosition;
             Sprite.RenderPosition = Sprite.RenderPosition.Floor();
 
@@ -1019,7 +1037,10 @@ namespace Celeste.Entities
 
             PreviousPosition = Position;
 
-            //Vars       
+            // Rising edge of the jump button this frame (not a held/buffered press).
+            jumpPressedFresh = Input.Jump.Check && !prevJumpCheck;
+
+            //Vars
             {
                 // strawb reset timer
                 StrawberryCollectResetTimer -= Engine.DeltaTime;
@@ -1569,6 +1590,7 @@ namespace Celeste.Entities
                 swimSurfaceLoopSfx.Stop();
 
             wasOnGround = onGround;
+            prevJumpCheck = Input.Jump.Check;
         }
 
         private void CreateTrail()
@@ -1737,7 +1759,11 @@ namespace Celeste.Entities
                 UpdateKirbySprite();
 
             //Animation
-            if (InControl && Sprite.CurrentAnimationID != PlayerSprite.Throw && StateMachine.State != StTempleFall && 
+            // Combat/Kirby states (StDashAttack..StAquaGrapple) drive their own
+            // animations — don't override them every frame here.
+            bool inAbilityState = StateMachine.State >= StDashAttack && StateMachine.State <= StAquaGrapple;
+
+            if (InControl && !inAbilityState && Sprite.CurrentAnimationID != PlayerSprite.Throw && StateMachine.State != StTempleFall &&
                 StateMachine.State != StReflectionFall && StateMachine.State != StStarFly && StateMachine.State != StCassetteFly)
             {
                 if (StateMachine.State == StAttract)
@@ -3585,111 +3611,168 @@ namespace Celeste.Entities
                 }
             }
 
-            // Combat & Kirby ability checks (after normal movement)
+            // ─────────────────────────────────────────────────────────────────
+            // Kirby / combat ability triggers.
+            //
+            // These run AFTER every vanilla check above, so Madeline's core kit
+            // (dash, jump, coyote time, wall jump, climb, pickup) always behaves
+            // exactly like vanilla — the Dash button is never overridden while a
+            // dash is available, and a buffered jump press is always spent on a
+            // real jump first.
+            //
+            // Priority ladder (first match wins):
+            //   Dash button:  vanilla dash > Dash Attack chain > Cyclone Slash
+            //                 (air, only when out of dashes)
+            //   Grab button:  climb/pickup (vanilla, above) > Star Spit (inhaled)
+            //                 ground: Slide Tackle (ducking)
+            //                         > up: Hammer (with copy power) /
+            //                               Counter Stance (no power)
+            //                         > Inhale / Slash (neutral)
+            //                 air:    Aqua Grapple / Star Shot (up)
+            //                         > Ground Pound (down) > Aerial Combo
+            //   Jump button:  vanilla jump/wall jump (above) > Dive Kick (down)
+            //                 > Kirby Float (flaps left) > Air Drift (no flaps)
+            //                 Air abilities require a FRESH press — a buffered
+            //                 press is reserved for vanilla landing/wall jumps.
+            //
+            // Every accepted press consumes its buffer so one press can never
+            // trigger two abilities.
+            // ─────────────────────────────────────────────────────────────────
             if (CombatEnabled || KirbyModeActive)
             {
-                // Dash Attack: press Dash during an active dash attack window
-                if (Input.Dash.Pressed && DashAttacking && dashAttackCooldownTimer <= 0)
-                {
-                    Input.Dash.ConsumeBuffer();
-                    return StDashAttack;
-                }
+                bool kirby = KirbyModeActive || IsKirbyMode();
 
-                // Combat Slash: press Grab + direction while not climbing/holding
-                if (CombatEnabled && Input.Grab.Pressed && Holding == null && !Ducking
-                    && combatSlashCooldownTimer <= 0)
+                // Dash button — only reachable when the vanilla dash above didn't fire
+                if (Input.Dash.Pressed)
                 {
-                    if (onGround)
-                        return StCombatSlash;
-                    else
-                        return StAerialCombo;
-                }
-
-                // Ground Pound: press Down+Dash in the air
-                if (CombatEnabled && !onGround && Input.MoveY.Value == 1 && Input.Dash.Pressed && Dashes > 0)
-                {
-                    Input.Dash.ConsumeBuffer();
-                    return StGroundPound;
-                }
-
-                // Kirby Inhale: press Grab while in Kirby mode and not climbing
-                if (KirbyModeActive && Input.Grab.Pressed && Holding == null && !Ducking)
-                {
-                    return StKirbyInhale;
-                }
-
-                // Kirby Float: press Jump while in the air in Kirby mode (after normal jump fails)
-                if (KirbyModeActive && !onGround && kirbyFlapCount > 0 && Input.Jump.Pressed
-                    && jumpGraceTimer <= 0 && !WallJumpCheck(1) && !WallJumpCheck(-1))
-                {
-                    Input.Jump.ConsumeBuffer();
-                    return StKirbyFloat;
-                }
-
-                // Kirby Hammer: press Dash+Down on the ground in Kirby mode
-                if (KirbyModeActive && onGround && Input.Dash.Pressed && Input.MoveY.Value == 1 && Dashes > 0)
-                {
-                    Input.Dash.ConsumeBuffer();
-                    Dashes = Math.Max(0, Dashes - 1);
-                    return StKirbyHammer;
-                }
-
-                // Kirby Star Spit: press Grab after inhaling an enemy
-                if (KirbyModeActive && kirbyHasInhaledEnemy && Input.Grab.Pressed)
-                {
-                    return StKirbyStarSpit;
-                }
-
-                // Skill-Based Combat System - New abilities
-                if (IsKirbyMode() && skillStamina > 0)
-                {
-                    // Air Drift: Jump while in air (brief air control)
-                    if (!onGround && Input.Jump.Pressed && skillStamina >= AirDriftStaminaCost)
+                    // Dash Attack: chain off an active dash-attack window
+                    if (DashAttacking && dashAttackCooldownTimer <= 0)
                     {
-                        Input.Jump.ConsumeBuffer();
-                        return StAirDrift;
+                        Input.Dash.ConsumeBuffer();
+                        return StDashAttack;
                     }
 
-                    // Counter Stance: Grab on ground to parry
-                    if (onGround && Input.Grab.Pressed && skillStamina >= CounterStanceStaminaCost)
+                    // Cyclone Slash: air spin when out of dashes
+                    if (kirby && !onGround && Dashes <= 0 && skillStamina >= CycloneSlashStaminaCost)
+                    {
+                        Input.Dash.ConsumeBuffer();
+                        return StCycloneSlash;
+                    }
+                }
+
+                // Grab button abilities (climb and pickup already had their chance above)
+                if (Input.Grab.Pressed && Holding == null)
+                {
+                    // Star Spit: anywhere, if something was inhaled
+                    if (kirby && kirbyHasInhaledEnemy)
                     {
                         Input.Grab.ConsumeBuffer();
-                        return StCounterStance;
+                        return StKirbyStarSpit;
                     }
 
-                    // Dive Kick: Down + Jump in air for fast attack
-                    if (!onGround && Input.Jump.Pressed && Input.MoveY.Value > 0 && skillStamina >= DiveKickStaminaCost)
+                    if (onGround)
+                    {
+                        // Slide Tackle: grab while ducking (Kirby's slide)
+                        if (kirby && Ducking && skillStamina >= SlideTackleStaminaCost)
+                        {
+                            Input.Grab.ConsumeBuffer();
+                            return StSlideTackle;
+                        }
+
+                        if (!Ducking)
+                        {
+                            // Up + grab: with a copy power Kirby swings the weapon
+                            // (Hammer); bare Kirby raises his guard (Counter Stance)
+                            if (kirby && Input.MoveY.Value == -1)
+                            {
+                                if (CurrentPowerState != KirbyMode.KirbyPowerState.None
+                                    && skillStamina >= KirbyHammerStaminaCost)
+                                {
+                                    Input.Grab.ConsumeBuffer();
+                                    return StKirbyHammer;
+                                }
+
+                                if (skillStamina >= CounterStanceStaminaCost)
+                                {
+                                    Input.Grab.ConsumeBuffer();
+                                    return StCounterStance;
+                                }
+                            }
+
+                            // Neutral grab: Inhale in Kirby mode, Combat Slash otherwise
+                            if (kirby)
+                            {
+                                Input.Grab.ConsumeBuffer();
+                                return StKirbyInhale;
+                            }
+
+                            if (CombatEnabled && combatSlashCooldownTimer <= 0)
+                            {
+                                Input.Grab.ConsumeBuffer();
+                                return StCombatSlash;
+                            }
+                        }
+                    }
+                    else if (!Ducking)
+                    {
+                        // Up + grab: Aqua Grapple if unlocked and a solid anchor
+                        // exists, otherwise Star Shot charge
+                        if (kirby && Input.MoveY.Value == -1)
+                        {
+                            if (skillHasAquaGrappleUnlocked && skillStamina >= AquaGrappleStaminaCost
+                                && TryFindGrappleAnchor(out skillGrappleTarget))
+                            {
+                                Input.Grab.ConsumeBuffer();
+                                return StAquaGrapple;
+                            }
+
+                            if (skillStamina >= StarShotStaminaCost)
+                            {
+                                Input.Grab.ConsumeBuffer();
+                                return StStarShot;
+                            }
+                        }
+
+                        // Down + grab: Ground Pound (Kirby's stone)
+                        if (kirby && Input.MoveY.Value == 1)
+                        {
+                            Input.Grab.ConsumeBuffer();
+                            return StGroundPound;
+                        }
+
+                        // Neutral air grab: Aerial Combo
+                        if (CombatEnabled && combatSlashCooldownTimer <= 0)
+                        {
+                            Input.Grab.ConsumeBuffer();
+                            return StAerialCombo;
+                        }
+                    }
+                }
+
+                // Jump button air abilities — fresh presses only, so buffered
+                // presses still become vanilla jumps on landing / at walls
+                if (kirby && !onGround && Input.Jump.Pressed && jumpPressedFresh
+                    && jumpGraceTimer <= 0 && !WallJumpCheck(1) && !WallJumpCheck(-1))
+                {
+                    // Dive Kick: down + jump
+                    if (Input.MoveY.Value == 1 && skillStamina >= DiveKickStaminaCost)
                     {
                         Input.Jump.ConsumeBuffer();
                         return StDiveKick;
                     }
 
-                    // Cyclone Slash: Dash while in air for spin attack
-                    if (!onGround && Input.Dash.Pressed && skillStamina >= CycloneSlashStaminaCost)
+                    // Kirby Float: signature puff jump
+                    if (kirbyFlapCount > 0 && Holding == null)
                     {
-                        Input.Dash.ConsumeBuffer();
-                        return StCycloneSlash;
+                        Input.Jump.ConsumeBuffer();
+                        return StKirbyFloat;
                     }
 
-                    // Star Shot: Grab while in air to charge and shoot
-                    if (!onGround && Input.Grab.Pressed && skillStamina >= StarShotStaminaCost)
+                    // Air Drift: recovery drift once out of flaps
+                    if (skillStamina >= AirDriftStaminaCost)
                     {
-                        Input.Grab.ConsumeBuffer();
-                        return StStarShot;
-                    }
-
-                    // Slide Tackle: Down + Dash on ground for low dash attack
-                    if (onGround && Input.Dash.Pressed && Input.MoveY.Value > 0 && skillStamina >= SlideTackleStaminaCost)
-                    {
-                        Input.Dash.ConsumeBuffer();
-                        return StSlideTackle;
-                    }
-
-                    // Aqua Grapple: Grab + Up in air (if unlocked)
-                    if (!onGround && Input.Grab.Pressed && skillHasAquaGrappleUnlocked && skillStamina >= AquaGrappleStaminaCost)
-                    {
-                        Input.Grab.ConsumeBuffer();
-                        return StAquaGrapple;
+                        Input.Jump.ConsumeBuffer();
+                        return StAirDrift;
                     }
                 }
             }
@@ -6208,6 +6291,7 @@ namespace Celeste.Entities
 
         private void DashAttackBegin()
         {
+            StartSwing();
             dashAttackCooldownTimer = DashAttackCooldown;
             dashChainCount++;
             dashChainTimer = .5f;
@@ -6275,13 +6359,25 @@ namespace Celeste.Entities
 
         private void CombatSlashBegin()
         {
+            StartSlashHit();
+        }
+
+        // Sets up one slash swing. Called from Begin and from each combo chain —
+        // returning the current state index to the StateMachine is a no-op, so
+        // chains must re-run the swing setup explicitly.
+        private void StartSlashHit()
+        {
+            StartSwing();
             combatSlashCooldownTimer = CombatSlashCooldown;
+            combatSlashTimer = CombatSlashTime;
             comboCount = Math.Min(comboCount + 1, MaxComboCount);
             comboWindowTimer = ComboWindowTime;
 
             combatSlashDir = lastAim;
             if (combatSlashDir == Vector2.Zero)
                 combatSlashDir = Vector2.UnitX * (int)Facing;
+            if (combatSlashDir.X != 0)
+                Facing = (Facings)Math.Sign(combatSlashDir.X);
 
             Speed = combatSlashDir * CombatSlashSpeed * (1f + comboCount * 0.15f);
 
@@ -6302,36 +6398,39 @@ namespace Celeste.Entities
         {
             DealCombatDamageInRadius(Center + combatSlashDir * 12f, CombatSlashRange, CombatSlashDamage + comboCount);
 
-            // allow chain into next combo hit
+            // chain into the next combo hit
             if (Input.Grab.Pressed && comboCount < MaxComboCount && combatSlashCooldownTimer <= 0)
+            {
+                Input.Grab.ConsumeBuffer();
+                StartSlashHit();
                 return StCombatSlash;
+            }
 
+            // dash always cancels (vanilla responsiveness)
             if (CanDash)
                 return StartDash();
 
-            return StCombatSlash;
-        }
-
-        private IEnumerator CombatSlashCoroutine()
-        {
-            yield return null;
-
-            yield return CombatSlashTime;
-
-            // on last combo hit, bonus knockback burst
-            if (comboCount >= MaxComboCount)
+            combatSlashTimer -= Engine.DeltaTime;
+            if (combatSlashTimer <= 0)
             {
-                level.Displacement.AddBurst(Center, .5f, 8, 48, .4f, Ease.QuadOut, Ease.QuadOut);
-                Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
-                DealCombatDamageInRadius(Center, CombatSlashRange * 1.5f, CombatSlashDamage * 2);
-                comboCount = 0;
+                // on last combo hit, bonus knockback burst
+                if (comboCount >= MaxComboCount)
+                {
+                    level.Displacement.AddBurst(Center, .5f, 8, 48, .4f, Ease.QuadOut, Ease.QuadOut);
+                    Input.Rumble(RumbleStrength.Strong, RumbleLength.Medium);
+                    StartSwing();
+                    DealCombatDamageInRadius(Center, CombatSlashRange * 1.5f, CombatSlashDamage * 2);
+                    comboCount = 0;
 
-                CelesteGame.Freeze(.05f);
-                Sprite.Scale = new Vector2(.6f, 1.4f);
+                    CelesteGame.Freeze(.05f);
+                    Sprite.Scale = new Vector2(.6f, 1.4f);
+                }
+
+                Speed *= 0.5f;
+                return StNormal;
             }
 
-            Speed *= 0.5f;
-            StateMachine.State = StNormal;
+            return StCombatSlash;
         }
 
         #endregion
@@ -6341,10 +6440,10 @@ namespace Celeste.Entities
         private void GroundPoundBegin()
         {
             groundPounding = true;
+            groundPoundImpacted = false;
             groundPoundTimer = 0;
             Speed.X = 0;
             Speed.Y = 0;
-            Dashes = Math.Max(0, Dashes - 1);
 
             Sprite.Play(PlayerSprite.FallFast);
             Sprite.Scale = new Vector2(.5f, 1.5f);
@@ -6359,14 +6458,20 @@ namespace Celeste.Entities
 
         private int GroundPoundUpdate()
         {
-            // brief hover at the top
-            if (groundPoundTimer < .08f)
+            if (groundPoundImpacted)
             {
+                // post-impact: the coroutine set the bounce; just apply gravity
+                Speed.Y = Calc.Approach(Speed.Y, MaxFall, Gravity * Engine.DeltaTime);
+            }
+            else if (groundPoundTimer < .08f)
+            {
+                // brief hover at the top
                 groundPoundTimer += Engine.DeltaTime;
                 Speed.Y = 0;
             }
             else
             {
+                // slam
                 Speed.Y = GroundPoundSpeed;
                 Speed.X = 0;
             }
@@ -6379,16 +6484,12 @@ namespace Celeste.Entities
 
         private IEnumerator GroundPoundCoroutine()
         {
-            // brief hover
-            yield return .08f;
-
-            // slam down
-            Speed.Y = GroundPoundSpeed;
-
+            // brief hover, then slam — GroundPoundUpdate drives the speeds
             while (!onGround)
                 yield return null;
 
             // impact
+            groundPoundImpacted = true;
             Speed.Y = 0;
             CelesteGame.Freeze(.05f);
             level.DirectionalShake(Vector2.UnitY, GroundPoundShakeTime);
@@ -6399,18 +6500,28 @@ namespace Celeste.Entities
             Sprite.Scale = new Vector2(1.6f, .4f);
 
             // deal damage in a radius at the landing point
+            StartSwing();
             DealCombatDamageInRadius(BottomCenter, GroundPoundRadius, GroundPoundDamage);
 
-            // bounce upward
+            if (!Inventory.NoRefills)
+                RefillDash();
+            RefillStamina();
+
+            // jump-cancel: a buffered jump press at impact becomes a real jump,
+            // keeping the landing as responsive as Madeline's
+            if (Input.Jump.Pressed)
+            {
+                Jump();
+                StateMachine.State = StNormal;
+                yield break;
+            }
+
+            // otherwise bounce upward
             Speed.Y = GroundPoundBounceSpeed;
             varJumpSpeed = Speed.Y;
             varJumpTimer = BounceVarJumpTime;
             AutoJump = true;
             AutoJumpTimer = BounceAutoJumpTime;
-
-            if (!Inventory.NoRefills)
-                RefillDash();
-            RefillStamina();
 
             yield return .1f;
 
@@ -6424,7 +6535,15 @@ namespace Celeste.Entities
         private void AerialComboBegin()
         {
             aerialComboHits = 0;
-            aerialComboTimer = 0;
+            StartAerialHit();
+        }
+
+        // Sets up one aerial swing; each chained hit re-aims and resets the timer.
+        private void StartAerialHit()
+        {
+            StartSwing();
+            aerialComboHits++;
+            aerialComboTimer = AerialComboTime;
 
             combatSlashDir = lastAim;
             if (combatSlashDir == Vector2.Zero)
@@ -6449,21 +6568,12 @@ namespace Celeste.Entities
         {
             DealCombatDamageInRadius(Center + combatSlashDir * 10f, CombatSlashRange, AerialComboDamage);
 
-            // chain hits
+            // chain hits (one buffered press = exactly one extra hit)
             if (Input.Grab.Pressed && aerialComboHits < MaxAerialHits)
             {
-                aerialComboHits++;
-                combatSlashDir = lastAim;
-                if (combatSlashDir == Vector2.Zero)
-                    combatSlashDir = Vector2.UnitX * (int)Facing;
-
-                Speed = combatSlashDir * AerialComboHitSpeed;
-                Speed.Y += AerialComboUpSpeed;
-
-                SlashFx.Burst(Center, combatSlashDir.Angle());
-                Input.Rumble(RumbleStrength.Light, RumbleLength.Short);
-                Sprite.Scale = new Vector2(1.2f, .8f);
-                aerialComboTimer = 0;
+                Input.Grab.ConsumeBuffer();
+                StartAerialHit();
+                return StAerialCombo;
             }
 
             if (CanDash)
@@ -6472,29 +6582,26 @@ namespace Celeste.Entities
             // gravity
             Speed.Y = Calc.Approach(Speed.Y, MaxFall, Gravity * .5f * Engine.DeltaTime);
 
-            return StAerialCombo;
-        }
-
-        private IEnumerator AerialComboCoroutine()
-        {
-            yield return null;
-
-            yield return AerialComboTime;
-
-            // if combo is finished, exit with a small upward boost
-            if (aerialComboHits >= MaxAerialHits)
+            aerialComboTimer -= Engine.DeltaTime;
+            if (aerialComboTimer <= 0)
             {
-                level.Displacement.AddBurst(Center, .3f, 8, 32, .3f, Ease.QuadOut, Ease.QuadOut);
-                Speed.Y = Math.Min(Speed.Y, -80f);
-                Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
+                // if combo is finished, exit with a small upward boost
+                if (aerialComboHits >= MaxAerialHits)
+                {
+                    level.Displacement.AddBurst(Center, .3f, 8, 32, .3f, Ease.QuadOut, Ease.QuadOut);
+                    Speed.Y = Math.Min(Speed.Y, -80f);
+                    Input.Rumble(RumbleStrength.Medium, RumbleLength.Medium);
+                }
+
+                AutoJump = true;
+                AutoJumpTimer = 0;
+                varJumpSpeed = Speed.Y;
+                varJumpTimer = VarJumpTime;
+
+                return StNormal;
             }
 
-            AutoJump = true;
-            AutoJumpTimer = 0;
-            varJumpSpeed = Speed.Y;
-            varJumpTimer = VarJumpTime;
-
-            StateMachine.State = StNormal;
+            return StAerialCombo;
         }
 
         #endregion
@@ -6517,7 +6624,7 @@ namespace Celeste.Entities
         private int KirbyInhaleUpdate()
         {
             kirbyInhaleTimer -= Engine.DeltaTime;
-            Speed.X = 0;
+            Speed.X = Calc.Approach(Speed.X, 0, RunReduce * Engine.DeltaTime);
 
             // gravity
             if (!onGround)
@@ -6563,9 +6670,15 @@ namespace Celeste.Entities
 
         private void PullAndInhaleEnemies(Vector2 origin, Vector2 direction)
         {
-            foreach (Entity entity in Scene.Tracker.GetEntities<Actor>())
+            foreach (Entity entity in Scene.Entities)
             {
-                if (entity == this || entity is Player)
+                // only pull things that can actually be fought — never Theo,
+                // holdables, or other neutral actors
+                if (!(entity is Actor) || !IsDamageableTarget(entity))
+                    continue;
+
+                // bosses are too big to inhale
+                if (entity is Bosses.BaseBoss || entity is Boss)
                     continue;
 
                 float dist = Vector2.Distance(entity.Center, origin);
@@ -6609,8 +6722,10 @@ namespace Celeste.Entities
             kirbyFlapCount = Math.Max(0, kirbyFlapCount - 1);
             kirbyFlapScaleTimer = KirbyFlapScaleTime;
 
-            // Initial upward kick
-            Speed.Y = KirbyFloatSpeed;
+            // Initial upward kick — preserves stronger upward momentum so
+            // jump/dash height carries into the float instead of being clipped
+            Speed.Y = Math.Min(Speed.Y, KirbyFloatSpeed);
+            varJumpTimer = 0;
 
             // Puffed-up squash on entry
             Sprite.Scale = new Vector2(1.3f, 0.75f);
@@ -6654,25 +6769,41 @@ namespace Celeste.Entities
             // Gentle float gravity ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â drifts slowly downward
             Speed.Y = Calc.Approach(Speed.Y, KirbyFloatFallSpeed, KirbyFloatGravity * Engine.DeltaTime);
 
-            // Fast-fall: hold down to drop out of float
+            // Fast-fall: hold down to puff out the air and drop out of float
             if (Input.MoveY.Value > 0)
             {
-                Speed.Y = 200f;
+                Speed.Y = Math.Max(Speed.Y, KirbyAirPuffSpeed);
                 return StNormal;
             }
 
-            // Additional flap: press jump again to bounce upward (costs a flap)
-            if (Input.Jump.Pressed && kirbyFlapCount > 0)
+            if (Input.Jump.Pressed)
             {
-                Input.Jump.ConsumeBuffer();
-                kirbyFlapCount--;
-                kirbyFlapScaleTimer = KirbyFlapScaleTime;
+                // Wall jump escape: floating against a wall jumps off it,
+                // exactly like Madeline would
+                if (WallJumpCheck(1))
+                {
+                    WallJump(-1);
+                    return StNormal;
+                }
+                if (WallJumpCheck(-1))
+                {
+                    WallJump(1);
+                    return StNormal;
+                }
 
-                Speed.Y = KirbyFloatSpeed;
-                Sprite.Scale = new Vector2(1.35f, 0.7f);
+                // Additional flap: press jump again to bounce upward (costs a flap)
+                if (kirbyFlapCount > 0)
+                {
+                    Input.Jump.ConsumeBuffer();
+                    kirbyFlapCount--;
+                    kirbyFlapScaleTimer = KirbyFlapScaleTime;
 
-                Play(Sfxs.char_mad_jump);
-                level.Particles.Emit(P_DashA, 2, BottomCenter, Vector2.UnitX * 4, Calc.Down);
+                    Speed.Y = KirbyFloatSpeed;
+                    Sprite.Scale = new Vector2(1.35f, 0.7f);
+
+                    Play(Sfxs.char_mad_jump);
+                    level.Particles.Emit(P_DashA, 2, BottomCenter, Vector2.UnitX * 4, Calc.Down);
+                }
             }
 
             // Out of flaps ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â gravity takes over, return to normal when going fast enough downward
@@ -6707,7 +6838,9 @@ namespace Celeste.Entities
 
         private void KirbyHammerBegin()
         {
+            StartSwing();
             kirbyHammerTimer = KirbyHammerTime;
+            skillStamina = Math.Max(0f, skillStamina - KirbyHammerStaminaCost);
             Speed = Vector2.Zero;
 
             Sprite.Play(PlayerSprite.Dash);
@@ -6725,15 +6858,15 @@ namespace Celeste.Entities
         {
             kirbyHammerTimer -= Engine.DeltaTime;
 
-            // brief pause then slam forward
+            // brief wind-up, then slam forward — only the slam half deals damage
             if (kirbyHammerTimer < KirbyHammerTime * .5f)
             {
                 Speed.X = KirbyHammerSpeed * (int)Facing;
                 if (!onGround)
                     Speed.Y = Calc.Approach(Speed.Y, MaxFall, Gravity * Engine.DeltaTime);
-            }
 
-            DealCombatDamageInRadius(Center + Vector2.UnitX * (int)Facing * 16f, KirbyHammerRadius, KirbyHammerDamage);
+                DealCombatDamageInRadius(Center + Vector2.UnitX * (int)Facing * 16f, KirbyHammerRadius, KirbyHammerDamage);
+            }
 
             return StKirbyHammer;
         }
@@ -6822,7 +6955,9 @@ namespace Celeste.Entities
 
         private void SpawnKirbyStarProjectile(Vector2 from, Vector2 direction)
         {
-            // deal damage along the projectile path instantly (simplified)
+            // deal damage along the projectile path instantly (simplified) —
+            // one swing, so each enemy on the path is hit exactly once
+            StartSwing();
             direction = direction.SafeNormalize();
             for (float d = 0; d < 120f; d += 8f)
             {
@@ -6850,7 +6985,8 @@ namespace Celeste.Entities
             airDriftTimer = AirDriftDuration;
             skillStamina -= AirDriftStaminaCost;
 
-            Speed.Y = -60f;
+            // keep stronger upward momentum instead of clipping it
+            Speed.Y = Math.Min(Speed.Y, -60f);
 
             if (Sprite != null)
             {
@@ -6889,11 +7025,9 @@ namespace Celeste.Entities
 
             airDriftTimer -= Engine.DeltaTime;
 
+            // state machine calls AirDriftEnd on the transition
             if (airDriftTimer <= 0f || onGround)
-            {
-                AirDriftEnd();
                 return StNormal;
-            }
 
             int moveX = Input.MoveX.Value;
             Speed.X = Calc.Approach(Speed.X, AirDriftSpeed * moveX, 400f * Engine.DeltaTime);
@@ -6932,6 +7066,7 @@ namespace Celeste.Entities
                 Audio.Play("event:/char/pusheen/kirby/kirby_knight/spin", Position); // TODO: add kirby_knight/* sub-bank to FMOD & SoundBank
             }
 
+            StartSwing();
             DealCombatDamageInRadius(Center, CycloneSlashRadius, 1);
         }
 
@@ -6959,21 +7094,19 @@ namespace Celeste.Entities
 
             cycloneSlashTimer -= Engine.DeltaTime;
 
+            // state machine calls CycloneSlashEnd on the transition
             if (cycloneSlashTimer <= 0f || onGround)
-            {
-                CycloneSlashEnd();
                 return StNormal;
-            }
 
-            if (Sprite != null)
-            {
-                Sprite.Rotation = 0f;
-                if (!Sprite.CurrentAnimationID.Equals("spin"))
-                    Sprite.Play("spin");
-            }
+            if (Sprite != null && Sprite.Has("spin") && !Sprite.CurrentAnimationID.Equals("spin"))
+                Sprite.Play("spin");
 
+            // fixed-rate damage ticks; each tick is a fresh swing
             if (Scene.OnInterval(0.1f))
+            {
+                StartSwing();
                 DealCombatDamageInRadius(Center, CycloneSlashRadius, 1);
+            }
 
             Speed.Y = Calc.Approach(Speed.Y, -20f, 300f * Engine.DeltaTime);
 
@@ -7031,11 +7164,9 @@ namespace Celeste.Entities
             Speed.Y = Calc.Approach(Speed.Y, -15f, 150f * Engine.DeltaTime);
             Speed.X *= 0.9f;
 
+            // release fires the shot — StarShotEnd (called by the state machine) handles it
             if (!Input.Grab.Check)
-            {
-                StarShotEnd();
                 return StNormal;
-            }
 
             if (Sprite != null && Scene.OnInterval(0.1f))
             {
@@ -7053,7 +7184,8 @@ namespace Celeste.Entities
         {
             if (level == null) return;
 
-            Vector2 direction = new Vector2(Input.MoveX.Value, Input.MoveY.Value).SafeNormalize();
+            // fire along the same aim vector every other ability uses
+            Vector2 direction = lastAim;
             if (direction == Vector2.Zero)
                 direction = Vector2.UnitX * (int)Facing;
 
@@ -7071,7 +7203,8 @@ namespace Celeste.Entities
             Audio.Play("event:/char/pusheen/kirby/spit", Position); // TODO: add to FMOD bank & SoundBank.Char.Kirby
             Speed = -direction * 80f * charge;
 
-            // Deal damage along path
+            // Deal damage along path — one swing, so each enemy is hit once
+            StartSwing();
             for (float d = 0; d < 120f * charge; d += 8f)
             {
                 Vector2 checkPos = Center + direction * d;
@@ -7084,9 +7217,13 @@ namespace Celeste.Entities
         // Slide Tackle State
         private void SlideTackleBegin()
         {
+            StartSwing();
             skillIsSlideTackling = true;
             slideTackleTimer = SlideTackleDuration;
             skillStamina -= SlideTackleStaminaCost;
+
+            // use the duck hitbox so the slide fits under low gaps
+            Ducking = true;
 
             Speed.X = SlideTackleSpeed * (int)Facing;
             Speed.Y = 0f;
@@ -7121,8 +7258,6 @@ namespace Celeste.Entities
                 Sprite.Scale = Vector2.One;
                 Sprite.Color = Color.White;
             }
-
-            Speed.X *= 0.3f;
         }
 
         private int SlideTackleUpdate()
@@ -7132,24 +7267,30 @@ namespace Celeste.Entities
 
             slideTackleTimer -= Engine.DeltaTime;
 
-            if (slideTackleTimer <= 0f || !onGround)
+            // sliding off a ledge keeps full momentum (slide-launch tech)
+            if (!onGround)
+                return StNormal;
+
+            // jump-cancel through Jump() so lift boost, var jump and buffering
+            // all behave exactly like a vanilla jump — sliding into a jump keeps
+            // the slide's speed, like a mini super-dash
+            if (Input.Jump.Pressed)
             {
-                SlideTackleEnd();
+                Jump();
+                return StNormal;
+            }
+
+            // timer ran out: ease the slide back down
+            if (slideTackleTimer <= 0f)
+            {
+                Speed.X *= 0.5f;
                 return StNormal;
             }
 
             Speed.X = Calc.Approach(Speed.X, SlideTackleSpeed * (int)Facing, 100f * Engine.DeltaTime);
 
-            if (Input.Jump.Pressed)
-            {
-                Input.Jump.ConsumeBuffer();
-                SlideTackleEnd();
-                Speed.Y = -200f;
-                return StNormal;
-            }
-
-            if (Scene.OnInterval(0.05f))
-                DealCombatDamageInRadius(Center, 24f, 1);
+            // single swing for the whole slide: each enemy is hit exactly once
+            DealCombatDamageInRadius(Center, 24f, 1);
 
             return StSlideTackle;
         }
@@ -7210,11 +7351,9 @@ namespace Celeste.Entities
             counterStanceTimer -= Engine.DeltaTime;
             parryWindowTimer -= Engine.DeltaTime;
 
+            // state machine calls CounterStanceEnd on the transition
             if (counterStanceTimer <= 0f || !onGround)
-            {
-                CounterStanceEnd();
                 return StNormal;
-            }
 
             if (parryWindowTimer > 0f)
             {
@@ -7233,13 +7372,31 @@ namespace Celeste.Entities
                     Sprite.Color = Color.Gold * 0.7f;
             }
 
-            if (Input.Dash.Pressed)
-            {
-                CounterStanceEnd();
-                return StNormal;
-            }
+            // dash cancels the stance
+            if (CanDash)
+                return StartDash();
 
             return StCounterStance;
+        }
+
+        // Cached per-type "is this a parryable threat" answer so the parry check
+        // doesn't do string work on every entity every frame.
+        private static readonly Dictionary<Type, bool> parryThreatTypeCache = new Dictionary<Type, bool>();
+
+        private bool IsParryThreat(Entity entity)
+        {
+            if (entity == this || entity is Player || entity is K_Player)
+                return false;
+
+            Type type = entity.GetType();
+            if (!parryThreatTypeCache.TryGetValue(type, out bool threat))
+            {
+                threat = GetTakeDamageMethod(type) != null
+                    || type.Name.Contains("Enemy")
+                    || type.Name.Contains("Projectile");
+                parryThreatTypeCache[type] = threat;
+            }
+            return threat;
         }
 
         private bool CheckParryContact()
@@ -7248,14 +7405,8 @@ namespace Celeste.Entities
 
             foreach (var entity in level.Entities)
             {
-                if (Vector2.Distance(Center, entity.Center) < 40f)
-                {
-                    if (entity.GetType().Name.Contains("Enemy") ||
-                        entity.GetType().Name.Contains("Projectile"))
-                    {
-                        return true;
-                    }
-                }
+                if (IsParryThreat(entity) && Vector2.DistanceSquared(Center, entity.Center) < 40f * 40f)
+                    return true;
             }
             return false;
         }
@@ -7275,13 +7426,12 @@ namespace Celeste.Entities
             level.Flash(Color.Gold * 0.4f, true);
             level.Shake(0.3f);
             Audio.Play("event:/char/pusheen/kirby/transform_in", Position); // TODO: add to FMOD bank & SoundBank.Char.Kirby
-
-            CounterStanceEnd();
         }
 
         // Dive Kick State
         private void DiveKickBegin()
         {
+            StartSwing();
             skillIsDiveKicking = true;
             diveKickTimer = DiveKickDuration;
             skillStamina -= DiveKickStaminaCost;
@@ -7319,6 +7469,8 @@ namespace Celeste.Entities
                 level.Particles.Emit(ParticleTypes.SparkyDust, 12, BottomCenter, Vector2.One * 24f);
                 level.Shake(0.3f);
                 Audio.Play("event:/char/pusheen/kirby/kirby_knight/punch_Final", Position); // TODO: add kirby_knight/* sub-bank to FMOD & SoundBank
+                // landing shockwave is its own swing so kicked enemies get hit too
+                StartSwing();
                 DealCombatDamageInRadius(BottomCenter, 40f, 2);
             }
 
@@ -7336,11 +7488,9 @@ namespace Celeste.Entities
 
             diveKickTimer -= Engine.DeltaTime;
 
+            // state machine calls DiveKickEnd on the transition (landing impact)
             if (diveKickTimer <= 0f || onGround)
-            {
-                DiveKickEnd();
                 return StNormal;
-            }
 
             Speed.Y = DiveKickSpeed;
 
@@ -7359,27 +7509,25 @@ namespace Celeste.Entities
         }
 
         // Aqua Grapple State
+        // skillGrappleTarget is found and validated by TryFindGrappleAnchor in
+        // NormalUpdate before the state is entered — no anchor, no grapple.
         private void AquaGrappleBegin()
         {
             skillIsAquaGrappling = true;
             aquaGrappleTimer = AquaGrappleMaxDuration;
             skillStamina -= AquaGrappleStaminaCost;
 
-            Vector2 aimDirection = new Vector2(Input.MoveX.Value, Math.Min(Input.MoveY.Value, 0)).SafeNormalize();
-            if (aimDirection == Vector2.Zero)
-                aimDirection = new Vector2((int)Facing, -0.5f).SafeNormalize();
+            skillGrappleLength = MathHelper.Clamp(Vector2.Distance(Center, skillGrappleTarget), 30f, AquaGrappleMaxRange);
 
-            skillGrappleTarget = FindGrappleAnchor(aimDirection);
-            skillGrappleLength = Vector2.Distance(Center, skillGrappleTarget);
+            // pendulum angle of the player around the anchor
+            // (player = anchor + length * (cos a, sin a))
+            Vector2 toPlayer = Center - skillGrappleTarget;
+            skillGrappleSwingAngle = (float)Math.Atan2(toPlayer.Y, toPlayer.X);
 
-            if (skillGrappleLength > AquaGrappleMaxRange)
-            {
-                skillGrappleLength = AquaGrappleMaxRange;
-                skillGrappleTarget = Center + aimDirection * AquaGrappleMaxRange;
-            }
-
-            Vector2 toTarget = skillGrappleTarget - Center;
-            skillGrappleSwingAngle = (float)Math.Atan2(toTarget.Y, toTarget.X);
+            // carry the player's current velocity into the swing as angular
+            // momentum (project onto the tangent direction)
+            Vector2 tangent = new Vector2(-(float)Math.Sin(skillGrappleSwingAngle), (float)Math.Cos(skillGrappleSwingAngle));
+            skillGrappleAngularVel = Vector2.Dot(Speed, tangent) / skillGrappleLength;
 
             if (Sprite != null)
             {
@@ -7408,8 +7556,6 @@ namespace Celeste.Entities
             skillComboCount++;
             skillLastActionTime = Scene.RawTimeActive;
 
-            Speed *= 0.8f;
-
             if (Sprite != null)
             {
                 Sprite.Scale = Vector2.One;
@@ -7430,40 +7576,52 @@ namespace Celeste.Entities
 
             aquaGrappleTimer -= Engine.DeltaTime;
 
-            if (aquaGrappleTimer <= 0f || onGround || Input.Jump.Pressed)
+            // jump release: convert swing momentum into a jump with variable
+            // height, so releases are controllable like every other jump
+            if (Input.Jump.Pressed)
             {
-                if (Input.Jump.Pressed)
-                {
-                    Input.Jump.ConsumeBuffer();
-                    Speed.Y = -250f;
-                }
-                AquaGrappleEnd();
+                Input.Jump.ConsumeBuffer();
+                Speed.Y = Math.Min(Speed.Y, JumpSpeed * 1.5f);
+                varJumpSpeed = Speed.Y;
+                varJumpTimer = VarJumpTime;
+                AutoJump = true;
+                AutoJumpTimer = BounceAutoJumpTime;
                 return StNormal;
             }
 
-            Vector2 toTarget = skillGrappleTarget - Center;
-            float currentAngle = (float)Math.Atan2(toTarget.Y, toTarget.X);
+            if (aquaGrappleTimer <= 0f || onGround)
+                return StNormal;
 
+            // pendulum: gravity torque pulls the swing toward hanging straight
+            // down; angular velocity persists so swings build real momentum
+            skillGrappleAngularVel += (AquaGrappleSwingGravity / skillGrappleLength) * (float)Math.Cos(skillGrappleSwingAngle) * Engine.DeltaTime;
+
+            // pump the swing with left/right input
             int moveX = Input.MoveX.Value;
             if (moveX != 0)
-                skillGrappleSwingAngle += moveX * 2f * Engine.DeltaTime;
+                skillGrappleAngularVel += moveX * 3f * Engine.DeltaTime;
 
-            float swingGravity = 300f * Engine.DeltaTime;
-            float angleVelocity = swingGravity * (float)Math.Sin(skillGrappleSwingAngle);
-            skillGrappleSwingAngle += angleVelocity * Engine.DeltaTime;
+            // light damping keeps it stable
+            skillGrappleAngularVel *= 1f - 0.3f * Engine.DeltaTime;
 
-            Vector2 targetPos = skillGrappleTarget - new Vector2(
-                (float)Math.Cos(skillGrappleSwingAngle) * skillGrappleLength,
-                (float)Math.Sin(skillGrappleSwingAngle) * skillGrappleLength
-            );
+            skillGrappleSwingAngle += skillGrappleAngularVel * Engine.DeltaTime;
 
-            Vector2 moveDir = targetPos - Center;
-            Speed = moveDir * 5f;
-
+            // climb / extend the rope
             if (Input.MoveY.Value < 0)
                 skillGrappleLength = Math.Max(30f, skillGrappleLength - AquaGrappleRetractSpeed * Engine.DeltaTime);
             else if (Input.MoveY.Value > 0)
                 skillGrappleLength = Math.Min(AquaGrappleMaxRange, skillGrappleLength + AquaGrappleRetractSpeed * Engine.DeltaTime * 0.5f);
+
+            // move toward the rope-constrained position through Speed so solids
+            // still block the swing (and kill momentum when they do)
+            Vector2 targetPos = skillGrappleTarget + new Vector2(
+                (float)Math.Cos(skillGrappleSwingAngle) * skillGrappleLength,
+                (float)Math.Sin(skillGrappleSwingAngle) * skillGrappleLength
+            );
+
+            Speed = (targetPos - Center) / Math.Max(Engine.DeltaTime, 0.001f);
+            if (Speed.Length() > 320f)
+                Speed = Speed.SafeNormalize() * 320f;
 
             if (level != null && Scene.OnInterval(0.05f))
             {
@@ -7475,40 +7633,42 @@ namespace Celeste.Entities
                 }
             }
 
+            // grab again to let go (state machine calls AquaGrappleEnd)
             if (Input.Grab.Pressed)
             {
-                AquaGrappleEnd();
+                Input.Grab.ConsumeBuffer();
                 return StNormal;
             }
 
             return StAquaGrapple;
         }
 
-        private Vector2 FindGrappleAnchor(Vector2 direction)
+        /// <summary>
+        /// Raycasts along the player's aim for a solid to hook onto. Returns false
+        /// when nothing is in range — the grapple never anchors to empty air.
+        /// </summary>
+        private bool TryFindGrappleAnchor(out Vector2 anchor)
         {
-            if (level == null) return Center + direction * AquaGrappleMaxRange;
+            anchor = Vector2.Zero;
+            if (level == null)
+                return false;
+
+            Vector2 aim = new Vector2(Input.MoveX.Value, Math.Min(Input.MoveY.Value, 0)).SafeNormalize();
+            if (aim == Vector2.Zero)
+                aim = new Vector2((int)Facing, -0.5f).SafeNormalize();
 
             Vector2 start = Center;
-            Vector2 end = start + direction * AquaGrappleMaxRange;
-
-            for (float t = 0; t <= 1f; t += 0.05f)
+            for (float d = 8f; d <= AquaGrappleMaxRange; d += 4f)
             {
-                Vector2 checkPos = Vector2.Lerp(start, end, t);
+                Vector2 checkPos = start + aim * d;
                 if (level.CollideCheck<Solid>(checkPos))
-                    return checkPos;
-
-                foreach (var entity in level.Entities)
                 {
-                    if (entity.GetType().Name.Contains("Grapple") ||
-                        entity.GetType().Name.Contains("Hook"))
-                    {
-                        if (Vector2.Distance(checkPos, entity.Center) < 16f)
-                            return entity.Center;
-                    }
+                    anchor = checkPos;
+                    return true;
                 }
             }
 
-            return end;
+            return false;
         }
 
         private void CreateWaterStream(Vector2 from, Vector2 to)
@@ -7675,15 +7835,12 @@ namespace Celeste.Entities
                 currentHealth = Math.Max(0, currentHealth - amount);
             }
 
-            // Apply knockback and invincibility
+            // Apply knockback and invincibility (Render flickers the player
+            // while skillInvincibilityTimer is active)
             if (currentHealth > 0)
             {
                 ApplyKnockback(source);
                 skillInvincibilityTimer = SkillInvincibilityDuration;
-
-                // Flash player sprite
-                if (Sprite != null)
-                    Sprite.Visible = false;
             }
 
             return true;
@@ -7833,15 +7990,46 @@ namespace Celeste.Entities
             RefillDash();
         }
 
+        // Cached per-type lookup of TakeDamage(int) so combat checks don't pay
+        // reflection costs every frame. A null value means the type has no such method.
+        private static readonly Dictionary<Type, System.Reflection.MethodInfo> takeDamageMethodCache = new Dictionary<Type, System.Reflection.MethodInfo>();
+
+        private static System.Reflection.MethodInfo GetTakeDamageMethod(Type type)
+        {
+            if (!takeDamageMethodCache.TryGetValue(type, out var method))
+            {
+                method = type.GetMethod("TakeDamage", new Type[] { typeof(int) });
+                takeDamageMethodCache[type] = method;
+            }
+            return method;
+        }
+
+        private bool IsDamageableTarget(Entity entity)
+        {
+            return entity != this && !(entity is Player) && !(entity is K_Player)
+                && GetTakeDamageMethod(entity.GetType()) != null;
+        }
+
+        /// <summary>
+        /// Starts a new damage swing. Each enemy can only be hit once per swing,
+        /// which keeps damage deterministic (one press = one hit) instead of
+        /// re-applying damage every frame the hitbox overlaps.
+        /// </summary>
+        private void StartSwing()
+        {
+            swingHitEntities.Clear();
+        }
+
         private void DealCombatDamageInRadius(Vector2 center, float radius, int damage)
         {
-            foreach (Entity entity in Scene.Tracker.GetEntities<Actor>())
+            foreach (Entity entity in Scene.Entities)
             {
-                if (entity == this || entity is Player)
+                if (!IsDamageableTarget(entity) || swingHitEntities.Contains(entity))
                     continue;
 
                 if (Vector2.DistanceSquared(entity.Center, center) <= radius * radius)
                 {
+                    swingHitEntities.Add(entity);
                     ApplyCombatDamage(entity, damage, (entity.Center - center).SafeNormalize());
                 }
             }
@@ -7849,13 +8037,14 @@ namespace Celeste.Entities
 
         private void DealCombatDamageAtPoint(Vector2 point, float radius, int damage)
         {
-            foreach (Entity entity in Scene.Tracker.GetEntities<Actor>())
+            foreach (Entity entity in Scene.Entities)
             {
-                if (entity == this || entity is Player)
+                if (!IsDamageableTarget(entity) || swingHitEntities.Contains(entity))
                     continue;
 
                 if (Vector2.DistanceSquared(entity.Center, point) <= radius * radius)
                 {
+                    swingHitEntities.Add(entity);
                     ApplyCombatDamage(entity, damage, (entity.Center - point).SafeNormalize());
                 }
             }
@@ -7863,17 +8052,14 @@ namespace Celeste.Entities
 
         private void ApplyCombatDamage(Entity target, int damage, Vector2 knockbackDir)
         {
-            // check for TakeDamage method via reflection for compatibility with Enemy, BossCharacter, etc.
-            var method = target.GetType().GetMethod("TakeDamage", new Type[] { typeof(int) });
+            var method = GetTakeDamageMethod(target.GetType());
             if (method != null)
             {
                 method.Invoke(target, new object[] { damage });
 
                 // visual feedback
                 level.Displacement.AddBurst(target.Center, .2f, 4, 24, .2f, Ease.QuadOut, Ease.QuadOut);
-
-                if (Scene.OnInterval(.05f))
-                    Dust.Burst(target.Center, knockbackDir.Angle(), 4);
+                Dust.Burst(target.Center, knockbackDir.Angle(), 4);
             }
         }
 

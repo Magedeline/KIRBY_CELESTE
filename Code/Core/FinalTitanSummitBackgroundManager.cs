@@ -467,7 +467,7 @@ public class FinalTitanSummitBackgroundManager : Entity
 
         level.CanRetry = false;
         player.Sprite.Play("launch");
-        Audio.Play("event:/new_content/char/pusheen/kirby/final_titan_summit_flynext", player.Position);
+        Audio.Play("event:/new_content/char/pusheen/kirby/flynext", player.Position);
         yield return 0.25f;
 
         Vector2 from = player.Position;
