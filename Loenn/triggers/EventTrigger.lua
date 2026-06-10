@@ -81,6 +81,7 @@ local eventOptions = {
     "cs21_special_thanks_dodge_credits",
     "cs21_two_worlds_unite",
     "cs21_saved",
+    "cs21_farewell",
     "cs21_ending"
 }
 

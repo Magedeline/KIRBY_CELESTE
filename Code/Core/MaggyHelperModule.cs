@@ -248,6 +248,9 @@ namespace Celeste.Mod.MaggyHelper
             // Debug room warp menu (development convenience)
             Everest.Events.Level.OnLoadLevel += OnLoadLevel_EnsureHotReloadController;
 
+            // Guard against Everest's null-key crash in ModContent.Update during rebuild churn
+            global::Celeste.Mod.MaggyHelper.HotReload.EverestContentUpdateGuard.Load();
+
             // Hook level exit to clean up static state
             Everest.Events.Level.OnExit += OnLevelExit;
 
@@ -281,6 +284,14 @@ namespace Celeste.Mod.MaggyHelper
             // Register in-game test runner
             global::Celeste.Mod.MaggyHelper.MaggyHelperTestRunner.RegisterConsoleCommand();
 
+            // If Load() is running while a Level is active, this is an Everest
+            // CodeReload assembly swap (not initial startup) - notify the
+            // hot reload system so [HotReloadable] types can re-init state.
+            if (Engine.Scene is Level)
+            {
+                global::Celeste.HotReload.HotReloadHandler.NotifyEverestReload();
+            }
+
             // Register performance profiler commands
             // global::Celeste.Mod.MaggyHelper.PerformanceProfiler.RegisterConsoleCommands(); // TODO: Restore when PerformanceProfiler is available
         }
@@ -298,8 +309,8 @@ namespace Celeste.Mod.MaggyHelper
         // leaked one subscription per mod reload.)
         private static void OnLoadLevel_EnsureHotReloadController(Level level, Player.IntroTypes playerIntro, bool isFromLoader)
         {
-            // if (level.Tracker.GetEntity<global::Celeste.Mod.MaggyHelper.HotReload.HotReloadController>() == null)
-            //     level.Add(new global::Celeste.Mod.MaggyHelper.HotReload.HotReloadController()); // TODO: Restore when HotReload is available
+            if (level.Tracker.GetEntity<global::Celeste.Mod.MaggyHelper.HotReload.HotReloadController>() == null)
+                level.Add(new global::Celeste.Mod.MaggyHelper.HotReload.HotReloadController());
 
             // Add debug room warp menu when DeveloperBypass or DebugMode is enabled
             var settings = Settings;
@@ -394,6 +405,9 @@ namespace Celeste.Mod.MaggyHelper
             Everest.Events.Level.OnExit -= OnLevelExit;
             // Unhook debug room warp menu
             Everest.Events.Level.OnLoadLevel -= OnLoadLevel_EnsureHotReloadController;
+
+            // Remove ModContent.Update null-key guard
+            global::Celeste.Mod.MaggyHelper.HotReload.EverestContentUpdateGuard.Unload();
 
             // Unhook Vignette System
             UnloadVignetteHooks();
@@ -1481,15 +1495,14 @@ namespace Celeste.Mod.MaggyHelper
         private static void Cmd_HotReloadTest()
         {
             Engine.Commands?.Log("[MaggyHelper] Simulating hot reload event...");
-            
-            // We simulate it by calling the handler directly with some types
-            // Type[] mockTypes = new Type[] { 
-            //     typeof(global::Celeste.HotReload.ModHotReloadTest),
-            //     typeof(global::Celeste.HotReload.GameHotReloadTest)
-            // };
-            
-            // global::Celeste.HotReload.HotReloadHandler.UpdateApplication(mockTypes);
-            Engine.Commands?.Log("[MaggyHelper] Hot reload test disabled - ModHotReloadTest class not found.");
+
+            Type[] mockTypes = new Type[] {
+                typeof(global::Celeste.Mod.MaggyHelper.HotReload.ModHotReloadTest),
+                typeof(global::Celeste.HotReload.GameHotReloadTest)
+            };
+
+            global::Celeste.HotReload.HotReloadHandler.UpdateApplication(mockTypes);
+            Engine.Commands?.Log("[MaggyHelper] Hot reload test complete.");
         }
 
         // =====================================================================

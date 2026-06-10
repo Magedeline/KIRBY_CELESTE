@@ -145,9 +145,18 @@ namespace Celeste.Triggers
                     break;
 
                 case ActionType.ChangeStrength:
-                    // Convert our enum to the backdrop's enum
-                    var backdropStrength = (RainbowBlackholeBg.Strengths)Enum.Parse(typeof(RainbowBlackholeBg.Strengths), strengthLevel.ToString());
-                    backdrop.SetStrength(backdropStrength);
+                    // RainbowChaos/Cosmic don't exist on the backdrop enum:
+                    // they map to max strength with forced rainbow colors
+                    if (strengthLevel >= StrengthLevel.RainbowChaos)
+                    {
+                        backdrop.RainbowMode = true;
+                        backdrop.SetStrength(RainbowBlackholeBg.Strengths.Insane);
+                    }
+                    else
+                    {
+                        backdrop.RainbowMode = false;
+                        backdrop.SetStrength((RainbowBlackholeBg.Strengths)(int)strengthLevel);
+                    }
                     break;
 
                 case ActionType.SetAlpha:

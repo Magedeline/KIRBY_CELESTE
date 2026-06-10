@@ -16205,7 +16205,7 @@ I'll give {*}everything{/*} I have.
 Every last ounce of strength.
 For {+MADELINE}. For {+BADELINE}. For everyone.
 
-MAGGYHELPER_CH19_LAST_ROOM=
+MAGGYHELPER_CH19_EDGE_OF_UNIVERSE=
 [KIRBY left surprised]
 That generator... it's down!
 onto the last generator!
@@ -17929,7 +17929,7 @@ MAGGYHELPER_CH21_ELS_LAST_BOOST=
 [els right normal]
 tell your parent to forgive me!
 
-MAGGYHELPER_CH21_RESTORATION_AND_FAREWELL=
+MAGGYHELPER_CH20_SAVED=
 {trigger 0 maddy baddy and everyone else walk in left}
 [MADELINE left surprised]
 Wait...

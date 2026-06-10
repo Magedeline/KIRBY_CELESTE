@@ -86,6 +86,35 @@ namespace Celeste.Mod.MaggyHelper
 
         #endregion
 
+        #region Hot Reload Settings (Development)
+
+        [SettingSubHeader("MAGGYHELPER_HOTRELOAD_HEADER")]
+        [SettingName("MAGGYHELPER_HOTRELOAD_ENABLED")]
+        public bool HotReloadEnabled { get; set; } = true;
+
+        [SettingName("MAGGYHELPER_HOTRELOAD_SHOW_UI")]
+        public bool HotReloadShowUI { get; set; } = true;
+
+        [SettingName("MAGGYHELPER_HOTRELOAD_SOUND")]
+        public bool HotReloadSound { get; set; } = true;
+
+        [SettingName("MAGGYHELPER_HOTRELOAD_VERBOSE")]
+        public bool HotReloadVerbose { get; set; }
+
+        [SettingName("MAGGYHELPER_BIND_HOTRELOAD_TOGGLE")]
+        [DefaultButtonBinding(0, Keys.F5)]
+        public ButtonBinding HotReloadToggle { get; set; }
+
+        [SettingName("MAGGYHELPER_BIND_HOTRELOAD_RELOAD")]
+        [DefaultButtonBinding(0, Keys.F6)]
+        public ButtonBinding HotReloadManual { get; set; }
+
+        [SettingName("MAGGYHELPER_BIND_HOTRELOAD_UI")]
+        [DefaultButtonBinding(0, Keys.F8)]
+        public ButtonBinding HotReloadUIBinding { get; set; }
+
+        #endregion
+
         #region Mod Integration Settings
 
         [SettingSubHeader("MaggyHelper_INTEGRATIONS_HEADER")]

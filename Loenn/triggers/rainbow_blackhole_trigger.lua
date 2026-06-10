@@ -53,6 +53,22 @@ rainbowBlackholeTrigger.placements = {
         }
     },
     {
+        name = "rainbow_chaos",
+        data = {
+            width = 16,
+            height = 16,
+            action = "ChangeStrength",
+            strength = "RainbowChaos",
+            alpha = 1.0,
+            scale = 1.0,
+            direction = 1.0,
+            triggerOnce = false,
+            fadeTime = 0.0,
+            flag = "",
+            onlyIfFlag = false
+        }
+    },
+    {
         name = "set_alpha",
         data = {
             width = 16,

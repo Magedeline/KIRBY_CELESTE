@@ -25,7 +25,11 @@ namespace Celeste
 
         public bool OnSpawnHack;
 
+        public bool OnlyOnce;
+
         private bool triggered;
+
+        private string onceFlag;
 
         private EventInstance snapshot;
 
@@ -55,6 +59,8 @@ namespace Celeste
         {
             Event = data.Attr("event");
             OnSpawnHack = data.Bool("onSpawn");
+            OnlyOnce = data.Bool("onlyOnce", true);
+            onceFlag = $"event_trigger_once_{data.Level.Name}_{data.ID}";
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -87,8 +93,16 @@ namespace Celeste
             {
                 return;
             }
-            triggered = true;
             Level level = base.Scene as Level;
+            if (OnlyOnce && level.Session.GetFlag(onceFlag))
+            {
+                return;
+            }
+            triggered = true;
+            if (OnlyOnce)
+            {
+                level.Session.SetFlag(onceFlag, true);
+            }
             if (TriggerCustomEvent(this, player, Event))
             {
                 return;
@@ -435,6 +449,7 @@ namespace Celeste.Triggers
             Register("cs21_special_thanks_dodge_credits", (trigger, player, eventId) => new global::Celeste.Cutscenes.CS21_SpecialThanksDodgeCredits(player));
             Register("cs21_two_worlds_unite", (trigger, player, eventId) => new global::Celeste.Cutscenes.CS21_TwoWorldsUnite(player));
             Register("cs21_saved", (trigger, player, eventId) => new global::Celeste.Cutscenes.CS21_Saved(player));
+            Register("cs21_farewell", (trigger, player, eventId) => new global::Celeste.Cutscenes.CS21_RestorationAndFarewell(player));
             Register("cs21_ending", (trigger, player, eventId) => new global::Celeste.Cutscenes.CS21_Ending(player));
 
         }

@@ -83,6 +83,13 @@ public class RainbowBlackholeBg : Backdrop
         Calc.HexToColor("ca4ca7")
     };
 
+    private Color[] colorsRed = new Color[3]
+    {
+        Calc.HexToColor("ff2a2a"),
+        Calc.HexToColor("d40000"),
+        Calc.HexToColor("ff5533")
+    };
+
     private Color[] colorsRainbow = new Color[7]
     {
         Calc.HexToColor("ff0000"),
@@ -155,7 +162,7 @@ public class RainbowBlackholeBg : Backdrop
         [MethodImpl(MethodImplOptions.NoInlining)]
         get
         {
-            return (int)MathHelper.Lerp(30f, 50f, (StrengthMultiplier - 1f) / 3f);
+            return (int)MathHelper.Lerp(30f, 50f, Calc.Clamp((StrengthMultiplier - 1f) / 3f, 0f, 1f));
         }
     }
 
@@ -164,7 +171,7 @@ public class RainbowBlackholeBg : Backdrop
         [MethodImpl(MethodImplOptions.NoInlining)]
         get
         {
-            return (int)MathHelper.Lerp(150f, 220f, (StrengthMultiplier - 1f) / 3f);
+            return (int)MathHelper.Lerp(150f, 220f, Calc.Clamp((StrengthMultiplier - 1f) / 3f, 0f, 1f));
         }
     }
 
@@ -173,7 +180,7 @@ public class RainbowBlackholeBg : Backdrop
         [MethodImpl(MethodImplOptions.NoInlining)]
         get
         {
-            return (int)MathHelper.Lerp(0f, 10f, (StrengthMultiplier - 1f) / 3f);
+            return (int)MathHelper.Lerp(0f, 10f, Calc.Clamp((StrengthMultiplier - 1f) / 3f, 0f, 1f));
         }
     }
 
@@ -288,11 +295,9 @@ public class RainbowBlackholeBg : Backdrop
         StrengthMultiplier = Calc.Approach(StrengthMultiplier, 1f + (float)strength, Engine.DeltaTime * 0.1f);
         if (scene.OnInterval(0.05f))
         {
-            Color[] activeColors = RainbowMode ? colorsRainbow : colorsMild;
-            Color[] activeWild = RainbowMode ? colorsRainbow : colorsWild;
-            for (int i = 0; i < activeColors.Length; i++)
+            for (int i = 0; i < colorsLerp.Length; i++)
             {
-                colorsLerp[i] = RainbowMode ? activeColors[i] : Color.Lerp(activeColors[i], activeWild[i], (StrengthMultiplier - 1f) / 3f);
+                colorsLerp[i] = GetPhaseColor(i);
                 for (int j = 0; j < 20; j++)
                 {
                     colorsLerpBlack[i, j] = Color.Lerp(colorsLerp[i], Color.Black, (float)j / 19f) * FadeAlphaMultiplier;
@@ -353,7 +358,7 @@ public class RainbowBlackholeBg : Backdrop
         }
         float num8 = 0.2f + (StrengthMultiplier - 1f) * 0.1f;
         int spiralCount = SpiralCount;
-        Color value = Color.Lerp(Color.Lerp(bgColorOuterMild, bgColorOuterWild, (StrengthMultiplier - 1f) / 3f), Color.White, 0.1f) * 0.8f;
+        Color value = Color.Lerp(GetOuterBgColor(), Color.White, 0.1f) * 0.8f;
         int num9 = 0;
         for (int m = 0; m < spiralCount; m++)
         {
@@ -406,6 +411,56 @@ public class RainbowBlackholeBg : Backdrop
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
+    private Color GetPhaseColor(int i)
+    {
+        // Strength-based phases: mild (purple) -> wild (pink) -> red -> rainbow
+        float t = StrengthMultiplier - 1f;
+        Color baseColor;
+        if (t <= 2f)
+            baseColor = Color.Lerp(colorsMild[i % colorsMild.Length], colorsWild[i % colorsWild.Length], t / 2f);
+        else
+            baseColor = Color.Lerp(colorsWild[i % colorsWild.Length], colorsRed[i % colorsRed.Length], Calc.ClampedMap(t, 2f, 3f));
+        if (RainbowMode || t > 3f)
+        {
+            Color rainbow = HueToColor((spinTime * 0.15f + (float)i / colorsLerp.Length) % 1f);
+            baseColor = RainbowMode ? rainbow : Color.Lerp(baseColor, rainbow, Calc.ClampedMap(t, 3f, 4f));
+        }
+        return baseColor;
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private Color GetOuterBgColor()
+    {
+        float t = StrengthMultiplier - 1f;
+        Color color;
+        if (t <= 2f)
+            color = Color.Lerp(bgColorOuterMild, bgColorOuterWild, t / 2f);
+        else
+            color = Color.Lerp(bgColorOuterWild, colorsRed[1], Calc.ClampedMap(t, 2f, 3f));
+        if (RainbowMode || t > 3f)
+        {
+            Color rainbow = HueToColor(spinTime * 0.1f % 1f);
+            color = RainbowMode ? rainbow : Color.Lerp(color, rainbow, Calc.ClampedMap(t, 3f, 4f));
+        }
+        return color;
+    }
+
+    private static Color HueToColor(float hue)
+    {
+        float h = (hue % 1f + 1f) % 1f * 6f;
+        float x = 1f - Math.Abs(h % 2f - 1f);
+        return h switch
+        {
+            < 1f => new Color(1f, x, 0f),
+            < 2f => new Color(x, 1f, 0f),
+            < 3f => new Color(0f, 1f, x),
+            < 4f => new Color(0f, x, 1f),
+            < 5f => new Color(x, 0f, 1f),
+            _ => new Color(1f, 0f, x)
+        };
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
     private void AssignVertColors(VertexPositionColorTexture[] verts, int v, ref Color a, ref Color b, ref Color c, ref Color d)
     {
         verts[v].Color = a;
@@ -437,7 +492,7 @@ public class RainbowBlackholeBg : Backdrop
         Engine.Graphics.GraphicsDevice.SetRenderTarget(buffer);
         Engine.Graphics.GraphicsDevice.Clear(bgColorInner);
         Draw.SpriteBatch.Begin();
-        Color value = Color.Lerp(bgColorOuterMild, bgColorOuterWild, (StrengthMultiplier - 1f) / 3f);
+        Color value = GetOuterBgColor();
         for (int i = 0; i < 20; i++)
         {
             float num = (1f - spinTime % 1f) * 0.05f + (float)i / 20f;
