@@ -3,12 +3,15 @@
 using global::Celeste.Mod.Meta;
 using MonoMod.RuntimeDetour;
 using MonoMod.Utils;
+using MonoMod.Cil;
+using System.Reflection.Emit;
 
 namespace Celeste;
 
 /// <summary>
 /// D-Side hook system for Crystal Heart collection, module initialization, and overworld D-Side management.
 /// Extends the AreaModeExtender with additional layer for Celeste mod-specific D-Side interactions.
+/// Supports both On.hook (delegate-based) and IL.hook (IL manipulation) patches.
 /// </summary>
 public static class CelesteDSideHooks
 {
@@ -16,12 +19,18 @@ public static class CelesteDSideHooks
     private static Hook _crystalHeartOnCollectHook;
     private static Hook _overworldOnEnterHook;
 
+    // IL hooks for low-level patching
+    private static ILHook _crystalHeartCollectILHook;
+    private static ILHook _levelLoadLevelILHook;
+
     public static void Load()
     {
         if (_loaded)
             return;
 
         _loaded = true;
+
+        // ──── On.hook delegates (standard hooks) ────
 
         // Crystal Heart collection hook for D-Side tracking
         On.Celeste.HeartGem.Collect += OnCrystalHeartCollect;
@@ -35,12 +44,15 @@ public static class CelesteDSideHooks
         On.Celeste.Level.LoadLevel += OnLevelLoadLevel;
         On.Celeste.Level.End += OnLevelEnd;
 
+        // ──── IL.hook patches (IL manipulation) ────
+
+        InstallCrystalHeartHook();
+        InstallDSideILHooks();
+
         // Save data hooks for D-Side stats persistence (commented out - not needed for core functionality)
         // On.Celeste.SaveData.BeforeInitialize += OnSaveDataBeforeInitialize;
 
-        InstallCrystalHeartHook();
-
-        Logger.Log(LogLevel.Info, "MaggyHelper", "CelesteDSideHooks loaded");
+        Logger.Log(LogLevel.Info, "MaggyHelper", "CelesteDSideHooks loaded with On.hook and IL.hook support");
     }
 
     public static void Unload()
@@ -50,18 +62,29 @@ public static class CelesteDSideHooks
 
         _loaded = false;
 
+        // ──── Unload On.hook delegates ────
+
         On.Celeste.HeartGem.Collect -= OnCrystalHeartCollect;
         On.Celeste.Overworld.Begin -= OnOverworldBegin;
         On.Celeste.OuiChapterPanel.Enter -= OnChapterPanelEnter;
         On.Celeste.OuiChapterPanel.Leave -= OnChapterPanelLeave;
         On.Celeste.Level.LoadLevel -= OnLevelLoadLevel;
         On.Celeste.Level.End -= OnLevelEnd;
-        // On.Celeste.SaveData.BeforeInitialize -= OnSaveDataBeforeInitialize;
+
+        // ──── Dispose IL.hook patches ────
 
         _crystalHeartOnCollectHook?.Dispose();
         _crystalHeartOnCollectHook = null;
 
-        Logger.Log(LogLevel.Info, "MaggyHelper", "CelesteDSideHooks unloaded");
+        _crystalHeartCollectILHook?.Dispose();
+        _crystalHeartCollectILHook = null;
+
+        _levelLoadLevelILHook?.Dispose();
+        _levelLoadLevelILHook = null;
+
+        // On.Celeste.SaveData.BeforeInitialize -= OnSaveDataBeforeInitialize;
+
+        Logger.Log(LogLevel.Info, "MaggyHelper", "CelesteDSideHooks unloaded (On.hook and IL.hook)");
     }
 
     private static void InstallCrystalHeartHook()
@@ -85,6 +108,117 @@ public static class CelesteDSideHooks
         _crystalHeartOnCollectHook = new Hook(target, typeof(CelesteDSideHooks).GetMethod(
             nameof(Hook_HeartGem_Collect),
             System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic));
+    }
+
+    private static void InstallDSideILHooks()
+    {
+        try
+        {
+            InstallCrystalHeartCollectILHook();
+            InstallLevelLoadLevelILHook();
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Warn, "MaggyHelper", $"Failed to install D-Side IL hooks: {ex.Message}");
+        }
+    }
+
+    private static void InstallCrystalHeartCollectILHook()
+    {
+        if (_crystalHeartCollectILHook != null)
+            return;
+
+        MethodInfo target = typeof(HeartGem).GetMethod(
+            "Collect",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic,
+            null,
+            new[] { typeof(Player) },
+            null);
+
+        if (target == null)
+        {
+            Logger.Log(LogLevel.Warn, "MaggyHelper", "Failed to find HeartGem.Collect method for IL hook installation.");
+            return;
+        }
+
+        _crystalHeartCollectILHook = new ILHook(target, IL_HeartGem_Collect);
+        Logger.Log(LogLevel.Debug, "MaggyHelper", "HeartGem.Collect IL hook installed");
+    }
+
+    private static void IL_HeartGem_Collect(ILContext il)
+    {
+        try
+        {
+            ILCursor cursor = new ILCursor(il);
+            int patches = 0;
+
+            // Track IL modifications for D-Side heart collection
+            if (cursor.TryGotoNext(MoveType.Before,
+                instr => instr.MatchLdloc(0)))
+            {
+                // This is a basic IL hook example - you can add more complex IL manipulation here
+                Logger.Log(LogLevel.Debug, "MaggyHelper", "IL_HeartGem_Collect: patch point located");
+                patches++;
+            }
+
+            if (patches == 0)
+            {
+                Logger.Log(LogLevel.Debug, "MaggyHelper", "IL_HeartGem_Collect: no patches applied (method structure may differ)");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Warn, "MaggyHelper", $"Error in IL_HeartGem_Collect: {ex.Message}");
+        }
+    }
+
+    private static void InstallLevelLoadLevelILHook()
+    {
+        if (_levelLoadLevelILHook != null)
+            return;
+
+        MethodInfo target = typeof(Level).GetMethod(
+            "LoadLevel",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic,
+            null,
+            new[] { typeof(Player.IntroTypes), typeof(bool) },
+            null);
+
+        if (target == null)
+        {
+            Logger.Log(LogLevel.Warn, "MaggyHelper", "Failed to find Level.LoadLevel method for IL hook installation.");
+            return;
+        }
+
+        _levelLoadLevelILHook = new ILHook(target, IL_Level_LoadLevel);
+        Logger.Log(LogLevel.Debug, "MaggyHelper", "Level.LoadLevel IL hook installed");
+    }
+
+    private static void IL_Level_LoadLevel(ILContext il)
+    {
+        try
+        {
+            ILCursor cursor = new ILCursor(il);
+            int patches = 0;
+
+            // Track IL modifications for D-Side level initialization
+            // Look for any ldstr instructions that we might want to log for debugging
+            while (cursor.TryGotoNext(MoveType.After,
+                instr => instr.MatchCallvirt<Level>(nameof(Level.LoadLevel))))
+            {
+                patches++;
+                break;
+            }
+
+            if (patches == 0)
+            {
+                Logger.Log(LogLevel.Debug, "MaggyHelper", "IL_Level_LoadLevel: no target patterns found");
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Warn, "MaggyHelper", $"Error in IL_Level_LoadLevel: {ex.Message}");
+        }
     }
 
     private delegate void orig_HeartGem_Collect(HeartGem self, Player player);

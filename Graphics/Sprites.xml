@@ -1146,7 +1146,14 @@
       <Anim id="launchRecover" path="launchRecover" delay="0.06"/>
       <Anim id="spit" path="spit" delay="0.06" goto="idle" />
       <Anim id="determined" path="determined" delay="0.1" goto="idle" />
-  
+
+      <!-- Punch & Dash Attack Animations -->
+      <Anim id="punch_flash" path="punch/flash" delay="0.05" frames="0-5" goto="punch_idle" />
+      <Loop id="punch_idle" path="punch/idle_fist" delay="0.1" />
+      <Anim id="punch_attack" path="punch/flash" delay="0.06" goto="idle" />
+      <Anim id="punch_two" path="punchTwo/flash" delay="0.06" goto="idle" />
+      <Anim id="punch_multi" path="punchMulti/flash" delay="0.06" goto="idle" />
+
       <!-- Wing Power States -->
       <Loop id="wing_idle" path="wing/idle" delay="0.15" />
       <Anim id="wing_fly" path="wing/fly" delay="0.08" />
@@ -1174,7 +1181,11 @@
         <Frames path="float" hair="0,-4:0|0,-4:1|0,-4:2|0,-4:3" hat="0,-12|0,-12|0,-12|0,-12" />
         <Frames path="land" hair="0,-4:0|0,-4:1" hat="0,-12|0,-12" />
         <Frames path="crouch" hair="0,-2:0|0,-2:1" hat="0,-10|0,-10" />
-        
+        <Frames path="punch/flash" hair="0,-4:0|0,-4:0|0,-4:1|0,-4:2|0,-4:2|0,-4:3" hat="0,-12|0,-12|0,-12|0,-12|0,-12|0,-12" />
+        <Frames path="punch/idle_fist" hair="0,-4:0|0,-4:1|0,-4:2|0,-4:3|0,-4:3" hat="0,-12|0,-12|0,-12|0,-12|0,-12" />
+        <Frames path="punchTwo/flash" hair="0,-4:0|0,-4:0|0,-4:1|0,-4:2|0,-4:2|0,-4:3" hat="0,-12|0,-12|0,-12|0,-12|0,-12|0,-12" />
+        <Frames path="punchMulti/flash" hair="0,-4:0|0,-4:0|0,-4:1|0,-4:2|0,-4:2|0,-4:3" hat="0,-12|0,-12|0,-12|0,-12|0,-12|0,-12" />
+
         <!-- Basic Movement (metadata-only additions) -->
         <Anim id="lookUp" path="lookUp" delay="0.1" frames="2-7" />
         <Loop id="runWind" path="run_wind" delay="0.095" frames="0-11"/>
@@ -2384,6 +2395,30 @@
       <Justify x="0.5" y="0.5"/>
       <Anim id="flash" path="flash" delay="0.05" frames="0-6"/>
     </savestarrefillFlash>
+
+  <puffrefill path="objects/puffrefill/" start="idle">
+      <Justify x="0.5" y="0.5"/>
+      <Loop id="idle" path="idle" delay="0.1" frames="0-4"/>
+      <Anim id="spin" path="idle" delay="0.06" frames="0-4" goto="idle"/>
+      <Anim id="flash" path="flash" delay="0.05" frames="0-5"/>
+    </puffrefill>
+
+  <puffrefillFlash path="objects/puffrefill/" start="flash">
+      <Justify x="0.5" y="0.5"/>
+      <Anim id="flash" path="flash" delay="0.05" frames="0-5"/>
+    </puffrefillFlash>
+
+  <puffrefillmulti path="objects/puffrefillmulti/" start="idle">
+      <Justify x="0.5" y="0.5"/>
+      <Loop id="idle" path="idle" delay="0.08" frames="0-12"/>
+      <Anim id="spin" path="idle" delay="0.06" frames="0-12" goto="idle"/>
+      <Anim id="flash" path="flash" delay="0.05" frames="0-5"/>
+    </puffrefillmulti>
+
+  <puffrefillmultiFlash path="objects/puffrefillmulti/" start="flash">
+      <Justify x="0.5" y="0.5"/>
+      <Anim id="flash" path="flash" delay="0.05" frames="0-5"/>
+    </puffrefillmultiFlash>
 
   <MaggyHelper_glider path="objects/glider/" start="idle">
       <Justify x="0.5" y="0.5"/>

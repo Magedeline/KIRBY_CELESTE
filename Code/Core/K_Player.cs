@@ -200,6 +200,7 @@ namespace Celeste.Entities
         public const int StCounterStance = 35;
         public const int StDiveKick = 36;
         public const int StAquaGrapple = 37;
+        public const int StPunchAttack = 38;
 
         public const string TalkSfx = "player_talk";
 
@@ -215,6 +216,14 @@ namespace Celeste.Entities
         private const float CombatSlashCooldown = .1f;
         private const float CombatSlashRange = 24f;
         private const int CombatSlashDamage = 1;
+
+        // Punch Attack Constants
+        private const float PunchAttackSpeed = 220f;
+        private const float PunchAttackTime = .2f;
+        private const float PunchAttackCooldown = .1f;
+        private const float PunchAttackRange = 22f;
+        private const int PunchAttackDamage = 1;
+        private const float CloseEncounterRadius = 48f;
         private const int MaxComboCount = 3;
         private const float ComboWindowTime = .4f;
 
@@ -476,6 +485,12 @@ namespace Celeste.Entities
         private float groundPoundTimer;
         private bool groundPounding;
         private bool groundPoundImpacted;
+
+        // Punch Attack Vars
+        private float punchAttackTimer;
+        private float punchAttackCooldownTimer;
+        private Vector2 punchAttackDir;
+        private int punchAttackCount;
         private int aerialComboHits;
         private float aerialComboTimer;
 
@@ -717,6 +732,7 @@ namespace Celeste.Entities
             StateMachine.SetCallbacks(StCounterStance, CounterStanceUpdate, null, CounterStanceBegin, CounterStanceEnd);
             StateMachine.SetCallbacks(StDiveKick, DiveKickUpdate, null, DiveKickBegin, DiveKickEnd);
             StateMachine.SetCallbacks(StAquaGrapple, AquaGrappleUpdate, null, AquaGrappleBegin, AquaGrappleEnd);
+            StateMachine.SetCallbacks(StPunchAttack, PunchAttackUpdate, null, PunchAttackBegin, PunchAttackEnd);
 
             Add(StateMachine);
 
@@ -1337,6 +1353,8 @@ namespace Celeste.Entities
                     dashAttackCooldownTimer -= Engine.DeltaTime;
                 if (combatSlashCooldownTimer > 0)
                     combatSlashCooldownTimer -= Engine.DeltaTime;
+                if (punchAttackCooldownTimer > 0)
+                    punchAttackCooldownTimer -= Engine.DeltaTime;
                 if (comboWindowTimer > 0)
                 {
                     comboWindowTimer -= Engine.DeltaTime;
@@ -3704,6 +3722,12 @@ namespace Celeste.Entities
                             {
                                 Input.Grab.ConsumeBuffer();
                                 return StKirbyInhale;
+                            }
+
+                            if (CombatEnabled && punchAttackCooldownTimer <= 0 && IsInCloseEncounter())
+                            {
+                                Input.Grab.ConsumeBuffer();
+                                return StPunchAttack;
                             }
 
                             if (CombatEnabled && combatSlashCooldownTimer <= 0)
@@ -6435,6 +6459,61 @@ namespace Celeste.Entities
 
         #endregion
 
+        #region Punch Attack State
+
+        private void PunchAttackBegin()
+        {
+            punchAttackTimer = 0;
+            punchAttackCooldownTimer = PunchAttackCooldown;
+            punchAttackCount = 0;
+
+            Entity closest = GetClosestDamageableEntity();
+            if (closest != null)
+            {
+                punchAttackDir = (closest.Center - Center).SafeNormalize();
+            }
+            else
+            {
+                punchAttackDir = Vector2.UnitX * (int)Facing;
+            }
+
+            Speed = punchAttackDir * PunchAttackSpeed;
+
+            int punchVariant = punchAttackCount % 3;
+            if (punchVariant == 0)
+                Sprite.Play("punch_attack");
+            else if (punchVariant == 1)
+                Sprite.Play("punch_two");
+            else
+                Sprite.Play("punch_multi");
+
+            Sprite.Scale = new Vector2(1.2f, .8f);
+            Input.Rumble(RumbleStrength.Medium, RumbleLength.Short);
+            CreateTrail();
+        }
+
+        private void PunchAttackEnd()
+        {
+            CreateTrail();
+        }
+
+        private int PunchAttackUpdate()
+        {
+            punchAttackTimer += Engine.DeltaTime;
+
+            DealCombatDamageInRadius(Center + punchAttackDir * 10f, PunchAttackRange, PunchAttackDamage);
+
+            if (punchAttackTimer >= PunchAttackTime)
+            {
+                Speed *= 0.3f;
+                return StNormal;
+            }
+
+            return StPunchAttack;
+        }
+
+        #endregion
+
         #region Ground Pound State
 
         private void GroundPoundBegin()
@@ -8002,6 +8081,40 @@ namespace Celeste.Entities
                 takeDamageMethodCache[type] = method;
             }
             return method;
+        }
+
+        private bool IsInCloseEncounter()
+        {
+            foreach (Entity entity in Scene.Entities)
+            {
+                if (!IsDamageableTarget(entity))
+                    continue;
+
+                if (Vector2.DistanceSquared(entity.Center, Center) <= CloseEncounterRadius * CloseEncounterRadius)
+                    return true;
+            }
+            return false;
+        }
+
+        private Entity GetClosestDamageableEntity()
+        {
+            Entity closest = null;
+            float closestDist = float.MaxValue;
+
+            foreach (Entity entity in Scene.Entities)
+            {
+                if (!IsDamageableTarget(entity))
+                    continue;
+
+                float dist = Vector2.DistanceSquared(entity.Center, Center);
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    closest = entity;
+                }
+            }
+
+            return closest;
         }
 
         private bool IsDamageableTarget(Entity entity)

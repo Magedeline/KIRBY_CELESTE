@@ -1216,6 +1216,7 @@
 {3b9ebf41-6063-4078-b8bf-0d3f6959c758} event:/music/pusheen/lvl12/titan_tower
 {18edbc47-1e3b-40a9-9244-317e65298ed9} event:/music/pusheen/lvl12/vessel
 {60a641a6-f0ff-4e7b-b01d-fed7b7834c0b} event:/music/pusheen/lvl12/wish
+{cc779976-3b40-4269-92da-a5e73120b14f} event:/music/pusheen/lvl12/tower_basic
 {7ecf2cfa-44fd-4167-8d5c-3fcaeacbc067} event:/music/pusheen/lvl13/alphys_theme
 {4a66015f-b9fd-477f-bdda-832f7e6acc89} event:/music/pusheen/lvl13/angel
 {12a28acd-c022-4c61-adca-f0ff7b269624} event:/music/pusheen/lvl13/battle
@@ -1244,6 +1245,7 @@
 {4ac6eb4b-3509-4974-9042-d20c85a6d29c} event:/music/pusheen/lvl14/core
 {45a30364-df1f-46aa-b19a-9025b108de01} event:/music/pusheen/lvl14/cyber
 {ae8331c7-5a97-49bb-938a-c1a82f82372d} event:/music/pusheen/lvl14/intro_traitor
+{7fe37207-0a1b-4697-a81a-868404fd68f9} event:/music/pusheen/lvl14/past
 {2435a8e5-a7b4-407e-82fa-e3769fdb5559} event:/music/pusheen/lvl15/boss
 {7dbc36c2-302e-423a-82cc-ca5b34172421} event:/music/pusheen/lvl15/boss_intro
 {187e9a71-08f2-4e0b-a313-f24a3f0c73be} event:/music/pusheen/lvl15/corridor
@@ -1706,6 +1708,8 @@
 {fbedbe88-d275-4e09-90f2-288ed653ee38} event:/new_content/music/pusheen/lvl19/part02
 {c2768eaa-6449-4dd0-852f-f1035bca151c} event:/new_content/music/pusheen/lvl19/part03
 {a8e6cf54-74ee-4fec-9e86-d7946c0f546e} event:/new_content/music/pusheen/lvl19/tape_rooms
+{8dd6c0a4-5e25-4a86-a56a-7409e827bb45} event:/new_content/music/pusheen/lvl20/cutscenes/donotgiveup
+{2c98aedd-b5af-47d0-936b-6f7234b5bc69} event:/new_content/music/pusheen/lvl20/cutscenes/gameover
 {0d7ca5d0-ca5f-49d6-aa8e-1a637333aa45} event:/new_content/music/pusheen/lvl20/angel
 {548b0b0f-4652-4bd2-8928-3ad077c561a4} event:/new_content/music/pusheen/lvl20/angel_ex
 {42882049-6050-4879-ba1d-98c78fd22492} event:/new_content/music/pusheen/lvl20/asriel
@@ -1713,7 +1717,11 @@
 {970368cc-d45a-4159-a9ec-e56e27d2f7ae} event:/new_content/music/pusheen/lvl20/burn_in_despair
 {de4f52bb-8acf-47fb-b869-b2a74453f67c} event:/new_content/music/pusheen/lvl20/els
 {34b45f00-d2e4-46df-a7f5-3e9ea8b29427} event:/new_content/music/pusheen/lvl20/feel
+{6f97713c-acff-4eb2-a2db-2a27f46fc405} event:/new_content/music/pusheen/lvl20/intro
+{de856adf-7299-421a-920e-4a4099691d2f} event:/new_content/music/pusheen/lvl20/main
 {1fde15b7-fcf4-4f7c-9a97-f3d97f7d9b6f} event:/new_content/music/pusheen/lvl20/musicbox
+{8b3ad8c0-9867-473b-a0f8-2cd866ee20d2} event:/new_content/music/pusheen/lvl20/scary
+{2da808c5-f3f3-4129-878f-00ace47f9ffd} event:/new_content/music/pusheen/lvl20/scaryalt
 {60b066e1-e4ee-42c9-9b3b-e3144cb17358} event:/new_content/music/pusheen/lvl21/cinematic/break
 {fcf4bbcc-e946-43bb-8176-1a7b8257d9ab} event:/new_content/music/pusheen/lvl21/cinematic/end
 {18d84d29-8f61-4b53-adfe-dd34d46dade7} event:/new_content/music/pusheen/lvl21/cinematic/end_intro
@@ -1724,6 +1732,7 @@
 {a13aba5f-682b-4cd3-afda-ad072159d922} event:/new_content/music/pusheen/lvl21/els_termina03
 {8283aef2-593e-46f8-ac68-0736a1d13b6a} event:/new_content/music/pusheen/lvl21/els_termina04
 {ebf75ce1-02b5-40f8-84b8-a6491f8e68fd} event:/new_content/music/pusheen/lvl21/els_termina05
+{d530f415-df39-497f-aed2-b69b1f36c729} event:/new_content/music/pusheen/lvl21/els_termina06
 {cc5bfbed-e22e-477f-acb3-866fb2b94151} event:/new_content/music/pusheen/lvl21/escape
 {cca5cd0e-61fe-4390-8deb-a8d6883018ae} event:/new_content/music/pusheen/lvl21/final_ascent
 {386f5d17-0a64-4027-a984-4dfa41f6aaeb} event:/new_content/music/pusheen/lvl21/finale

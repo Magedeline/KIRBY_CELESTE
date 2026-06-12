@@ -215,7 +215,17 @@ namespace Celeste.Mod.MaggyHelper
             // OuiChapterSelectHooks: Wraps OuiChapterSelect to catch crashes from updateScarf()
             OuiChapterSelectHooks.Load();
             global::Celeste.AreaModeExtender.Load();
-            global::Celeste.CelesteDSideHooks.Load();
+
+            // ──── Initialize D-Side Hook Registry ────
+            // Loads: CelesteDSideHooks (On.hook + IL.hook)
+            //        CelesteMusicHooks (On.hook + IL.hook)
+            //        TitleScreen_ExtHook (On.hook + IL.hook)
+            global::Celeste.DSideHookRegistry.InitializeAll();
+
+            // ──── Initialize Comprehensive D-Side Hook System ────
+            // Complete implementation with state tracking and animations
+            global::Celeste.DSideHookImplementation.Initialize();
+
             global::Celeste.AltSidesHelperBridge.Load();
             global::Celeste.IntroRemixHooks.Load();
             global::Celeste.MonoModHooks.Load();
@@ -226,7 +236,6 @@ namespace Celeste.Mod.MaggyHelper
             // Initialize Vignette hooks for intro/outro cutscenes
             InitializeVignetteHooks();
 
-            global::Celeste.TitleScreen_ExtHook.Load();
             global::Celeste.Cutscenes.IntroWarning.Load();
 
             global::Celeste.ChapterMasteryTracker.Load();
@@ -392,11 +401,19 @@ namespace Celeste.Mod.MaggyHelper
             global::Celeste.IntroRemixHooks.Unload();
             global::Celeste.Cutscenes.IntroWarning.Unload();
             global::Celeste.AreaModeExtender.Unload();
-            global::Celeste.CelesteDSideHooks.Unload();
+
+            // ──── Shutdown Comprehensive D-Side Hook System ────
+            global::Celeste.DSideHookImplementation.Shutdown();
+
+            // ──── Uninitialize D-Side Hook Registry ────
+            // Unloads: CelesteDSideHooks (On.hook + IL.hook)
+            //          CelesteMusicHooks (On.hook + IL.hook)
+            //          TitleScreen_ExtHook (On.hook + IL.hook)
+            global::Celeste.DSideHookRegistry.UninitializeAll();
+
             global::Celeste.AltSidesHelperBridge.Unload();
             global::Celeste.MonoModHooks.Unload();
             global::Celeste.Mod.MaggyHelper.PayphoneCutsceneTriggers.Unload();
-            global::Celeste.TitleScreen_ExtHook.Unload();
             global::Celeste.ChapterMasteryTracker.Unload();
             global::Celeste.CosmicChapterPanelHook.Unload();
             global::Celeste.Mod.MaggyHelper.ChapterProgressDisplay.Unload();
